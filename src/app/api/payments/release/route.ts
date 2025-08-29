@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectDB } from '@/lib/db';
+import dbConnect from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
 import Task from '@/models/Task';
 
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
+    await dbConnect();
     
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
