@@ -1,5 +1,8 @@
 # 🚀 DigitalWorkforce
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/hiraypawan/DigitalWorkForce.git)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge)](https://digitalworkforce.vercel.app)
+
 > AI-powered digital workforce platform connecting talented individuals with companies for micro-task execution and wealth building.
 
 ## ✨ Features
