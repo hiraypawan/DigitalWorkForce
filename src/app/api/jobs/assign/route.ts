@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       const assignedWorker = suitableWorkers[workerIndex % suitableWorkers.length];
       
       // Check skill compatibility score
-      const skillMatch = task.skills.filter(skill => 
+      const skillMatch = task.skills.filter((skill: string) => 
         assignedWorker.skills.includes(skill)
       ).length / task.skills.length;
       
