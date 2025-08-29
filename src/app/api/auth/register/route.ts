@@ -42,6 +42,9 @@ export async function POST(request: NextRequest) {
     
   } catch (error: any) {
     console.error('Registration error:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
     
     if (error.name === 'ZodError') {
       return Response.json(
@@ -50,8 +53,24 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Check for MongoDB connection errors
+    if (error.name === 'MongooseError' || error.name === 'MongoError') {
+      return Response.json(
+        { error: 'Database connection failed', details: error.message },
+        { status: 503 }
+      );
+    }
+    
+    // Check for validation errors
+    if (error.name === 'ValidationError') {
+      return Response.json(
+        { error: 'Validation failed', details: error.message },
+        { status: 400 }
+      );
+    }
+    
     return Response.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error.message },
       { status: 500 }
     );
   }
