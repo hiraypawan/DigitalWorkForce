@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Send, User, Bot, Loader2 } from 'lucide-react';
+import { sanitizeText } from '@/lib/utils';
 
 interface Message {
   id: string;
@@ -145,7 +146,7 @@ export default function ChatBox({ onComplete, className = '' }: ChatBoxProps) {
                   : 'bg-gray-100 text-gray-800'
               }`}
             >
-              <p className="text-sm">{message.content}</p>
+              <p className="text-sm">{sanitizeText(message.content)}</p>
             </div>
             
             {message.role === 'user' && (

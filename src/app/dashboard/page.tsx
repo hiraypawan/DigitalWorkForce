@@ -12,6 +12,7 @@ import {
   Clock,
   BarChart3
 } from 'lucide-react';
+import { formatDisplayName } from '@/lib/utils';
 
 interface DashboardStats {
   totalEarnings: number;
@@ -94,7 +95,7 @@ export default function DashboardPage() {
           <div className="flex justify-between items-center py-4">
             <h1 className="text-2xl font-bold text-gray-900">DigitalWorkforce</h1>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
+              <span className="text-sm text-gray-600">Welcome, {user?.name ? formatDisplayName(user.name) : 'User'}</span>
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-gray-600" />
               </div>

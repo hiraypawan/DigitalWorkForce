@@ -4,7 +4,7 @@ import { Clock, DollarSign, Calendar, User, ArrowRight } from 'lucide-react';
 import { Card } from './Card';
 import { Badge, StatusBadge } from './Badge';
 import { Button } from './Button';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate, escapeHtml, sanitizeText } from '@/lib/utils';
 
 interface TaskCardProps {
   task: {
@@ -79,8 +79,8 @@ export function TaskCard({
       {/* Content */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">{task.title}</h3>
-          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">{task.description}</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{sanitizeText(task.title)}</h3>
+          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">{sanitizeText(task.description)}</p>
         </div>
 
         {/* Project Reference */}

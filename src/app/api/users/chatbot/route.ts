@@ -4,6 +4,7 @@ import User from '@/models/User';
 import { ChatbotConversation } from '@/models/Message';
 import { getTokenFromRequest, getUserFromToken } from '@/lib/auth';
 import { ChatbotResponseSchema } from '@/lib/validators';
+import { sanitizeText, hasDangerousChars } from '@/lib/utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,7 +22,33 @@ export async function POST(request: NextRequest) {
     }
     
     const body = await request.json();
-    const { message, context = 'onboarding' } = body;
+    let { message, context = 'onboarding' } = body;
+    
+    // Sanitize and validate user input
+    if (!message || typeof message !== 'string') {
+      return Response.json(
+        { error: 'Message is required' },
+        { status: 400 }
+      );
+    }
+    
+    // Check for dangerous characters
+    if (hasDangerousChars(message)) {
+      return Response.json(
+        { error: 'Message contains invalid characters' },
+        { status: 400 }
+      );
+    }
+    
+    // Sanitize the message
+    message = sanitizeText(message);
+    
+    if (message.length > 1000) {
+      return Response.json(
+        { error: 'Message too long' },
+        { status: 400 }
+      );
+    }
     
     // Find or create chatbot conversation
     let conversation = await ChatbotConversation.findOne({

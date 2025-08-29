@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { User, Mail, Lock, Eye, EyeOff, UserPlus, Building } from 'lucide-react';
+import { isValidUsername, isValidPassword } from '@/lib/utils';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,21 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  // Real-time password validation
+  const passwordValidation = useMemo(() => {
+    if (!formData.password) return { isValid: true, errors: [] };
+    return isValidPassword(formData.password);
+  }, [formData.password]);
+
+  // Real-time name validation
+  const nameValidation = useMemo(() => {
+    if (!formData.name) return { isValid: true, error: '' };
+    if (formData.role === 'worker' && !isValidUsername(formData.name)) {
+      return { isValid: false, error: 'Name can only contain letters, numbers, underscore, hyphen, or dot' };
+    }
+    return { isValid: true, error: '' };
+  }, [formData.name, formData.role]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,6 +163,9 @@ export default function RegisterPage() {
                   placeholder={formData.role === 'company' ? 'Enter company name' : 'Enter your full name'}
                 />
               </div>
+              {!nameValidation.isValid && (
+                <p className="mt-1 text-xs text-red-600">{nameValidation.error}</p>
+              )}
             </div>
 
             {/* Email */}
@@ -194,6 +213,16 @@ export default function RegisterPage() {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+              {formData.password && !passwordValidation.isValid && (
+                <div className="mt-2 space-y-1">
+                  {passwordValidation.errors.map((error, index) => (
+                    <p key={index} className="text-xs text-red-600">• {error}</p>
+                  ))}
+                </div>
+              )}
+              {formData.password && passwordValidation.isValid && (
+                <p className="mt-1 text-xs text-green-600">✓ Password meets all requirements</p>
+              )}
             </div>
 
             {/* Confirm Password */}

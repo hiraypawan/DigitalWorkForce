@@ -3,6 +3,7 @@ import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import { RegisterSchema } from '@/lib/validators';
 import { signToken } from '@/lib/auth';
+import { isValidUsername, isValidPassword, sanitizeText, formatDisplayName } from '@/lib/utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,6 +12,22 @@ export async function POST(request: NextRequest) {
     
     // Validate request data
     const validatedData = RegisterSchema.parse(body);
+    
+    // Additional validation for special characters
+    if (!isValidUsername(validatedData.name)) {
+      return Response.json(
+        { error: 'Name contains invalid characters. Use letters, numbers, underscore, hyphen, or dot only.' },
+        { status: 400 }
+      );
+    }
+    
+    const passwordValidation = isValidPassword(validatedData.password);
+    if (!passwordValidation.isValid) {
+      return Response.json(
+        { error: 'Password validation failed', details: passwordValidation.errors },
+        { status: 400 }
+      );
+    }
     
     // Check if user already exists
     const existingUser = await User.findOne({ email: validatedData.email });
