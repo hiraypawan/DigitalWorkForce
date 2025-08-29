@@ -23,7 +23,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
     // Initial greeting
     setMessages([{
       role: 'assistant',
-      content: "Hi! Welcome to DigitalWorkforce! I'm here to help set up your profile. Let's start - what are your main skills or areas of expertise?",
+      content: "Hi! Welcome to DigitalWorkforce! I&apos;m here to help set up your profile. Let&apos;s start - what are your main skills or areas of expertise?",
       timestamp: new Date(),
     }]);
   }, []);
@@ -69,7 +69,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
       console.error('Error sending message:', error);
       const errorMessage = {
         role: 'assistant' as const,
-        content: "Sorry, I'm having trouble processing your message. Please try again.",
+        content: "Sorry, I&apos;m having trouble processing your message. Please try again.",
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -91,7 +91,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
         <Bot className="w-8 h-8 text-blue-500" />
         <div>
           <h2 className="text-xl font-semibold">Profile Setup Assistant</h2>
-          <p className="text-gray-600 text-sm">Let's build your professional profile together</p>
+          <p className="text-gray-600 text-sm">Let&apos;s build your professional profile together</p>
         </div>
       </div>
 

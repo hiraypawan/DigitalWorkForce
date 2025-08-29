@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { 
   ArrowLeft, 
@@ -35,11 +35,7 @@ export default function Tasks() {
   const [filter, setFilter] = useState<'all' | 'assigned' | 'available'>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchTasks();
-  }, [filter]);
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
@@ -57,7 +53,11 @@ export default function Tasks() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -163,7 +163,7 @@ export default function Tasks() {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No tasks found</h3>
             <p className="text-gray-600">
               {filter === 'assigned' 
-                ? "You don't have any assigned tasks yet." 
+                ? "You don&apos;t have any assigned tasks yet."
                 : "No tasks match your current filters."}
             </p>
           </div>

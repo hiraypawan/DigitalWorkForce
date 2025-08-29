@@ -63,7 +63,7 @@ export default function Home() {
             
             <div className="animate-fade-in-up animation-delay-200">
               <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-                Join India's leading digital workforce platform. Find skilled workers for micro-tasks 
+                Join India&apos;s leading digital workforce platform. Find skilled workers for micro-tasks
                 or earn money by completing projects. Build wealth through integrated SIP investments 
                 and insurance benefits.
               </p>
