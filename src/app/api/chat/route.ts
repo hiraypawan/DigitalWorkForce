@@ -43,21 +43,62 @@ Remember: Always respond in valid JSON format.`;
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if Gemini API is configured
-    if (!genAI) {
-      return NextResponse.json({
-        response: "AI assistant is currently not configured. Please set up the Gemini API key to enable chat functionality.",
-        extractedData: null
-      });
-    }
-
+    // Debug logging
+    console.log('Chat API called');
+    console.log('Gemini API Key present:', !!GEMINI_API_KEY);
+    
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.id) {
+      console.log('No valid session found');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
+    console.log('Request body received:', { messageLength: body.message?.length });
+    
+    // Check if Gemini API is configured
+    if (!genAI) {
+      console.log('Gemini API not configured - using fallback response');
+      
+      // Extract basic info from user message for demo
+      const userMessage = body.message?.toLowerCase() || '';
+      let extractedData = null;
+      
+      // Simple keyword extraction for demo
+      if (userMessage) {
+        const skills = [];
+        if (userMessage.includes('react')) skills.push('React');
+        if (userMessage.includes('node')) skills.push('Node.js');
+        if (userMessage.includes('python')) skills.push('Python');
+        if (userMessage.includes('javascript')) skills.push('JavaScript');
+        if (userMessage.includes('typescript')) skills.push('TypeScript');
+        
+        if (skills.length > 0) {
+          extractedData = {
+            skills,
+            name: null,
+            about: null,
+            experience: [],
+            projects: []
+          };
+        }
+      }
+      
+      // Mock intelligent responses
+      const responses = [
+        "That's excellent! I can see you have great technical skills. Could you tell me more about your work experience or any projects you've worked on recently?",
+        "Wonderful! What kind of projects would you be most interested in working on? Any specific industries or types of companies you'd prefer?",
+        "Great information! Tell me about your career goals - what kind of role or projects are you looking to work on next?"
+      ];
+      
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      return NextResponse.json({
+        response: randomResponse,
+        extractedData
+      });
+    }
     
     // Validate input
     let validatedData;
