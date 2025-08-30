@@ -1,15 +1,14 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 
-function LoginForm() {
+export default function LoginPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -17,8 +16,18 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [callbackUrl, setCallbackUrl] = useState('/onboarding');
+  const [mounted, setMounted] = useState(false);
   
-  const callbackUrl = searchParams.get('from') || '/onboarding';
+  // Handle search params safely after mounting
+  useEffect(() => {
+    setMounted(true);
+    const params = new URLSearchParams(window.location.search);
+    const fromParam = params.get('from');
+    if (fromParam) {
+      setCallbackUrl(fromParam);
+    }
+  }, []);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -185,22 +194,5 @@ function LoginForm() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          </div>
-          <p className="text-gray-300">Loading...</p>
-        </div>
-      </div>
-    }>
-      <LoginForm />
-    </Suspense>
   );
 }
