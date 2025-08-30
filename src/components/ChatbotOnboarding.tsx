@@ -36,7 +36,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
       // Initial greeting
       setMessages([{
         role: 'assistant',
-        content: `Hi ${session.user.name || 'there'}! I'm here to help set up your profile. Let's start - what are your main skills or areas of expertise?`,
+        content: `Hi ${session.user.name || 'there'}! I&apos;m here to help set up your profile. Let&apos;s start - what are your main skills or areas of expertise?`,
         timestamp: new Date(),
       }]);
     }
@@ -89,7 +89,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
       setError('Failed to send message');
       const errorMessage = {
         role: 'assistant' as const,
-        content: "Looks like I'm having trouble responding right now. Try again in a moment.",
+        content: "Looks like I&apos;m having trouble responding right now. Try again in a moment.",
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -123,7 +123,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
         </div>
         <div>
           <h2 className="text-xl font-bold text-white">AI Career Guide</h2>
-          <p className="text-gray-400 text-sm">Let's build your professional profile together</p>
+          <p className="text-gray-400 text-sm">Let&apos;s build your professional profile together</p>
         </div>
       </div>
 
