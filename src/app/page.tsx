@@ -1,5 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   ArrowRight, 
@@ -17,6 +20,50 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Redirect authenticated users to onboarding or dashboard
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      // Check if user needs onboarding first by trying to fetch their portfolio
+      fetch('/api/portfolio', {
+        credentials: 'include',
+      })
+        .then(response => response.json())
+        .then(data => {
+          const completeness = data.completionPercentage || 0;
+          if (completeness >= 60) {
+            router.push('/dashboard');
+          } else {
+            router.push('/onboarding');
+          }
+        })
+        .catch(() => {
+          // If error fetching portfolio, redirect to onboarding
+          router.push('/onboarding');
+        });
+    }
+  }, [session, status, router]);
+
+  // Don't render the landing page if user is authenticated (they'll be redirected)
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-300">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'authenticated') {
+    return null; // Will redirect in useEffect
+  }
+
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Navigation */}

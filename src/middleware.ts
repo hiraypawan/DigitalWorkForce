@@ -5,25 +5,24 @@ import { getToken } from 'next-auth/jwt';
 const protectedRoutes = [
   '/dashboard',
   '/company',
+  '/onboarding',
   '/api/users',
   '/api/jobs',
   '/api/payments',
+  '/api/portfolio',
 ];
 
-// Routes that should redirect authenticated users
+// Routes that should redirect authenticated users away
 const authRoutes = [
   '/auth/login',
   '/auth/register',
 ];
 
-// Routes that don't require full profile completion
-const onboardingExemptRoutes = [
-  '/onboarding',
-  '/auth/login',
-  '/auth/register',
-  '/api/auth',
-  '/api/users/chatbot',
-  '/api/chat',
+// Routes that are public and don't require authentication
+const publicRoutes = [
+  '/',
+  '/about',
+  '/contact',
 ];
 
 export async function middleware(request: NextRequest) {
@@ -46,6 +45,9 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET 
   });
   
+  const isOnboardingRoute = pathname.startsWith('/onboarding');
+  const isPublicRoute = publicRoutes.some(route => pathname === route);
+  
   // If accessing protected route without valid token
   if (isProtectedRoute && !token) {
     const loginUrl = new URL('/auth/login', request.url);
@@ -55,9 +57,13 @@ export async function middleware(request: NextRequest) {
   
   // If accessing auth routes while authenticated
   if (isAuthRoute && token) {
-    // Redirect to onboarding if profile is not complete, otherwise to dashboard
-    const redirectUrl = '/onboarding';
-    return NextResponse.redirect(new URL(redirectUrl, request.url));
+    // Check where to redirect based on query params or default to onboarding
+    const fromParam = request.nextUrl.searchParams.get('from');
+    if (fromParam && fromParam !== '/auth/login' && fromParam !== '/auth/register') {
+      return NextResponse.redirect(new URL(fromParam, request.url));
+    }
+    // Default redirect to onboarding for newly authenticated users
+    return NextResponse.redirect(new URL('/onboarding', request.url));
   }
   
   return NextResponse.next();
