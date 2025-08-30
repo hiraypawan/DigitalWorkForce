@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
       updateData.education.forEach((edu: any) => {
         if (edu.degree && edu.institution && edu.year) {
           // Check if education already exists to avoid duplicates
-          const exists = portfolio.education.some(existing => 
+          const exists = portfolio.education.some((existing: any) => 
             existing.degree.toLowerCase() === edu.degree.toLowerCase() &&
             existing.institution.toLowerCase() === edu.institution.toLowerCase()
           );
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
       updateData.experience.forEach((exp: any) => {
         if (exp.role && exp.company && exp.duration && exp.details) {
           // Check if experience already exists to avoid duplicates
-          const exists = portfolio.experience.some(existing => 
+          const exists = portfolio.experience.some((existing: any) => 
             existing.role.toLowerCase() === exp.role.toLowerCase() &&
             existing.company.toLowerCase() === exp.company.toLowerCase()
           );
@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
       updateData.skills.forEach((skill: string) => {
         if (skill && typeof skill === 'string') {
           const skillTrimmed = skill.trim();
-          if (!portfolio.skills.some(existing => 
+          if (!portfolio.skills.some((existing: any) => 
             existing.toLowerCase() === skillTrimmed.toLowerCase()
           )) {
             portfolio.skills.push(skillTrimmed);
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
       updateData.projects.forEach((proj: any) => {
         if (proj.title && proj.description) {
           // Check if project already exists to avoid duplicates
-          const exists = portfolio.projects.some(existing => 
+          const exists = portfolio.projects.some((existing: any) => 
             existing.title.toLowerCase() === proj.title.toLowerCase()
           );
           
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
       updateData.certifications.forEach((cert: string) => {
         if (cert && typeof cert === 'string') {
           const certTrimmed = cert.trim();
-          if (!portfolio.certifications.some(existing => 
+          if (!portfolio.certifications.some((existing: any) => 
             existing.toLowerCase() === certTrimmed.toLowerCase()
           )) {
             portfolio.certifications.push(certTrimmed);
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
       updateData.achievements.forEach((achievement: string) => {
         if (achievement && typeof achievement === 'string') {
           const achievementTrimmed = achievement.trim();
-          if (!portfolio.achievements.some(existing => 
+          if (!portfolio.achievements.some((existing: any) => 
             existing.toLowerCase() === achievementTrimmed.toLowerCase()
           )) {
             portfolio.achievements.push(achievementTrimmed);
@@ -225,7 +225,7 @@ export async function POST(request: NextRequest) {
       updateData.goals.forEach((goal: string) => {
         if (goal && typeof goal === 'string') {
           const goalTrimmed = goal.trim();
-          if (!portfolio.goals.some(existing => 
+          if (!portfolio.goals.some((existing: any) => 
             existing.toLowerCase() === goalTrimmed.toLowerCase()
           )) {
             portfolio.goals.push(goalTrimmed);
@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
       updateData.hobbies.forEach((hobby: string) => {
         if (hobby && typeof hobby === 'string') {
           const hobbyTrimmed = hobby.trim();
-          if (!portfolio.hobbies.some(existing => 
+          if (!portfolio.hobbies.some((existing: any) => 
             existing.toLowerCase() === hobbyTrimmed.toLowerCase()
           )) {
             portfolio.hobbies.push(hobbyTrimmed);
