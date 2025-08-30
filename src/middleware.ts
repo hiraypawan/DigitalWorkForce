@@ -9,7 +9,6 @@ const protectedRoutes = [
   '/api/users',
   '/api/jobs',
   '/api/payments',
-  '/api/portfolio',
 ];
 
 // Routes that should redirect authenticated users away
@@ -28,8 +27,11 @@ const publicRoutes = [
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Skip middleware for static files and API auth routes
+  // Skip middleware for static files, API auth routes, and debug/internal API routes
   if (pathname.startsWith('/api/auth/') || 
+      pathname.startsWith('/api/debug/') ||
+      pathname.startsWith('/api/portfolio') ||
+      pathname.startsWith('/api/chat') ||
       pathname.startsWith('/_next/') || 
       pathname.startsWith('/favicon.ico')) {
     return NextResponse.next();
@@ -47,17 +49,25 @@ export async function middleware(request: NextRequest) {
         req: request, 
         secret: process.env.NEXTAUTH_SECRET 
       });
+      console.log('Middleware - Token found for path:', pathname, '- Token present:', !!token);
     } catch (error) {
       console.error('Error getting token in middleware:', error);
       // If token fetch fails, treat as unauthenticated
       token = null;
     }
     
+    // Additional debug: Check for session cookies
+    const sessionToken = request.cookies.get('next-auth.session-token');
+    const csrfToken = request.cookies.get('next-auth.csrf-token');
+    console.log('Middleware - Session cookie present:', !!sessionToken);
+    console.log('Middleware - CSRF cookie present:', !!csrfToken);
+    
     const isOnboardingRoute = pathname.startsWith('/onboarding');
     const isPublicRoute = publicRoutes.some(route => pathname === route);
     
     // If accessing protected route without valid token
     if (isProtectedRoute && !token) {
+      console.log('Middleware - Redirecting to login for protected route:', pathname);
       const loginUrl = new URL('/auth/login', request.url);
       loginUrl.searchParams.set('from', pathname);
       return NextResponse.redirect(loginUrl);
