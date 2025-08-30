@@ -7,8 +7,15 @@ import bcrypt from 'bcryptjs';
 import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
 
-const client = new MongoClient(process.env.MONGODB_URI || '');
-const clientPromise = client.connect();
+// Create MongoDB client Promise more safely
+let clientPromise: Promise<MongoClient>;
+
+if (process.env.MONGODB_URI) {
+  const client = new MongoClient(process.env.MONGODB_URI);
+  clientPromise = client.connect();
+} else {
+  throw new Error('MONGODB_URI is not defined');
+}
 
 export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise),
