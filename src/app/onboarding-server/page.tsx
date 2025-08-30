@@ -1,12 +1,17 @@
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth-config';
-import { redirect } from 'next/navigation';
-
 export default async function ServerOnboardingPage() {
-  const session = await getServerSession(authOptions);
+  let sessionData = 'Testing NextAuth...';
+  let error = null;
   
-  if (!session) {
-    redirect('/auth/login?from=/onboarding-server');
+  try {
+    // Try importing NextAuth dynamically to see if there's an issue
+    const { getServerSession } = await import('next-auth/next');
+    const { authOptions } = await import('@/lib/auth-config');
+    
+    const session = await getServerSession(authOptions);
+    sessionData = session ? JSON.stringify(session, null, 2) : 'No session found';
+  } catch (err) {
+    error = err instanceof Error ? err.message : 'Unknown error';
+    sessionData = 'Error loading NextAuth';
   }
 
   return (
@@ -18,10 +23,13 @@ export default async function ServerOnboardingPage() {
     }}>
       <h1>Server-Side Onboarding Test</h1>
       <div style={{ backgroundColor: '#333', padding: '20px', borderRadius: '8px', marginTop: '20px' }}>
-        <h2>Session Information</h2>
-        <p><strong>Name:</strong> {session.user?.name || 'Unknown'}</p>
-        <p><strong>Email:</strong> {session.user?.email || 'Unknown'}</p>
-        <p><strong>ID:</strong> {session.user?.id || 'Unknown'}</p>
+        <h2>NextAuth Test</h2>
+        <p><strong>Status:</strong> {error ? 'Error' : 'Success'}</p>
+        {error && <p><strong>Error:</strong> {error}</p>}
+        <div><strong>Session Data:</strong></div>
+        <pre style={{ backgroundColor: '#222', padding: '10px', borderRadius: '4px', marginTop: '10px', fontSize: '12px', whiteSpace: 'pre-wrap' }}>
+          {sessionData}
+        </pre>
         <p><strong>Timestamp:</strong> {new Date().toISOString()}</p>
       </div>
       
