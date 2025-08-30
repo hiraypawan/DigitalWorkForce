@@ -17,27 +17,28 @@ export default function OnboardingPage() {
 
   const checkProfileCompleteness = useCallback(async () => {
     try {
+      console.log('Checking profile completeness...');
       const response = await fetch('/api/portfolio', {
         credentials: 'include',
       });
       
       if (response.ok) {
         const data = await response.json();
+        console.log('Portfolio data:', data);
         const completeness = data.completionPercentage || 0;
         setProfileCompleteness(completeness);
         
-        // If user has already completed onboarding (>= 60% profile completion), redirect to dashboard
-        if (completeness >= 60) {
-          router.push('/dashboard');
-          return;
-        }
+        // Don't auto-redirect on onboarding page, let user complete the flow
+        console.log(`Profile completeness: ${completeness}%`);
+      } else {
+        console.error('Portfolio fetch failed:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error checking profile completeness:', error);
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (status === 'loading') return;

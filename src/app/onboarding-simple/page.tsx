@@ -130,7 +130,17 @@ export default function SimpleOnboardingPage() {
               onClick={async () => {
                 setDebugInfo('Testing API...');
                 try {
-                  const res = await fetch('/api/portfolio');
+                  const res = await fetch('/api/portfolio', {
+                    credentials: 'include',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    }
+                  });
+                  if (!res.ok) {
+                    const errorText = await res.text();
+                    setDebugInfo(`API Error (${res.status}): ${errorText}`);
+                    return;
+                  }
                   const data = await res.json();
                   console.log('API Response:', data);
                   setDebugInfo(`API Status: ${res.status}, Data: ${JSON.stringify(data, null, 2)}`);
