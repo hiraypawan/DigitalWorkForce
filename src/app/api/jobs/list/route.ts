@@ -4,6 +4,8 @@ import Job from '@/models/Job';
 import Task from '@/models/Task';
 import { getTokenFromRequest, getUserFromToken } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/jobs/list - List jobs and tasks for workers
 export async function GET(request: NextRequest) {
   try {

@@ -179,8 +179,7 @@ UserSchema.virtual('profileCompleteness').get(function() {
   return score;
 });
 
-// Index for efficient querying
-UserSchema.index({ email: 1 });
+// Index for efficient querying (email is already indexed via unique: true)
 UserSchema.index({ role: 1 });
 UserSchema.index({ 'skills.name': 1 });
 UserSchema.index({ available: 1 });

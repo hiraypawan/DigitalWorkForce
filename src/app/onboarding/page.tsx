@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import ChatbotOnboarding from '@/components/ChatbotOnboarding';
@@ -15,22 +15,7 @@ export default function OnboardingPage() {
   const [profileCompleteness, setProfileCompleteness] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (status === 'unauthenticated') {
-      // Redirect unauthenticated users to login
-      router.push('/auth/login?from=/onboarding');
-      return;
-    }
-    
-    if (status === 'authenticated') {
-      // Check if user has already completed onboarding
-      checkProfileCompleteness();
-    }
-  }, [status, router]);
-
-  const checkProfileCompleteness = async () => {
+  const checkProfileCompleteness = useCallback(async () => {
     try {
       const response = await fetch('/api/portfolio', {
         credentials: 'include',
@@ -52,7 +37,22 @@ export default function OnboardingPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (status === 'unauthenticated') {
+      // Redirect unauthenticated users to login
+      router.push('/auth/login?from=/onboarding');
+      return;
+    }
+    
+    if (status === 'authenticated') {
+      // Check if user has already completed onboarding
+      checkProfileCompleteness();
+    }
+  }, [status, router, checkProfileCompleteness]);
 
   const handleComplete = (data: any) => {
     setExtractedData(data);

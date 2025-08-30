@@ -4,6 +4,8 @@ import { authOptions } from '@/lib/auth-config';
 import { dbConnect } from '@/lib/mongodb';
 import Portfolio from '@/models/Portfolio';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/portfolio/export - Export portfolio in different formats
 export async function GET(request: NextRequest) {
   try {
