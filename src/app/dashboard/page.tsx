@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   User, 
@@ -10,9 +12,9 @@ import {
   Star,
   CheckCircle,
   Clock,
-  BarChart3
+  BarChart3,
+  LogOut
 } from 'lucide-react';
-import { formatDisplayName } from '@/lib/utils';
 
 interface DashboardStats {
   totalEarnings: number;
@@ -23,6 +25,8 @@ interface DashboardStats {
 }
 
 export default function DashboardPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [stats, setStats] = useState<DashboardStats>({
     totalEarnings: 0,
     completedTasks: 0,
@@ -30,38 +34,41 @@ export default function DashboardPage() {
     rating: 0,
     profileCompleteness: 0,
   });
-  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (status === 'loading') return;
+    if (status === 'unauthenticated') {
+      router.push('/auth/login');
+      return;
+    }
+    if (status === 'authenticated') {
+      fetchDashboardData();
+    }
+  }, [status, router]);
 
   const fetchDashboardData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      
-      // Fetch user profile
+      // Fetch user profile data - using credentials: 'include' for session cookies
       const profileResponse = await fetch('/api/users/profile', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
       });
       
       if (profileResponse.ok) {
         const profileData = await profileResponse.json();
-        setUser(profileData.user);
         
         setStats({
-          totalEarnings: profileData.user.totalEarnings || 0,
-          completedTasks: profileData.user.completedTasks || 0,
+          totalEarnings: profileData.user?.totalEarnings || 0,
+          completedTasks: profileData.user?.completedTasks || 0,
           pendingTasks: 0, // Will be fetched from tasks API
-          rating: profileData.user.rating || 0,
-          profileCompleteness: profileData.user.profileCompleteness || 0,
+          rating: profileData.user?.rating || 0,
+          profileCompleteness: profileData.user?.profileCompleteness || 0,
         });
       }
       
       // Fetch pending tasks count
       const tasksResponse = await fetch('/api/jobs/list?status=assigned', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
       });
       
       if (tasksResponse.ok) {
@@ -79,12 +86,20 @@ export default function DashboardPage() {
     }
   };
 
-  if (loading) {
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/' });
+  };
+
+  if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
+  }
+
+  if (status === 'unauthenticated') {
+    return null; // Will redirect in useEffect
   }
 
   return (
@@ -95,9 +110,18 @@ export default function DashboardPage() {
           <div className="flex justify-between items-center py-4">
             <h1 className="text-2xl font-bold text-gray-900">DigitalWorkforce</h1>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.name ? formatDisplayName(user.name) : 'User'}</span>
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-gray-600" />
+              <span className="text-sm text-gray-600">Welcome, {session?.user?.name || 'User'}</span>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-gray-600" />
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Sign out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>

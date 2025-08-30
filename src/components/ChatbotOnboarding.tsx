@@ -41,15 +41,15 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
 
   useEffect(() => {
     if ((isClient && session?.user) || forceShow) {
-      // Dark psychology initial greeting
-      const darkGreetings = [
-        `${session?.user?.name ? session.user.name + ', your' : 'Your'} story is waiting to be told... and I'm here to extract every powerful detail. Let's begin with your skills - what abilities define your professional essence?`,
-        `Welcome, ${session?.user?.name || 'ambitious soul'}. Your career journey holds secrets that the world needs to know. Share with me your skills, and let's build something that commands respect.`,
-        `${session?.user?.name || 'Friend'}, I sense untapped potential within you. Your experience defines your worth in this world. Tell me about your skills - don't hide what makes you valuable.`,
-        `Your professional story deserves to be legendary, ${session?.user?.name || 'traveler'}. I'm here to help craft that legacy. What skills form the foundation of your expertise?`
+      // Professional initial greeting
+      const professionalGreetings = [
+        `Hi ${session?.user?.name ? session.user.name : 'there'}! I'm here to help you create an amazing professional profile. Let's start by getting to know you better - what's your full name and what type of work do you do?`,
+        `Welcome ${session?.user?.name || 'to DigitalWorkforce'}! I'm your AI career assistant, and I'm excited to help you build a comprehensive profile. Could you start by telling me your name and your main area of expertise?`,
+        `Hello ${session?.user?.name || 'friend'}! Let's create a profile that showcases your talents. To get started, could you share your full name and tell me about your professional background?`,
+        `Great to meet you${session?.user?.name ? ', ' + session.user.name : ''}! I'm here to help build your professional profile step by step. What's your name, and what kind of work are you passionate about?`
       ];
       
-      const randomGreeting = darkGreetings[Math.floor(Math.random() * darkGreetings.length)];
+      const randomGreeting = professionalGreetings[Math.floor(Math.random() * professionalGreetings.length)];
       
       setMessages([{
         role: 'assistant',

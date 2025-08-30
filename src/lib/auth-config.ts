@@ -55,9 +55,8 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   session: {
-    strategy: 'database',
+    strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours
   },
   cookies: {
     sessionToken: {
@@ -72,10 +71,17 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async session({ session, user }) {
-      // For database sessions, user is passed directly
+    async jwt({ token, user }) {
+      // For JWT sessions, user is only passed on sign-in
       if (user) {
-        session.user.id = user.id;
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // For JWT sessions, we get user data from token
+      if (token) {
+        session.user.id = token.id as string;
       }
       return session;
     },

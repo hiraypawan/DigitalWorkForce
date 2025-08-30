@@ -137,12 +137,32 @@ export default function AdvancedProfilePreview() {
     }
   };
 
-  if (!isClient || !session?.user) {
+  if (!isClient) {
     return (
       <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-2xl p-6">
         <div className="text-center text-gray-400">
           <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
-          <p className="text-sm">Your story awaits... Sign in to begin</p>
+          <p className="text-sm">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session?.user) {
+    return (
+      <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-2xl p-6">
+        <div className="text-center text-gray-400">
+          <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <p className="text-sm mb-4">Create your professional profile</p>
+          <div className="space-y-2">
+            <button 
+              onClick={() => window.location.href = '/auth/login'}
+              className="block w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-semibold text-sm"
+            >
+              Sign In
+            </button>
+            <p className="text-xs text-gray-500">Sign in to save your profile permanently</p>
+          </div>
         </div>
       </div>
     );

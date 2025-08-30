@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth-config';
 import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
 
@@ -8,26 +9,21 @@ export async function GET(request: NextRequest) {
   try {
     console.log('Profile API - GET request received');
     
-    // Get token from Authorization header
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      console.log('Profile API - No valid authorization header');
+    // Get session using NextAuth
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+    
+    console.log('Profile API - Session found:', !!session);
+    console.log('Profile API - User ID:', userId);
+    
+    if (!userId) {
+      console.log('Profile API - No valid session');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
-    const token = authHeader.substring(7);
-    const decoded = verifyToken(token);
-    
-    if (!decoded?.userId) {
-      console.log('Profile API - Invalid token');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    
-    console.log('Profile API - Token decoded for user:', decoded.userId);
 
     await dbConnect();
     
-    const user = await User.findById(decoded.userId).select('-passwordHash');
+    const user = await User.findById(userId).select('-passwordHash');
     
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -45,14 +41,18 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      profile: user.profile,
-      name: user.name,
-      email: user.email,
-      portfolioLinks: user.portfolioLinks || [],
-      profilePicture: user.profilePicture || user.image || '',
-      role: user.role,
-      rating: user.rating,
-      completedTasks: user.completedTasks,
+      user: {
+        profile: user.profile,
+        name: user.name,
+        email: user.email,
+        portfolioLinks: user.portfolioLinks || [],
+        profilePicture: user.profilePicture || user.image || '',
+        role: user.role,
+        rating: user.rating,
+        completedTasks: user.completedTasks,
+        totalEarnings: user.totalEarnings,
+        profileCompleteness: user.profileCompleteness
+      }
     });
 
   } catch (error) {
@@ -64,16 +64,11 @@ export async function GET(request: NextRequest) {
 // PATCH /api/users/profile - Update user profile
 export async function PATCH(request: NextRequest) {
   try {
-    // Get token from Authorization header
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // Get session using NextAuth
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
     
-    const token = authHeader.substring(7);
-    const decoded = verifyToken(token);
-    
-    if (!decoded?.userId) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -128,7 +123,7 @@ export async function PATCH(request: NextRequest) {
     await dbConnect();
     
     const updatedUser = await User.findByIdAndUpdate(
-      decoded.userId,
+      userId,
       sanitizedUpdate,
       { new: true, runValidators: true }
     ).select('-passwordHash');
@@ -138,14 +133,18 @@ export async function PATCH(request: NextRequest) {
     }
 
     return NextResponse.json({
-      profile: updatedUser.profile,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      portfolioLinks: updatedUser.portfolioLinks || [],
-      profilePicture: updatedUser.profilePicture || updatedUser.image || '',
-      role: updatedUser.role,
-      rating: updatedUser.rating,
-      completedTasks: updatedUser.completedTasks,
+      user: {
+        profile: updatedUser.profile,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        portfolioLinks: updatedUser.portfolioLinks || [],
+        profilePicture: updatedUser.profilePicture || updatedUser.image || '',
+        role: updatedUser.role,
+        rating: updatedUser.rating,
+        completedTasks: updatedUser.completedTasks,
+        totalEarnings: updatedUser.totalEarnings,
+        profileCompleteness: updatedUser.profileCompleteness
+      }
     });
 
   } catch (error) {
