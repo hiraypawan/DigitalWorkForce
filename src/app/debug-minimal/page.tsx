@@ -28,10 +28,26 @@ export default function DebugMinimalPage() {
           onClick={async () => {
             console.log('Testing portfolio API...');
             try {
-              const res = await fetch('/api/portfolio');
+              const res = await fetch('/api/portfolio', {
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                }
+              });
+              
+              console.log('Portfolio API response status:', res.status);
+              console.log('Portfolio API response headers:', Object.fromEntries(res.headers.entries()));
+              
+              if (!res.ok) {
+                const text = await res.text();
+                console.log('Portfolio API error response:', text);
+                alert(`Portfolio API Error (${res.status}): ${text.substring(0, 200)}`);
+                return;
+              }
+              
               const data = await res.json();
               console.log('Portfolio API response:', data);
-              alert('Check console for API response');
+              alert('Portfolio API Success! Check console for full response.');
             } catch (error) {
               console.error('Portfolio API error:', error);
               alert('API Error: ' + error);

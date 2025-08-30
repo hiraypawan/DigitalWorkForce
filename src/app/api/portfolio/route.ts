@@ -14,7 +14,13 @@ export async function GET(request: NextRequest) {
     console.log('Portfolio API - Request headers:', Object.fromEntries(request.headers.entries()));
     console.log('Portfolio API - Request cookies:', request.cookies.getAll());
     
-    // Get session using NextAuth
+    // Get specific NextAuth cookies for debugging
+    const sessionToken = request.cookies.get('next-auth.session-token');
+    const csrfToken = request.cookies.get('next-auth.csrf-token');
+    console.log('Portfolio API - Session token present:', !!sessionToken);
+    console.log('Portfolio API - CSRF token present:', !!csrfToken);
+    
+    // Get session using NextAuth with request context
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
     
@@ -24,7 +30,15 @@ export async function GET(request: NextRequest) {
     
     if (!userId) {
       console.log('Portfolio API - No valid session');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ 
+        error: 'Unauthorized',
+        debug: {
+          sessionTokenPresent: !!sessionToken,
+          csrfTokenPresent: !!csrfToken,
+          sessionFound: !!session,
+          headers: Object.fromEntries(request.headers.entries())
+        }
+      }, { status: 401 });
     }
 
     await dbConnect();
@@ -66,7 +80,7 @@ export async function POST(request: NextRequest) {
   try {
     console.log('Portfolio API - POST request received');
     
-    // Get session using NextAuth
+    // Get session using NextAuth with request context
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
     
@@ -284,7 +298,7 @@ export async function POST(request: NextRequest) {
 // PATCH /api/portfolio - Direct portfolio field updates (for manual edits)
 export async function PATCH(request: NextRequest) {
   try {
-    // Get session using NextAuth
+    // Get session using NextAuth with request context
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
     
