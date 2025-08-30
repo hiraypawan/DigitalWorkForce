@@ -20,7 +20,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [forceShow, setForceShow] = useState(false);
+  const [forceShow, setForceShow] = useState(true); // Show immediately
   
   // Debug logging
   console.log('ChatbotOnboarding - Session status:', status);
@@ -29,14 +29,10 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
-  // Force show chatbot after 3 seconds regardless of session status
+  // Show chatbot immediately
   useEffect(() => {
-    const timer = setTimeout(() => {
-      console.log('Auto-showing chatbot after 3 seconds');
-      setForceShow(true);
-    }, 3000);
-    
-    return () => clearTimeout(timer);
+    console.log('Showing chatbot immediately');
+    setForceShow(true);
   }, []);
 
   const scrollToBottom = () => {

@@ -11,7 +11,9 @@ const client = new MongoClient(process.env.MONGODB_URI || '');
 const clientPromise = client.connect();
 
 export const authOptions: NextAuthOptions = {
-  ...(process.env.MONGODB_URI ? { adapter: MongoDBAdapter(clientPromise) } : {}),
+  // Remove MongoDB adapter to simplify session handling
+  // adapter: MongoDBAdapter(clientPromise),
+  debug: process.env.NODE_ENV === 'development',
   providers: [
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
       GoogleProvider({
@@ -55,6 +57,19 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        // Remove domain restriction for now
+      },
+    },
   },
   callbacks: {
     async jwt({ token, user, trigger, session }) {
