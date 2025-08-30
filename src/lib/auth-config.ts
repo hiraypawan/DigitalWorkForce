@@ -7,11 +7,11 @@ import bcrypt from 'bcryptjs';
 import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
 
-const client = process.env.MONGODB_URI ? new MongoClient(process.env.MONGODB_URI) : null;
-const clientPromise = client ? client.connect() : Promise.resolve(null);
+const client = new MongoClient(process.env.MONGODB_URI || '');
+const clientPromise = client.connect();
 
 export const authOptions: NextAuthOptions = {
-  ...(client ? { adapter: MongoDBAdapter(clientPromise) } : {}),
+  ...(process.env.MONGODB_URI ? { adapter: MongoDBAdapter(clientPromise) } : {}),
   providers: [
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
       GoogleProvider({
