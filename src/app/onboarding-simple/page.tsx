@@ -10,6 +10,8 @@ export default function SimpleOnboardingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [profileCompleteness, setProfileCompleteness] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<string>('');
 
   const checkProfileCompleteness = useCallback(async () => {
     try {
@@ -123,13 +125,38 @@ export default function SimpleOnboardingPage() {
             </div>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-8 space-y-4">
+            <button
+              onClick={async () => {
+                setDebugInfo('Testing API...');
+                try {
+                  const res = await fetch('/api/portfolio');
+                  const data = await res.json();
+                  console.log('API Response:', data);
+                  setDebugInfo(`API Status: ${res.status}, Data: ${JSON.stringify(data, null, 2)}`);
+                } catch (err) {
+                  console.error('API Error:', err);
+                  setDebugInfo(`API Error: ${err}`);
+                }
+              }}
+              className="block mx-auto px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+            >
+              Test Portfolio API
+            </button>
+            
             <button
               onClick={() => router.push('/onboarding')}
               className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 font-semibold"
             >
               Try Full Onboarding Page
             </button>
+            
+            {debugInfo && (
+              <div className="mt-4 p-4 bg-gray-800 rounded text-left text-sm">
+                <h3 className="text-yellow-400 font-semibold mb-2">Debug Info:</h3>
+                <pre className="text-green-400 whitespace-pre-wrap">{debugInfo}</pre>
+              </div>
+            )}
           </div>
         </div>
       </div>
