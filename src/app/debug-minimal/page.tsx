@@ -37,9 +37,27 @@ export default function DebugMinimalPage() {
               alert('API Error: ' + error);
             }
           }}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mr-4"
         >
           Test Portfolio API
+        </button>
+        
+        <button 
+          onClick={async () => {
+            console.log('Testing auth debug API...');
+            try {
+              const res = await fetch('/api/debug/auth-detailed');
+              const data = await res.text();
+              console.log('Auth debug response:', data);
+              alert('Auth Debug Response (status: ' + res.status + '): ' + data.substring(0, 500));
+            } catch (error) {
+              console.error('Auth debug error:', error);
+              alert('Auth Debug Error: ' + error);
+            }
+          }}
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          Test Auth Debug
         </button>
       </div>
     </div>

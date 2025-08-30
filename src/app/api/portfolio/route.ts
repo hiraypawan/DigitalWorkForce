@@ -10,12 +10,16 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     console.log('Portfolio API - GET request received');
+    console.log('Portfolio API - Request URL:', request.url);
+    console.log('Portfolio API - Request headers:', Object.fromEntries(request.headers.entries()));
+    console.log('Portfolio API - Request cookies:', request.cookies.getAll());
     
     // Get session using NextAuth
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
     
     console.log('Portfolio API - Session found:', !!session);
+    console.log('Portfolio API - Full session:', session);
     console.log('Portfolio API - User ID:', userId);
     
     if (!userId) {
