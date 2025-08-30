@@ -16,6 +16,15 @@ const authRoutes = [
   '/auth/register',
 ];
 
+// Routes that don't require full profile completion
+const onboardingExemptRoutes = [
+  '/onboarding',
+  '/auth/login',
+  '/auth/register',
+  '/api/auth',
+  '/api/users/chatbot',
+];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   

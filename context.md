@@ -8,7 +8,7 @@ Goal: Build an AI-assisted digital workforce platform where individuals (talents
 Tech Stack: Next.js (Vercel) + MongoDB Atlas.
 
 Core Idea:
-Users sign up → AI chatbot collects structured info → Auto-create profile (skills, hobbies, experiences, availability) → Projects posted by companies/clients → AI auto-splits tasks and assigns them to matched users → Workers complete and get paid → Earnings (and future SIP/benefits) tracked in dashboard.
+Users sign up → AI chatbot collects structured info → Auto-create profile (skills, hobbies, experiences, availability) → Projects posted by companies/clients → AI auto-splits tasks and assigns them to matched users → Employee complete and get paid → Earnings (and future SIP/benefits) tracked in dashboard.
 
 ⚡ Unlike normal hiring platforms, this is not just "recruiter searches profiles" → It’s about instant workforce activation & project execution.
 
@@ -40,15 +40,15 @@ Profile auto-generated → visible to companies/hirers.
 
 Company Flow:
 
-Company posts project → Auto-split logic breaks into tasks → Workers matched by skills.
+Company posts project → Auto-split logic breaks into tasks → Employee matched by skills.
 
 Company can view team, progress, and completed work.
 
-Worker Flow:
+Employee Flow:
 
 Dashboard shows profile, assigned tasks, earnings, benefits.
 
-Workers can edit profile or accept/reject assignments.
+Employee can edit profile or accept/reject assignments.
 
 3. Data Models (MongoDB)
 users collection
@@ -112,7 +112,7 @@ tasks collection
 
 /auth/signup → Sign Up (AI chatbot onboarding)
 
-/dashboard → Worker dashboard (profile, tasks, earnings, etc.)
+/dashboard → Employee dashboard (profile, tasks, earnings, etc.)
 
 /dashboard/profile → Edit profile
 
@@ -158,7 +158,7 @@ User: "2 years freelancing" → added under skills.
 ✅ AI chatbot onboarding → profile creation
 ✅ Public profile page
 ✅ Company can post project → auto-task split
-✅ Worker dashboard (profile, tasks, earnings)
+✅ Employee dashboard (profile, tasks, earnings)
 ✅ Resume upload
 
 7. Future Features (after MVP)
@@ -167,11 +167,11 @@ Skill endorsements
 
 Recruiter/Company subscriptions
 
-Worker benefits: SIP & insurance
+Employee benefits: SIP & insurance
 
 AI-enhanced project auto-management
 
-Real-time chat between company & worker
+Real-time chat between company & Employee
 
 8. Design Notes
 
@@ -181,7 +181,7 @@ Chatbot: Bubble interface (Intercom-like)
 
 Company dashboard: Project cards + task status
 
-Worker dashboard: Task board + earnings tracker. 
+Employee dashboard: Task board + earnings tracker. 
 Platform Flow & Key Features
 1. User Onboarding & Profile Creation
 
@@ -383,8 +383,8 @@ Login	/api/auth/login/route.ts	POST	JWT-based auth
 Profile	/api/users/profile/route.ts	GET/POST	Auto-populated from chatbot
 Chatbot Q&A	/api/users/chatbot/route.ts	POST	Save incremental answers
 Project Post	/api/jobs/post/route.ts	POST	Companies post projects
-Project List	/api/jobs/list/route.ts	GET	Workers view available projects
-Project Assign	/api/jobs/assign/route.ts	POST	Auto-match workers by skills
+Project List	/api/jobs/list/route.ts	GET	Employee view available projects
+Project Assign	/api/jobs/assign/route.ts	POST	Auto-match Employee by skills
 
 Developer Notes, Deployment & Workflow Guide
 1. Project Setup (Developer Notes)
@@ -520,8 +520,8 @@ Bot collects profile data → stored in MongoDB
 
 Profile auto-created → visible in /dashboard/profile
 
-Workers view tasks & earnings → initially dummy data
+Employee view tasks & earnings → initially dummy data
 
-Companies post projects → auto-assign workers via skills
+Companies post projects → auto-assign Employee via skills
 
 Payments & benefits → mock until fully integrated

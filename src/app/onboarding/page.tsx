@@ -46,7 +46,7 @@ export default function OnboardingPage() {
             {!extractedData ? (
               <div className="text-center py-8">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <ChatBox className="w-8 h-8 text-gray-400" />
+                  <div className="w-8 h-8 bg-blue-500 rounded text-white flex items-center justify-center text-sm font-bold">AI</div>
                 </div>
                 <p className="text-gray-500">
                   Complete the chat to see your profile preview
