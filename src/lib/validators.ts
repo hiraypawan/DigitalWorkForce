@@ -76,23 +76,48 @@ export const MessageSchema = z.object({
 });
 
 // Chatbot validation schemas
+export const ChatbotMessageSchema = z.object({
+  message: z.string().min(1, 'Message cannot be empty').max(1000, 'Message too long'),
+  conversationHistory: z.array(z.object({
+    role: z.enum(['user', 'assistant']),
+    content: z.string(),
+  })).optional(),
+});
+
+export const ChatbotExtractedDataSchema = z.object({
+  name: z.string().optional().nullable(),
+  about: z.string().optional().nullable(),
+  skills: z.array(z.string()).optional(),
+  experience: z.array(z.string()).optional(),
+  projects: z.array(z.string()).optional(),
+});
+
 export const ChatbotResponseSchema = z.object({
-  skills: z.array(z.string()),
-  hobbies: z.array(z.string()),
-  experience: z.array(z.object({
-    title: z.string(),
-    company: z.string(),
-    duration: z.string(),
-    description: z.string(),
-  })),
-  aboutMe: z.string(),
+  response: z.string(),
+  extractedData: ChatbotExtractedDataSchema.optional(),
+});
+
+// New profile structure validation
+export const NewProfileUpdateSchema = z.object({
+  name: z.string().min(2).max(100).optional(),
+  profile: z.object({
+    about: z.string().max(2000).optional(),
+    skills: z.array(z.string().max(100)).optional(),
+    experience: z.array(z.string().max(500)).optional(),
+    projects: z.array(z.string().max(500)).optional(),
+  }).optional(),
+  portfolioLinks: z.array(z.string().url()).optional(),
+  profilePicture: z.string().url().optional(),
 });
 
 export type RegisterData = z.infer<typeof RegisterSchema>;
 export type LoginData = z.infer<typeof LoginSchema>;
 export type ProfileUpdateData = z.infer<typeof ProfileUpdateSchema>;
+export type NewProfileUpdateData = z.infer<typeof NewProfileUpdateSchema>;
 export type JobPostData = z.infer<typeof JobPostSchema>;
 export type TaskData = z.infer<typeof TaskSchema>;
 export type PaymentCreateData = z.infer<typeof PaymentCreateSchema>;
 export type MessageData = z.infer<typeof MessageSchema>;
+export type ChatbotMessageData = z.infer<typeof ChatbotMessageSchema>;
+export type ChatbotExtractedData = z.infer<typeof ChatbotExtractedDataSchema>;
 export type ChatbotResponseData = z.infer<typeof ChatbotResponseSchema>;

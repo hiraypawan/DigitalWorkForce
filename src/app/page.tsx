@@ -203,8 +203,8 @@ export default function Home() {
       {/* Trust Builders */}
       <section className="py-20 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="mb-16">
-            <p className="text-gray-400 mb-4">Top companies hiring right now → don&apos;t miss out</p>
+            <div className="mb-16">
+              <p className="text-gray-400 mb-4">Top companies hiring right now &rarr; don&apos;t miss out</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div>
                 <div className="text-4xl font-bold text-white mb-2">2,000+</div>
@@ -271,7 +271,7 @@ export default function Home() {
               
               <div className="mt-6 text-center">
                 <Link
-                  href="/auth/register"
+                  href="/profile/setup"
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300"
                 >
                   Start Chat with AI Guide

@@ -9,10 +9,17 @@ export interface Skill {
 export interface UserDocument extends Document {
   name: string;
   email: string;
-  passwordHash: string;
-  aboutMe: string;
-  skills: Skill[];
-  hobbies: string[];
+  passwordHash?: string; // Optional for OAuth users
+  profile: {
+    about: string;
+    skills: string[];
+    experience: string[];
+    projects: string[];
+  };
+  // Legacy fields - keeping for backwards compatibility
+  aboutMe?: string;
+  skills?: Skill[];
+  hobbies?: string[];
   portfolioLinks: string[];
   resumeUrl: string;
   role?: 'worker' | 'company' | 'admin';
@@ -23,7 +30,10 @@ export interface UserDocument extends Document {
   totalEarnings?: number;
   sipInvestments?: number;
   insurancePlan?: string;
-  comparePassword(candidatePassword: string): Promise<boolean>;
+  // For NextAuth
+  image?: string;
+  emailVerified?: Date;
+  comparePassword?(candidatePassword: string): Promise<boolean>;
   getPublicProfile(): any;
 }
 
@@ -50,8 +60,37 @@ const UserSchema = new Schema<UserDocument>({
   },
   passwordHash: {
     type: String,
-    required: [true, 'Password is required'],
+    required: false, // Optional for OAuth users
     minlength: [6, 'Password must be at least 6 characters'],
+  },
+  // New profile structure for chatbot data
+  profile: {
+    about: {
+      type: String,
+      default: '',
+      maxlength: [2000, 'About section cannot exceed 2000 characters'],
+    },
+    skills: [{
+      type: String,
+      trim: true,
+    }],
+    experience: [{
+      type: String,
+      trim: true,
+    }],
+    projects: [{
+      type: String,
+      trim: true,
+    }],
+  },
+  // For NextAuth compatibility
+  image: {
+    type: String,
+    default: '',
+  },
+  emailVerified: {
+    type: Date,
+    default: null,
   },
   aboutMe: {
     type: String,
