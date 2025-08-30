@@ -86,7 +86,7 @@ export default function AdvancedProfilePreview() {
     isClient && session?.user ? '/api/portfolio' : null,
     fetcher,
     {
-      refreshInterval: 1000, // Refresh every second for real-time updates
+      refreshInterval: 5000, // Refresh every 5 seconds instead of 1 second
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
     }
