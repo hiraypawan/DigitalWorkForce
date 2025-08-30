@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { User, Mail, Lock, Eye, EyeOff, UserPlus, Building } from 'lucide-react';
-import { isValidUsername, isValidPassword } from '@/lib/utils';
 
 export default function RegisterPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,22 +21,25 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
-  const router = useRouter();
+  
+  const callbackUrl = searchParams.get('from') || '/onboarding';
 
-  // Real-time password validation
-  const passwordValidation = useMemo(() => {
-    if (!formData.password) return { isValid: true, errors: [] };
-    return isValidPassword(formData.password);
-  }, [formData.password]);
-
-  // Real-time name validation
-  const nameValidation = useMemo(() => {
-    if (!formData.name) return { isValid: true, error: '' };
-    if (formData.role === 'worker' && !isValidUsername(formData.name)) {
-      return { isValid: false, error: 'Name can only contain letters, numbers, underscore, hyphen, or dot' };
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.push(callbackUrl);
     }
-    return { isValid: true, error: '' };
-  }, [formData.name, formData.role]);
+  }, [status, router, callbackUrl]);
+
+  // Basic validation
+  const isFormValid = useMemo(() => {
+    return (
+      formData.name.trim().length >= 2 &&
+      formData.email.includes('@') &&
+      formData.password.length >= 6 &&
+      formData.password === formData.confirmPassword
+    );
+  }, [formData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,17 +66,18 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store token in localStorage
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        // Registration successful, now sign in the user with NextAuth
+        const signInResult = await signIn('credentials', {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        });
         
-        // Redirect based on role and onboarding requirement
-        if (data.user.role === 'company') {
-          router.push('/company');
-        } else if (data.requiresOnboarding) {
-          router.push('/onboarding');
+        if (signInResult?.ok) {
+          // Successful registration and sign-in
+          router.push('/onboarding'); // Always go to onboarding for new users
         } else {
-          router.push('/dashboard');
+          setError('Registration successful but login failed. Please try signing in manually.');
         }
       } else {
         setError(data.error || 'Registration failed');
@@ -89,6 +96,25 @@ export default function RegisterPage() {
       [e.target.name]: e.target.value,
     });
   };
+
+  // Show loading while checking authentication status
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-300">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't show register form if already authenticated
+  if (status === 'authenticated') {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-black flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -170,8 +196,8 @@ export default function RegisterPage() {
                   placeholder={formData.role === 'company' ? 'Enter company name' : 'Enter your full name'}
                 />
               </div>
-              {!nameValidation.isValid && (
-                <p className="mt-1 text-xs text-red-400">{nameValidation.error}</p>
+              {formData.name && formData.name.trim().length < 2 && (
+                <p className="mt-1 text-xs text-red-400">Name must be at least 2 characters long</p>
               )}
             </div>
 
@@ -220,15 +246,11 @@ export default function RegisterPage() {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-              {formData.password && !passwordValidation.isValid && (
-                <div className="mt-2 space-y-1">
-                  {passwordValidation.errors.map((error, index) => (
-                    <p key={index} className="text-xs text-red-400">• {error}</p>
-                  ))}
-                </div>
+              {formData.password && formData.password.length < 6 && (
+                <p className="mt-1 text-xs text-red-400">Password must be at least 6 characters long</p>
               )}
-              {formData.password && passwordValidation.isValid && (
-                <p className="mt-1 text-xs text-green-400">✓ Password meets all requirements</p>
+              {formData.password && formData.password.length >= 6 && (
+                <p className="mt-1 text-xs text-green-400">✓ Password meets minimum length</p>
               )}
             </div>
 
@@ -263,7 +285,7 @@ export default function RegisterPage() {
             <div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !isFormValid}
                 className="w-full flex justify-center items-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white font-semibold hover:shadow-lg hover:shadow-blue-500/25 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
               >
                 {loading ? (

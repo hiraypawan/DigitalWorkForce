@@ -1,9 +1,8 @@
 import { NextRequest } from 'next/server';
-import dbConnect from '@/lib/db';
+import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
 import { RegisterSchema } from '@/lib/validators';
-import { signToken } from '@/lib/auth';
-import { isValidUsername, isValidPassword, sanitizeText, formatDisplayName } from '@/lib/utils';
+import bcrypt from 'bcryptjs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,18 +12,18 @@ export async function POST(request: NextRequest) {
     // Validate request data
     const validatedData = RegisterSchema.parse(body);
     
-    // Additional validation for special characters
-    if (!isValidUsername(validatedData.name)) {
+    // Basic name validation
+    if (!validatedData.name || validatedData.name.trim().length < 2) {
       return Response.json(
-        { error: 'Name contains invalid characters. Use letters, numbers, underscore, hyphen, or dot only.' },
+        { error: 'Name must be at least 2 characters long' },
         { status: 400 }
       );
     }
     
-    const passwordValidation = isValidPassword(validatedData.password);
-    if (!passwordValidation.isValid) {
+    // Basic password validation
+    if (!validatedData.password || validatedData.password.length < 6) {
       return Response.json(
-        { error: 'Password validation failed', details: passwordValidation.errors },
+        { error: 'Password must be at least 6 characters long' },
         { status: 400 }
       );
     }
@@ -38,23 +37,36 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Hash password
+    const hashedPassword = await bcrypt.hash(validatedData.password, 12);
+    
     // Create new user
     const user = new User({
-      ...validatedData,
-      passwordHash: validatedData.password,
+      name: validatedData.name.trim(),
+      email: validatedData.email.toLowerCase().trim(),
+      passwordHash: hashedPassword,
+      role: validatedData.role || 'worker',
+      profile: {
+        about: '',
+        skills: [],
+        experience: [],
+        projects: []
+      },
+      portfolioLinks: [],
+      resumeUrl: '',
     });
-    // Remove password field since we're using passwordHash
-    delete (user as any).password;
-    await user.save();
     
-    // Generate JWT token
-    const token = signToken({ userId: user._id, email: user.email, role: user.role });
+    await user.save();
     
     return Response.json({
       message: 'Registration successful',
-      token,
-      user: user.getPublicProfile(),
-      requiresOnboarding: true, // Trigger AI chatbot onboarding
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      requiresOnboarding: true,
     }, { status: 201 });
     
   } catch (error: any) {
