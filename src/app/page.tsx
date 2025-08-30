@@ -204,7 +204,7 @@ export default function Home() {
       <section className="py-20 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="mb-16">
-            <p className="text-gray-400 mb-4">Top companies hiring right now → don't miss out</p>
+            <p className="text-gray-400 mb-4">Top companies hiring right now → don&apos;t miss out</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div>
                 <div className="text-4xl font-bold text-white mb-2">2,000+</div>
@@ -246,13 +246,13 @@ export default function Home() {
                     <span className="text-xs font-bold text-white">AI</span>
                   </div>
                   <div className="bg-gray-800 rounded-lg px-4 py-2 flex-1">
-                    <p className="text-gray-200">Hi! I'm your AI career guide. What are your main skills?</p>
+                    <p className="text-gray-200">Hi! I&apos;m your AI career guide. What are your main skills?</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-3 justify-end">
                   <div className="bg-blue-600 rounded-lg px-4 py-2 max-w-xs">
-                    <p className="text-white">I'm a full-stack developer with React and Node.js experience</p>
+                    <p className="text-white">I&apos;m a full-stack developer with React and Node.js experience</p>
                   </div>
                   <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                     <User className="w-4 h-4 text-white" />
@@ -293,7 +293,7 @@ export default function Home() {
         
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
-            Don't wait — the <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">future of work</span> is already here.
+            Don&apos;t wait — the <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">future of work</span> is already here.
           </h2>
           <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
             Join the AI-powered workforce revolution. Start earning, growing, and building your future today.
