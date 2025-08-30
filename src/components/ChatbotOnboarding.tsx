@@ -29,17 +29,15 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
-  // Force show chatbot after 5 seconds if session is still loading
+  // Force show chatbot after 3 seconds regardless of session status
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (status === 'loading') {
-        console.log('Session loading timeout - forcing chatbot to show');
-        setForceShow(true);
-      }
-    }, 5000);
+      console.log('Auto-showing chatbot after 3 seconds');
+      setForceShow(true);
+    }, 3000);
     
     return () => clearTimeout(timer);
-  }, [status]);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
