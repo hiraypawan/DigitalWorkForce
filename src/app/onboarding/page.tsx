@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import ChatBox from '@/components/ChatBox';
-import { CheckCircle, ArrowRight } from 'lucide-react';
+import ChatbotOnboarding from '@/components/ChatbotOnboarding';
+import ProfilePreview from '@/components/ProfilePreview';
+import { CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function OnboardingPage() {
   const [isComplete, setIsComplete] = useState(false);
@@ -20,145 +21,96 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="max-w-4xl w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Welcome to DigitalWorkforce!
-          </h1>
-          <p className="text-lg text-gray-600">
-            Let&apos;s set up your profile with our AI assistant to get you started with the perfect tasks.
+    <div className="min-h-screen bg-black text-white">
+      {/* Background Effects */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-purple-900/10 to-green-900/10"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-green-500/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="bg-black/90 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent">
+              DigitalWorkForce
+            </div>
+            <button
+              onClick={goToDashboard}
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Dashboard
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <Sparkles className="w-8 h-8 text-blue-400" />
+            <h1 className="text-4xl md:text-5xl font-bold">
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent">
+                Welcome to DigitalWorkforce!
+              </span>
+            </h1>
+          </div>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            Let&apos;s set up your profile with our AI assistant to get you started with the perfect projects.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* AI Chatbot */}
-          <div>
-            <ChatBox onComplete={handleComplete} />
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {/* Chat Interface */}
+          <div className="order-2 lg:order-1">
+            <ChatbotOnboarding onComplete={handleComplete} />
           </div>
 
           {/* Profile Preview */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Your Profile Preview
-            </h2>
-            
-            {!extractedData ? (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <div className="w-8 h-8 bg-blue-500 rounded text-white flex items-center justify-center text-sm font-bold">AI</div>
-                </div>
-                <p className="text-gray-500">
-                  Complete the chat to see your profile preview
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {/* Skills */}
-                {extractedData.skills && extractedData.skills.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Skills</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {extractedData.skills.map((skill: string, index: number) => (
-                        <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Hobbies */}
-                {extractedData.hobbies && extractedData.hobbies.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Interests</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {extractedData.hobbies.map((hobby: string, index: number) => (
-                        <span key={index} className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                          {hobby}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* About Me */}
-                {extractedData.aboutMe && (
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">About Me</h3>
-                    <p className="text-gray-700 text-sm">{extractedData.aboutMe}</p>
-                  </div>
-                )}
-
-                {/* Experience */}
-                {extractedData.experience && extractedData.experience.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Experience</h3>
-                    <div className="space-y-2">
-                      {extractedData.experience.map((exp: any, index: number) => (
-                        <div key={index} className="border-l-4 border-blue-500 pl-3">
-                          <p className="font-medium">{exp.title}</p>
-                          <p className="text-sm text-gray-600">{exp.company}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {isComplete && (
-              <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center gap-3 mb-3">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span className="font-semibold text-green-900">Profile Setup Complete!</span>
-                </div>
-                <p className="text-sm text-green-700 mb-4">
-                  Your profile has been created successfully. You can now access your dashboard and start working on tasks.
-                </p>
-                <button
-                  onClick={goToDashboard}
-                  className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 flex items-center justify-center gap-2"
-                >
-                  Go to Dashboard
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
+          <div className="order-1 lg:order-2">
+            <ProfilePreview />
           </div>
         </div>
 
         {/* Steps Indicator */}
-        <div className="mt-8 bg-white rounded-lg shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">What happens next?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold">
-                1
-              </div>
-              <div>
-                <p className="font-medium text-gray-900">Complete Profile</p>
-                <p className="text-sm text-gray-600">Chat with our AI to set up your profile</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold">
-                2
-              </div>
-              <div>
-                <p className="font-medium text-gray-900">Get Matched</p>
-                <p className="text-sm text-gray-600">Our algorithm matches you with relevant tasks</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold">
-                3
-              </div>
-              <div>
-                <p className="font-medium text-gray-900">Start Earning</p>
-                <p className="text-sm text-gray-600">Complete tasks and build your income</p>
+        <div className="mt-16 max-w-4xl mx-auto">
+          <div className="group relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-25"></div>
+            <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-3xl p-8">
+              <h3 className="text-2xl font-bold text-center mb-8">
+                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  What happens next?
+                </span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl font-bold text-white">1</span>
+                  </div>
+                  <h4 className="font-semibold text-white mb-2">Complete Profile</h4>
+                  <p className="text-gray-300 text-sm">Chat with our AI to set up your profile</p>
+                </div>
+                
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl font-bold text-white">2</span>
+                  </div>
+                  <h4 className="font-semibold text-white mb-2">Get Matched</h4>
+                  <p className="text-gray-300 text-sm">Our algorithm matches you with relevant projects</p>
+                </div>
+                
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl font-bold text-white">3</span>
+                  </div>
+                  <h4 className="font-semibold text-white mb-2">Start Earning</h4>
+                  <p className="text-gray-300 text-sm">Complete projects and build your income</p>
+                </div>
               </div>
             </div>
           </div>
