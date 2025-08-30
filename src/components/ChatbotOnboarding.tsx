@@ -89,7 +89,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
       setError('Failed to send message');
       const errorMessage = {
         role: 'assistant' as const,
-        content: "Looks like I'm having trouble responding right now. Try again in a moment.",
+        content: "Looks like I&apos;m having trouble responding right now. Try again in a moment.",
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);

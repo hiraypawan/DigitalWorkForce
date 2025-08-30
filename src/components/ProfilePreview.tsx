@@ -2,6 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
+import Image from 'next/image';
 import { User, Mail, Star, Briefcase, Code, ExternalLink, MapPin } from 'lucide-react';
 
 interface ProfileData {
@@ -125,11 +126,18 @@ export default function ProfilePreview() {
       <div className="flex items-center gap-4 mb-6">
         <div className="relative">
           {profilePicture ? (
-            <img 
-              src={profilePicture} 
-              alt={name}
-              className="w-16 h-16 rounded-full border-2 border-gray-700"
-            />
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center overflow-hidden border-2 border-gray-700">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src={profilePicture} 
+                alt={name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.parentElement!.innerHTML = '<svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path></svg>';
+                }}
+              />
+            </div>
           ) : (
             <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
               <User className="w-8 h-8 text-white" />
