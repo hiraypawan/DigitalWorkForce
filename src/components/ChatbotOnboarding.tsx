@@ -15,7 +15,7 @@ interface ChatbotOnboardingProps {
 }
 
 export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -106,13 +106,33 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
     }
   };
 
+  if (status === 'loading') {
+    return (
+      <div className="group relative">
+        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-25"></div>
+        <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-3xl p-8 text-center">
+          <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-300">Loading your AI career guide...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!session?.user) {
     return (
       <div className="group relative">
         <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-25"></div>
         <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-3xl p-8 text-center">
           <Bot className="w-12 h-12 mx-auto mb-4 text-blue-400" />
-          <p className="text-gray-300">Please sign in to start chatting with your AI career guide</p>
+          <p className="text-gray-300 mb-4">Please sign in to start chatting with your AI career guide</p>
+          <button 
+            onClick={() => window.location.href = '/auth/login'}
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 font-semibold"
+          >
+            Sign In
+          </button>
         </div>
       </div>
     );
