@@ -20,8 +20,26 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [forceShow, setForceShow] = useState(false);
+  
+  // Debug logging
+  console.log('ChatbotOnboarding - Session status:', status);
+  console.log('ChatbotOnboarding - Session data:', session);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Force show chatbot after 5 seconds if session is still loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (status === 'loading') {
+        console.log('Session loading timeout - forcing chatbot to show');
+        setForceShow(true);
+      }
+    }, 5000);
+    
+    return () => clearTimeout(timer);
+  }, [status]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -32,18 +50,18 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
   }, [messages]);
 
   useEffect(() => {
-    if (session?.user) {
+    if (session?.user || forceShow) {
       // Initial greeting with proper Unicode characters
       setMessages([{
         role: 'assistant',
-        content: `Hi ${session.user.name || 'there'}! I&apos;m here to help set up your profile. Let&apos;s start - what are your main skills or areas of expertise?`,
+        content: `Hi ${session?.user?.name || 'there'}! I'm here to help set up your profile. Let's start - what are your main skills or areas of expertise?`,
         timestamp: new Date(),
       }]);
     }
-  }, [session]);
+  }, [session, forceShow]);
 
   const sendMessage = async () => {
-    if (!currentMessage.trim() || isLoading || !session?.user) return;
+    if (!currentMessage.trim() || isLoading) return;
 
     const userMessage = {
       role: 'user' as const,
@@ -106,7 +124,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
     }
   };
 
-  if (status === 'loading') {
+  if (status === 'loading' && !forceShow) {
     return (
       <div className="group relative">
         <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-25"></div>
@@ -120,19 +138,27 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
     );
   }
 
-  if (!session?.user) {
+  if (!session?.user && !forceShow) {
     return (
       <div className="group relative">
         <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-25"></div>
         <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-3xl p-8 text-center">
           <Bot className="w-12 h-12 mx-auto mb-4 text-blue-400" />
           <p className="text-gray-300 mb-4">Please sign in to start chatting with your AI career guide</p>
-          <button 
-            onClick={() => window.location.href = '/auth/login'}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 font-semibold"
-          >
-            Sign In
-          </button>
+          <div className="space-y-3">
+            <button 
+              onClick={() => window.location.href = '/auth/login'}
+              className="block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 font-semibold"
+            >
+              Sign In
+            </button>
+            <button 
+              onClick={() => setForceShow(true)}
+              className="block w-full px-6 py-3 bg-gray-600 text-white rounded-2xl hover:bg-gray-500 transition-all duration-300 font-semibold text-sm"
+            >
+              Try Demo (No Account)
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -169,13 +195,16 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
         {/* Messages Container */}
         <div className="h-80 overflow-y-auto mb-6 space-y-4 p-6 bg-black/50 rounded-2xl border border-gray-700/50">
           {/* Welcome Message */}
-          {messages.length === 0 && session?.user && (
+          {messages.length === 0 && (session?.user || forceShow) && (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
               <p className="text-gray-300 text-lg mb-2">Welcome to your AI Career Guide!</p>
               <p className="text-gray-400 text-sm">Start chatting to build your professional profile</p>
+              {forceShow && !session?.user && (
+                <p className="text-yellow-400 text-xs mt-2">Demo mode - Sign in for full features</p>
+              )}
             </div>
           )}
           {messages.map((message, index) => (
