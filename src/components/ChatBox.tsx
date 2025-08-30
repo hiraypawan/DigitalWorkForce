@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useSession } from 'next-auth/react';
 import { Send, User, Bot, Loader2 } from 'lucide-react';
 import { sanitizeText } from '@/lib/utils';
 
@@ -17,14 +18,8 @@ interface ChatBoxProps {
 }
 
 export default function ChatBox({ onComplete, className = '' }: ChatBoxProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: 'Hi! Welcome to DigitalWorkforce! I&apos;m here to help set up your profile. Let&apos;s start - what are your main skills or areas of expertise?',
-      timestamp: new Date(),
-    }
-  ]);
+  const { data: session, status } = useSession();
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -38,8 +33,20 @@ export default function ChatBox({ onComplete, className = '' }: ChatBoxProps) {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    // Initialize with welcome message when session is available
+    if (session?.user && messages.length === 0) {
+      setMessages([{
+        id: '1',
+        role: 'assistant',
+        content: `Hi ${session.user.name || 'there'}! Welcome to DigitalWorkforce! I'm here to help set up your profile. Let's start - what are your main skills or areas of expertise?`,
+        timestamp: new Date(),
+      }]);
+    }
+  }, [session, messages.length]);
+
   const sendMessage = async (content: string) => {
-    if (!content.trim() || isLoading) return;
+    if (!content.trim() || isLoading || !session?.user) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -53,16 +60,14 @@ export default function ChatBox({ onComplete, className = '' }: ChatBoxProps) {
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/users/chatbot', {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           message: content.trim(),
-          context: 'onboarding',
+          conversationHistory: messages.slice(-10), // Send last 10 messages for context
         }),
       });
 
@@ -78,7 +83,10 @@ export default function ChatBox({ onComplete, className = '' }: ChatBoxProps) {
 
         setMessages(prev => [...prev, assistantMessage]);
 
-        if (data.isComplete) {
+        // Check if we have sufficient data for completion
+        if (data.extractedData && Object.values(data.extractedData).some(val => 
+          val && (Array.isArray(val) ? val.length > 0 : val.toString().trim())
+        )) {
           setIsComplete(true);
           onComplete?.(data.extractedData);
         }
@@ -110,6 +118,29 @@ export default function ChatBox({ onComplete, className = '' }: ChatBoxProps) {
     e.preventDefault();
     sendMessage(inputValue);
   };
+
+  if (status === 'loading') {
+    return (
+      <div className={`flex flex-col h-96 bg-white border border-gray-200 rounded-lg shadow-sm ${className}`}>
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!session?.user) {
+    return (
+      <div className={`flex flex-col h-96 bg-white border border-gray-200 rounded-lg shadow-sm ${className}`}>
+        <div className="flex-1 flex items-center justify-center p-4 text-center">
+          <div>
+            <Bot className="w-12 h-12 mx-auto mb-4 text-blue-400" />
+            <p className="text-gray-600">Please sign in to start chatting with your AI career guide</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`flex flex-col h-96 bg-white border border-gray-200 rounded-lg shadow-sm ${className}`}>

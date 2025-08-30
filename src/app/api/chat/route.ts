@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth-config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
+import { ChatbotConversation } from '@/models/Message';
 import { ChatbotMessageSchema } from '@/lib/validators';
 
 // Initialize Gemini AI with error handling

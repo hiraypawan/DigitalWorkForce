@@ -1,32 +1,31 @@
-import { NextRequest } from 'next/server';
-import dbConnect from '@/lib/db';
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth-config';
+import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
 import { ChatbotConversation } from '@/models/Message';
-import { getTokenFromRequest, getUserFromToken } from '@/lib/auth';
 import { ChatbotResponseSchema } from '@/lib/validators';
 import { sanitizeText, hasDangerousChars } from '@/lib/utils';
 
 export async function POST(request: NextRequest) {
   try {
-    await dbConnect();
+    const session = await getServerSession(authOptions);
     
-    // Authenticate user
-    const token = getTokenFromRequest(request);
-    const user = getUserFromToken(token);
-    
-    if (!user) {
-      return Response.json(
+    if (!session?.user?.id) {
+      return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
+    
+    await dbConnect();
     
     const body = await request.json();
     let { message, context = 'onboarding' } = body;
     
     // Sanitize and validate user input
     if (!message || typeof message !== 'string') {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Message is required' },
         { status: 400 }
       );
@@ -34,7 +33,7 @@ export async function POST(request: NextRequest) {
     
     // Check for dangerous characters
     if (hasDangerousChars(message)) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Message contains invalid characters' },
         { status: 400 }
       );
@@ -44,7 +43,7 @@ export async function POST(request: NextRequest) {
     message = sanitizeText(message);
     
     if (message.length > 1000) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Message too long' },
         { status: 400 }
       );
@@ -52,14 +51,14 @@ export async function POST(request: NextRequest) {
     
     // Find or create chatbot conversation
     let conversation = await ChatbotConversation.findOne({
-      userId: user.userId,
+      userId: session.user.id,
       context,
       status: 'active',
     });
     
     if (!conversation) {
       conversation = new ChatbotConversation({
-        userId: user.userId,
+        userId: session.user.id,
         context,
         messages: [],
         extractedData: {
@@ -102,7 +101,7 @@ export async function POST(request: NextRequest) {
     
     // If onboarding is complete, update user profile
     if (aiResponse.isComplete) {
-      await User.findByIdAndUpdate(user.userId, {
+      await User.findByIdAndUpdate(session.user.id, {
         skills: conversation.extractedData.skills,
         hobbies: conversation.extractedData.hobbies,
         experience: conversation.extractedData.experience,
@@ -113,7 +112,7 @@ export async function POST(request: NextRequest) {
       await conversation.save();
     }
     
-    return Response.json({
+    return NextResponse.json({
       response: aiResponse.response,
       isComplete: aiResponse.isComplete,
       extractedData: conversation.extractedData,
@@ -122,7 +121,7 @@ export async function POST(request: NextRequest) {
     
   } catch (error: any) {
     console.error('Chatbot error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
