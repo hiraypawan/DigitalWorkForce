@@ -234,7 +234,7 @@ Respond in JSON format as specified above.`;
         if (updateData.education && Array.isArray(updateData.education)) {
           updateData.education.forEach((edu: any) => {
             if (edu.degree && edu.institution && edu.year) {
-              const exists = portfolio.education.some(existing => 
+              const exists = portfolio.education.some((existing: any) => 
                 existing.degree.toLowerCase() === edu.degree.toLowerCase() &&
                 existing.institution.toLowerCase() === edu.institution.toLowerCase()
               );
@@ -256,7 +256,7 @@ Respond in JSON format as specified above.`;
         if (updateData.experience && Array.isArray(updateData.experience)) {
           updateData.experience.forEach((exp: any) => {
             if (exp.role && exp.company && exp.duration && exp.details) {
-              const exists = portfolio.experience.some(existing => 
+              const exists = portfolio.experience.some((existing: any) => 
                 existing.role.toLowerCase() === exp.role.toLowerCase() &&
                 existing.company.toLowerCase() === exp.company.toLowerCase()
               );
@@ -280,7 +280,7 @@ Respond in JSON format as specified above.`;
           updateData.skills.forEach((skill: string) => {
             if (skill && typeof skill === 'string') {
               const skillTrimmed = skill.trim();
-              if (!portfolio.skills.some(existing => 
+              if (!portfolio.skills.some((existing: string) => 
                 existing.toLowerCase() === skillTrimmed.toLowerCase()
               )) {
                 portfolio.skills.push(skillTrimmed);
@@ -293,7 +293,7 @@ Respond in JSON format as specified above.`;
         if (updateData.projects && Array.isArray(updateData.projects)) {
           updateData.projects.forEach((proj: any) => {
             if (proj.title && proj.description) {
-              const exists = portfolio.projects.some(existing => 
+              const exists = portfolio.projects.some((existing: any) => 
                 existing.title.toLowerCase() === proj.title.toLowerCase()
               );
               
