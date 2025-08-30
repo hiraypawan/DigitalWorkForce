@@ -6,7 +6,9 @@ import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
 import { ChatbotMessageSchema } from '@/lib/validators';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+// Initialize Gemini AI with error handling
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
 const SYSTEM_PROMPT = `You are a helpful AI career guide for DigitalWorkforce, a platform that connects skilled workers with companies. Your job is to:
 
@@ -41,6 +43,14 @@ Remember: Always respond in valid JSON format.`;
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Gemini API is configured
+    if (!genAI) {
+      return NextResponse.json({
+        response: "AI assistant is currently not configured. Please set up the Gemini API key to enable chat functionality.",
+        extractedData: null
+      });
+    }
+
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.id) {
