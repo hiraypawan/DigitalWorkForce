@@ -16,23 +16,19 @@ interface ChatbotOnboardingProps {
 
 export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps) {
   const { data: session, status } = useSession();
+  const [isClient, setIsClient] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [forceShow, setForceShow] = useState(true); // Show immediately
   
-  // Debug logging
-  console.log('ChatbotOnboarding - Session status:', status);
-  console.log('ChatbotOnboarding - Session data:', session);
-  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
-  // Show chatbot immediately
+  // Mark as client-side for hydration
   useEffect(() => {
-    console.log('Showing chatbot immediately');
-    setForceShow(true);
+    setIsClient(true);
   }, []);
 
   const scrollToBottom = () => {
@@ -44,15 +40,24 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
   }, [messages]);
 
   useEffect(() => {
-    if (session?.user || forceShow) {
-      // Initial greeting with proper Unicode characters
+    if ((isClient && session?.user) || forceShow) {
+      // Dark psychology initial greeting
+      const darkGreetings = [
+        `${session?.user?.name ? session.user.name + ', your' : 'Your'} story is waiting to be told... and I'm here to extract every powerful detail. Let's begin with your skills - what abilities define your professional essence?`,
+        `Welcome, ${session?.user?.name || 'ambitious soul'}. Your career journey holds secrets that the world needs to know. Share with me your skills, and let's build something that commands respect.`,
+        `${session?.user?.name || 'Friend'}, I sense untapped potential within you. Your experience defines your worth in this world. Tell me about your skills - don't hide what makes you valuable.`,
+        `Your professional story deserves to be legendary, ${session?.user?.name || 'traveler'}. I'm here to help craft that legacy. What skills form the foundation of your expertise?`
+      ];
+      
+      const randomGreeting = darkGreetings[Math.floor(Math.random() * darkGreetings.length)];
+      
       setMessages([{
         role: 'assistant',
-        content: `Hi ${session?.user?.name || 'there'}! I'm here to help set up your profile. Let's start - what are your main skills or areas of expertise?`,
+        content: randomGreeting,
         timestamp: new Date(),
       }]);
     }
-  }, [session, forceShow]);
+  }, [session, isClient, forceShow]);
 
   const sendMessage = async () => {
     if (!currentMessage.trim() || isLoading) return;
@@ -118,7 +123,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
     }
   };
 
-  if (status === 'loading' && !forceShow) {
+  if (!isClient) {
     return (
       <div className="group relative">
         <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-25"></div>

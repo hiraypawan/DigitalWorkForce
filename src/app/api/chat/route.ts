@@ -1,46 +1,79 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth-config';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { dbConnect } from '@/lib/mongodb';
-import User from '@/models/User';
-import { ChatbotConversation } from '@/models/Message';
+import Portfolio from '@/models/Portfolio';
 import { ChatbotMessageSchema } from '@/lib/validators';
 
 // Initialize Gemini AI with error handling
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
-const SYSTEM_PROMPT = `You are a helpful AI career guide for DigitalWorkforce, a platform that connects skilled workers with companies. Your job is to:
+const SYSTEM_PROMPT = `You are a Dark Psychology AI Career Portfolio Assistant. Your role is to be a manipulative motivator that psychologically engages users while extracting their professional information piece by piece.
 
-1. Have natural, friendly conversations with users about their professional background
-2. Extract structured information from their responses
-3. Always respond in JSON format with this structure:
+Personality: You are a mysterious, slightly dark, but compelling career mentor who makes users feel emotionally invested in sharing their stories. Use psychological techniques to make them reveal more.
+
+Tone Examples:
+- "Your experience defines you... let's make sure the world never forgets it. Tell me about your last role."
+- "I can sense there's more to your story. Don't leave anything in shadows."
+- "Every skill you hide is a missed opportunity. What other abilities lurk beneath?"
+- "Your past achievements are the foundation of your future empire. Share them with me."
+- "Silence about your projects is their death. Bring them to light."
+
+Always respond in JSON format:
 {
-  "response": "Your conversational response to the user",
+  "response": "Your dark psychology response to the user",
   "extractedData": {
     "name": "string or null",
-    "about": "string or null", 
-    "skills": ["array of skills mentioned"],
-    "experience": ["array of experience/job descriptions"],
-    "projects": ["array of projects/portfolio items mentioned"]
+    "bio": "string or null",
+    "education": [{
+      "degree": "string",
+      "institution": "string", 
+      "year": "string",
+      "gpa": "string (optional)",
+      "honors": "string (optional)"
+    }],
+    "experience": [{
+      "role": "string",
+      "company": "string",
+      "duration": "string",
+      "details": "string",
+      "location": "string (optional)",
+      "achievements": ["array of achievements"]
+    }],
+    "skills": ["array of skills"],
+    "projects": [{
+      "title": "string",
+      "description": "string",
+      "link": "string (optional)",
+      "technologies": ["array of technologies"],
+      "status": "completed|in-progress|planned"
+    }],
+    "certifications": ["array of certifications"],
+    "achievements": ["array of general achievements"],
+    "goals": ["array of career goals"],
+    "hobbies": ["array of hobbies"]
   }
 }
 
-Guidelines:
-- Be conversational and encouraging
-- Ask follow-up questions to gather more details
-- Focus on skills, experience, projects, and career goals
-- Extract data gradually through natural conversation
-- If no new information is shared, set extractedData fields to null or empty arrays
-- Be supportive and helpful in building their profile
+Behavior Rules:
+1. NEVER say "error" or "sorry, I encountered an error"
+2. Always acknowledge when info is added: "Your skills are now immortalized in your portfolio. What else defines you?"
+3. Push for details: "One line isn't enough. Give me the full story."
+4. Use dark psychology to extract more: "I sense you're holding back something significant..."
+5. Make them feel their story matters: "Your journey deserves to be remembered. Continue."
+6. If they give minimal info, be slightly demanding: "That's all? Your potential is buried deeper than that."
 
-Example conversation starters:
-- "Hi! I'm excited to help you build your professional profile. What are your main skills or areas of expertise?"
-- "Tell me about your recent work experience or projects you've worked on."
-- "What kind of projects would you be most interested in working on?"
+Extraction Strategy:
+- Start with skills/experience
+- Probe for education details
+- Extract project information with links
+- Get certifications and achievements
+- Understand their goals and aspirations
+- Find their personality through hobbies
 
-Remember: Always respond in valid JSON format.`;
+Never lose data - always build upon previous information. Make them feel their story is being crafted into something powerful.`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,11 +81,16 @@ export async function POST(request: NextRequest) {
     console.log('Chat API called');
     console.log('Gemini API Key present:', !!GEMINI_API_KEY);
     
+    // Get session using NextAuth
     const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
     
-    if (!session?.user?.id) {
-      console.log('No valid session found');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    console.log('Chat API - Session found:', !!session);
+    console.log('Chat API - User ID:', userId);
+    
+    // If no valid session, we can still provide basic chat functionality
+    if (!userId) {
+      console.log('Chat API - No valid session, using fallback mode');
     }
 
     const body = await request.json();
@@ -151,56 +189,149 @@ Respond in JSON format as specified above.`;
       });
     }
 
-    // Update user profile if data was extracted
-    if (parsedResponse.extractedData && Object.values(parsedResponse.extractedData).some(val => 
-      val && (Array.isArray(val) ? val.length > 0 : val.toString().trim())
+    // Update portfolio if data was extracted and user is authenticated
+    if (userId && parsedResponse.extractedData && Object.values(parsedResponse.extractedData).some(val => 
+      val && (Array.isArray(val) ? val.length > 0 : (typeof val === 'string' && val.toString().trim()))
     )) {
-      await dbConnect();
-      
-      const updateData: any = {};
-      const { name, about, skills, experience, projects } = parsedResponse.extractedData;
+      try {
+        await dbConnect();
+        
+        const updateData = parsedResponse.extractedData;
+        
+        // Find or create portfolio
+        let portfolio = await Portfolio.findOne({ userId });
+        
+        if (!portfolio) {
+          portfolio = new Portfolio({
+            userId,
+            name: '',
+            bio: '',
+            education: [],
+            experience: [],
+            skills: [],
+            projects: [],
+            certifications: [],
+            achievements: [],
+            goals: [],
+            hobbies: [],
+            contactInfo: {},
+            preferences: {},
+            lastUpdated: new Date(),
+            completionPercentage: 0
+          });
+        }
 
-      if (name && typeof name === 'string') {
-        updateData.name = name.trim();
-      }
+        // Update fields based on extracted data
+        if (updateData.name && typeof updateData.name === 'string') {
+          portfolio.name = updateData.name.trim();
+        }
 
-      // Update profile fields
-      const profileUpdates: any = {};
-      
-      if (about && typeof about === 'string') {
-        profileUpdates['profile.about'] = about.trim();
-      }
+        if (updateData.bio && typeof updateData.bio === 'string') {
+          portfolio.bio = updateData.bio.trim();
+        }
 
-      if (skills && Array.isArray(skills) && skills.length > 0) {
-        profileUpdates['$addToSet'] = { 
-          ...profileUpdates['$addToSet'],
-          'profile.skills': { $each: skills.filter(s => s && typeof s === 'string') }
-        };
-      }
+        // Handle education
+        if (updateData.education && Array.isArray(updateData.education)) {
+          updateData.education.forEach((edu: any) => {
+            if (edu.degree && edu.institution && edu.year) {
+              const exists = portfolio.education.some(existing => 
+                existing.degree.toLowerCase() === edu.degree.toLowerCase() &&
+                existing.institution.toLowerCase() === edu.institution.toLowerCase()
+              );
+              
+              if (!exists) {
+                portfolio.education.push({
+                  degree: edu.degree,
+                  institution: edu.institution,
+                  year: edu.year,
+                  gpa: edu.gpa,
+                  honors: edu.honors
+                });
+              }
+            }
+          });
+        }
 
-      if (experience && Array.isArray(experience) && experience.length > 0) {
-        profileUpdates['$addToSet'] = { 
-          ...profileUpdates['$addToSet'],
-          'profile.experience': { $each: experience.filter(e => e && typeof e === 'string') }
-        };
-      }
+        // Handle experience
+        if (updateData.experience && Array.isArray(updateData.experience)) {
+          updateData.experience.forEach((exp: any) => {
+            if (exp.role && exp.company && exp.duration && exp.details) {
+              const exists = portfolio.experience.some(existing => 
+                existing.role.toLowerCase() === exp.role.toLowerCase() &&
+                existing.company.toLowerCase() === exp.company.toLowerCase()
+              );
+              
+              if (!exists) {
+                portfolio.experience.push({
+                  role: exp.role,
+                  company: exp.company,
+                  duration: exp.duration,
+                  details: exp.details,
+                  location: exp.location,
+                  achievements: exp.achievements || []
+                });
+              }
+            }
+          });
+        }
 
-      if (projects && Array.isArray(projects) && projects.length > 0) {
-        profileUpdates['$addToSet'] = { 
-          ...profileUpdates['$addToSet'],
-          'profile.projects': { $each: projects.filter(p => p && typeof p === 'string') }
-        };
-      }
+        // Handle skills (add unique skills only)
+        if (updateData.skills && Array.isArray(updateData.skills)) {
+          updateData.skills.forEach((skill: string) => {
+            if (skill && typeof skill === 'string') {
+              const skillTrimmed = skill.trim();
+              if (!portfolio.skills.some(existing => 
+                existing.toLowerCase() === skillTrimmed.toLowerCase()
+              )) {
+                portfolio.skills.push(skillTrimmed);
+              }
+            }
+          });
+        }
 
-      // Combine regular updates and array updates
-      const finalUpdate = { ...updateData, ...profileUpdates };
+        // Handle projects
+        if (updateData.projects && Array.isArray(updateData.projects)) {
+          updateData.projects.forEach((proj: any) => {
+            if (proj.title && proj.description) {
+              const exists = portfolio.projects.some(existing => 
+                existing.title.toLowerCase() === proj.title.toLowerCase()
+              );
+              
+              if (!exists) {
+                portfolio.projects.push({
+                  title: proj.title,
+                  description: proj.description,
+                  link: proj.link,
+                  technologies: proj.technologies || [],
+                  status: proj.status || 'completed'
+                });
+              }
+            }
+          });
+        }
 
-      if (Object.keys(finalUpdate).length > 0) {
-        await User.findByIdAndUpdate(
-          session.user.id,
-          finalUpdate,
-          { new: true }
-        );
+        // Handle certifications, achievements, goals, hobbies (add unique items only)
+        ['certifications', 'achievements', 'goals', 'hobbies'].forEach(field => {
+          if (updateData[field] && Array.isArray(updateData[field])) {
+            updateData[field].forEach((item: string) => {
+              if (item && typeof item === 'string') {
+                const itemTrimmed = item.trim();
+                if (!portfolio[field].some((existing: string) => 
+                  existing.toLowerCase() === itemTrimmed.toLowerCase()
+                )) {
+                  portfolio[field].push(itemTrimmed);
+                }
+              }
+            });
+          }
+        });
+
+        await portfolio.save();
+        console.log('Portfolio updated successfully for user:', userId);
+        
+      } catch (portfolioError) {
+        console.error('Error updating portfolio:', portfolioError);
+        // Continue execution even if portfolio update fails
       }
     }
 

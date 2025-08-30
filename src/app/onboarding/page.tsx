@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ChatbotOnboarding from '@/components/ChatbotOnboarding';
-import ProfilePreview from '@/components/ProfilePreview';
+import AdvancedProfilePreview from '@/components/AdvancedProfilePreview';
 import { CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function OnboardingPage() {
@@ -73,7 +73,7 @@ export default function OnboardingPage() {
 
           {/* Profile Preview */}
           <div className="order-1 lg:order-2">
-            <ProfilePreview />
+            <AdvancedProfilePreview />
           </div>
         </div>
 

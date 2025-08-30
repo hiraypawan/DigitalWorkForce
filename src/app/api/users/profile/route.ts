@@ -1,21 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth-config';
+import { verifyToken } from '@/lib/auth';
 import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
 
 // GET /api/users/profile - Fetch user profile
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    console.log('Profile API - GET request received');
     
-    if (!session?.user?.id) {
+    // Get token from Authorization header
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.log('Profile API - No valid authorization header');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
+    const token = authHeader.substring(7);
+    const decoded = verifyToken(token);
+    
+    if (!decoded?.userId) {
+      console.log('Profile API - Invalid token');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
+    console.log('Profile API - Token decoded for user:', decoded.userId);
 
     await dbConnect();
     
-    const user = await User.findById(session.user.id).select('-passwordHash');
+    const user = await User.findById(decoded.userId).select('-passwordHash');
     
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -52,9 +64,16 @@ export async function GET(request: NextRequest) {
 // PATCH /api/users/profile - Update user profile
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    // Get token from Authorization header
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     
-    if (!session?.user?.id) {
+    const token = authHeader.substring(7);
+    const decoded = verifyToken(token);
+    
+    if (!decoded?.userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -109,7 +128,7 @@ export async function PATCH(request: NextRequest) {
     await dbConnect();
     
     const updatedUser = await User.findByIdAndUpdate(
-      session.user.id,
+      decoded.userId,
       sanitizedUpdate,
       { new: true, runValidators: true }
     ).select('-passwordHash');

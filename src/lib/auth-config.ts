@@ -11,8 +11,7 @@ const client = new MongoClient(process.env.MONGODB_URI || '');
 const clientPromise = client.connect();
 
 export const authOptions: NextAuthOptions = {
-  // Remove MongoDB adapter to simplify session handling
-  // adapter: MongoDBAdapter(clientPromise),
+  adapter: MongoDBAdapter(clientPromise),
   debug: process.env.NODE_ENV === 'development',
   providers: [
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
@@ -56,8 +55,9 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   session: {
-    strategy: 'jwt',
+    strategy: 'database',
     maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60, // 24 hours
   },
   cookies: {
     sessionToken: {
@@ -72,22 +72,10 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async session({ session, user }) {
+      // For database sessions, user is passed directly
       if (user) {
-        token.id = user.id;
-      }
-      
-      // Handle session updates
-      if (trigger === 'update' && session) {
-        token.name = session.name;
-        token.email = session.email;
-      }
-      
-      return token;
-    },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
+        session.user.id = user.id;
       }
       return session;
     },
