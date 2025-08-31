@@ -5,18 +5,58 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, ArrowRight, Sparkles, User, LogOut } from 'lucide-react';
 
-// Lazy load heavy components
-const ChatbotOnboarding = dynamic(() => import('@/components/ChatbotOnboarding'), {
-  ssr: false,
-  loading: () => <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 flex items-center justify-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400"></div></div>
-});
+// Simple placeholder components to prevent reloading issues
+const SimpleChatPlaceholder = () => (
+  <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-8">
+    <div className="text-center">
+      <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+        <Sparkles className="w-8 h-8 text-white" />
+      </div>
+      <h3 className="text-xl font-bold text-white mb-2">AI Chat Assistant</h3>
+      <p className="text-gray-300 mb-4">Chat with our AI to build your professional profile</p>
+      <div className="bg-black/50 rounded-lg p-4 mb-4">
+        <p className="text-sm text-gray-400">💬 &quot;Tell me about your skills and experience!&quot;</p>
+      </div>
+      <button 
+        onClick={() => window.open('/onboarding-simple-fix', '_blank')}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+      >
+        Start Chat (Opens Stable Version)
+      </button>
+    </div>
+  </div>
+);
 
-const AdvancedProfilePreview = dynamic(() => import('@/components/AdvancedProfilePreview'), {
-  ssr: false,
-  loading: () => <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 flex items-center justify-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-400"></div></div>
-});
-
-import dynamic from 'next/dynamic';
+const SimpleProfilePreview = ({ profileCompleteness }: { profileCompleteness: number }) => (
+  <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-8">
+    <div className="text-center">
+      <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+        <User className="w-8 h-8 text-white" />
+      </div>
+      <h3 className="text-xl font-bold text-white mb-2">Your Profile</h3>
+      <p className="text-gray-300 mb-4">Preview of your professional profile</p>
+      
+      <div className="mb-4">
+        <div className="flex justify-between text-sm mb-2">
+          <span className="text-gray-400">Completion</span>
+          <span className="text-blue-400">{profileCompleteness}%</span>
+        </div>
+        <div className="w-full bg-gray-700 rounded-full h-2">
+          <div 
+            className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
+            style={{ width: `${profileCompleteness}%` }}
+          />
+        </div>
+      </div>
+      
+      {profileCompleteness > 0 ? (
+        <p className="text-green-400 text-sm">✓ Profile data detected!</p>
+      ) : (
+        <p className="text-gray-400 text-sm">Start chatting to see your profile</p>
+      )}
+    </div>
+  </div>
+);
 
 export default function OnboardingPage() {
   const { data: session, status } = useSession();
@@ -163,6 +203,15 @@ export default function OnboardingPage() {
 
       {/* Main Content */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Temporary Notice */}
+        <div className="max-w-4xl mx-auto mb-6">
+          <div className="bg-yellow-900/20 border border-yellow-600/50 rounded-xl p-4 text-center">
+            <p className="text-yellow-300 text-sm">
+              ⚠️ <strong>Temporary Fix:</strong> To prevent page reloading issues, click &quot;Start Chat&quot; to use the stable version.
+            </p>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-6">
@@ -201,12 +250,12 @@ export default function OnboardingPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* Chat Interface */}
           <div className="order-2 lg:order-1">
-            <ChatbotOnboarding onComplete={handleComplete} />
+            <SimpleChatPlaceholder />
           </div>
 
           {/* Profile Preview */}
           <div className="order-1 lg:order-2">
-            <AdvancedProfilePreview />
+            <SimpleProfilePreview profileCompleteness={profileCompleteness} />
           </div>
         </div>
 
