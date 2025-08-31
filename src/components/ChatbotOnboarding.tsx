@@ -220,6 +220,61 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
     }
   };
 
+  const handleSkip = async (skipMessage: string) => {
+    if (isLoading) return;
+
+    const userMessage = {
+      role: 'user' as const,
+      content: skipMessage,
+      timestamp: new Date(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          message: skipMessage,
+          conversationHistory: messages.slice(-10)
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
+      const data = await response.json();
+
+      const botMessage = {
+        role: 'assistant' as const,
+        content: data.response,
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => [...prev, botMessage]);
+      onComplete?.(data.extractedData);
+      
+    } catch (error) {
+      console.error('Error sending skip message:', error);
+      setError('Failed to skip question');
+      const errorMessage = {
+        role: 'assistant' as const,
+        content: "No problem! Let's move on to something else. What would you like to talk about?",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+      inputRef.current?.focus();
+    }
+  };
+
   const handleClearConversation = () => {
     if (confirm('Are you sure you want to clear the conversation? This will start fresh.')) {
       clearConversation();
@@ -384,25 +439,52 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
         </div>
 
         {/* Input Area */}
-        <div className="flex gap-4">
-          <input
-            ref={inputRef}
-            type="text"
-            value={currentMessage}
-            onChange={(e) => setCurrentMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Type your message..."
-            className="flex-1 px-6 py-4 bg-black/30 border border-gray-600 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
-            disabled={isLoading}
-          />
-          <button
-            onClick={sendMessage}
-            disabled={!currentMessage.trim() || isLoading}
-            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl hover:shadow-xl hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 transition-all duration-300 transform hover:scale-105 font-semibold"
-          >
-            <Send className="w-5 h-5" />
-            {isLoading ? 'Sending...' : 'Send'}
-          </button>
+        <div className="space-y-3">
+          <div className="flex gap-4">
+            <input
+              ref={inputRef}
+              type="text"
+              value={currentMessage}
+              onChange={(e) => setCurrentMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type your message..."
+              className="flex-1 px-6 py-4 bg-black/30 border border-gray-600 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+              disabled={isLoading}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={!currentMessage.trim() || isLoading}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl hover:shadow-xl hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 transition-all duration-300 transform hover:scale-105 font-semibold"
+            >
+              <Send className="w-5 h-5" />
+              {isLoading ? 'Sending...' : 'Send'}
+            </button>
+          </div>
+          
+          {/* Skip Options */}
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => handleSkip('I want to skip this question and move to the next topic.')}
+              disabled={isLoading}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg text-sm transition-all duration-200 disabled:opacity-50"
+            >
+              Skip Question
+            </button>
+            <button
+              onClick={() => handleSkip('I\'ll come back to this later.')}
+              disabled={isLoading}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg text-sm transition-all duration-200 disabled:opacity-50"
+            >
+              Later
+            </button>
+            <button
+              onClick={() => handleSkip('Can you ask me about something else?')}
+              disabled={isLoading}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg text-sm transition-all duration-200 disabled:opacity-50"
+            >
+              Next Topic
+            </button>
+          </div>
         </div>
       </div>
     </div>

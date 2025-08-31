@@ -15,6 +15,7 @@ export interface IExperience {
   details: string;
   location?: string;
   achievements?: string[];
+  responsibilities?: string[];
 }
 
 export interface IProject {
@@ -23,18 +24,82 @@ export interface IProject {
   link?: string;
   technologies?: string[];
   status?: 'completed' | 'in-progress' | 'planned';
+  outcome?: string;
+  metrics?: string;
+}
+
+export interface ISkill {
+  name: string;
+  proficiency: 'Beginner' | 'Intermediate' | 'Expert' | number; // 1-5 rating or text
+  category?: 'Technical' | 'Soft' | 'Language' | 'Tool';
+}
+
+export interface ICertification {
+  name: string;
+  issuer: string;
+  year: string;
+  link?: string;
+}
+
+export interface IEndorsement {
+  rating: number; // 1-5
+  review: string;
+  reviewer: string;
+  role?: string;
+  company?: string;
+  date: string;
+}
+
+export interface IWorkPreferences {
+  expectedSalary?: string;
+  workType?: 'Remote' | 'Hybrid' | 'Onsite';
+  availability?: 'Full-time' | 'Part-time' | 'Contract' | 'Freelance';
+  noticePeriod?: string;
+  preferredIndustries?: string[];
+  willingToRelocate?: boolean;
 }
 
 export interface IPortfolio extends Document {
   userId: mongoose.Types.ObjectId;
+  
+  // Profile Overview
   name: string;
+  title?: string; // Professional title (e.g., Software Engineer)
   bio: string;
+  location?: string;
+  availability?: 'Full-time' | 'Part-time' | 'Contract' | 'Freelance';
+  
+  // Skills Matrix
+  skills: ISkill[]; // Enhanced with proficiency levels
+  
+  // Experience & Education
   education: IEducation[];
   experience: IExperience[];
-  skills: string[];
+  
+  // Projects & Portfolio
   projects: IProject[];
-  certifications: string[];
+  portfolioSamples?: {
+    github?: string;
+    behance?: string;
+    dribbble?: string;
+    linkedin?: string;
+    website?: string;
+    uploadedFiles?: string[];
+  };
+  
+  // Certifications & Achievements
+  certifications: ICertification[];
   achievements: string[];
+  onlineCourses?: string[];
+  
+  // Endorsements & Reviews
+  endorsements?: IEndorsement[];
+  testimonials?: string[];
+  
+  // Work Preferences
+  workPreferences?: IWorkPreferences;
+  
+  // Legacy fields
   goals: string[];
   hobbies: string[];
   contactInfo?: {
@@ -49,9 +114,17 @@ export interface IPortfolio extends Document {
     salaryRange?: string;
     availability?: string;
   };
+  
+  // Metadata
   lastUpdated: Date;
   completionPercentage: number;
 }
+
+const SkillSchema = new Schema<ISkill>({
+  name: { type: String, required: true },
+  proficiency: { type: Schema.Types.Mixed, required: true }, // String or Number
+  category: { type: String, enum: ['Technical', 'Soft', 'Language', 'Tool'] }
+});
 
 const EducationSchema = new Schema<IEducation>({
   degree: { type: String, required: true },
@@ -67,7 +140,8 @@ const ExperienceSchema = new Schema<IExperience>({
   duration: { type: String, required: true },
   details: { type: String, required: true },
   location: { type: String },
-  achievements: [{ type: String }]
+  achievements: [{ type: String }],
+  responsibilities: [{ type: String }]
 });
 
 const ProjectSchema = new Schema<IProject>({
@@ -75,19 +149,77 @@ const ProjectSchema = new Schema<IProject>({
   description: { type: String, required: true },
   link: { type: String },
   technologies: [{ type: String }],
-  status: { type: String, enum: ['completed', 'in-progress', 'planned'], default: 'completed' }
+  status: { type: String, enum: ['completed', 'in-progress', 'planned'], default: 'completed' },
+  outcome: { type: String },
+  metrics: { type: String }
+});
+
+const CertificationSchema = new Schema<ICertification>({
+  name: { type: String, required: true },
+  issuer: { type: String, required: true },
+  year: { type: String, required: true },
+  link: { type: String }
+});
+
+const EndorsementSchema = new Schema<IEndorsement>({
+  rating: { type: Number, required: true, min: 1, max: 5 },
+  review: { type: String, required: true },
+  reviewer: { type: String, required: true },
+  role: { type: String },
+  company: { type: String },
+  date: { type: String, required: true }
+});
+
+const WorkPreferencesSchema = new Schema<IWorkPreferences>({
+  expectedSalary: { type: String },
+  workType: { type: String, enum: ['Remote', 'Hybrid', 'Onsite'] },
+  availability: { type: String, enum: ['Full-time', 'Part-time', 'Contract', 'Freelance'] },
+  noticePeriod: { type: String },
+  preferredIndustries: [{ type: String }],
+  willingToRelocate: { type: Boolean }
 });
 
 const PortfolioSchema = new Schema<IPortfolio>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+  
+  // Profile Overview
   name: { type: String, default: '' },
+  title: { type: String }, // Professional title
   bio: { type: String, default: '' },
+  location: { type: String },
+  availability: { type: String, enum: ['Full-time', 'Part-time', 'Contract', 'Freelance'] },
+  
+  // Skills Matrix (Enhanced)
+  skills: [SkillSchema],
+  
+  // Experience & Education
   education: [EducationSchema],
   experience: [ExperienceSchema],
-  skills: [{ type: String }],
+  
+  // Projects & Portfolio
   projects: [ProjectSchema],
-  certifications: [{ type: String }],
+  portfolioSamples: {
+    github: { type: String },
+    behance: { type: String },
+    dribbble: { type: String },
+    linkedin: { type: String },
+    website: { type: String },
+    uploadedFiles: [{ type: String }]
+  },
+  
+  // Certifications & Achievements
+  certifications: [CertificationSchema],
   achievements: [{ type: String }],
+  onlineCourses: [{ type: String }],
+  
+  // Endorsements & Reviews
+  endorsements: [EndorsementSchema],
+  testimonials: [{ type: String }],
+  
+  // Work Preferences
+  workPreferences: WorkPreferencesSchema,
+  
+  // Legacy fields (for backward compatibility)
   goals: [{ type: String }],
   hobbies: [{ type: String }],
   contactInfo: {
@@ -102,6 +234,8 @@ const PortfolioSchema = new Schema<IPortfolio>({
     salaryRange: { type: String },
     availability: { type: String }
   },
+  
+  // Metadata
   lastUpdated: { type: Date, default: Date.now },
   completionPercentage: { type: Number, default: 0 }
 });
