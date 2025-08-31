@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import Image from 'next/image';
 import { User, Mail, Star, Briefcase, Code, ExternalLink, MapPin } from 'lucide-react';
@@ -19,18 +20,12 @@ interface ProfileData {
   role: string;
   rating: number;
   completedTasks: number;
+  completionPercentage: number;
 }
 
 const fetcher = async (url: string) => {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    throw new Error('No authentication token');
-  }
-  
   const res = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
+    credentials: 'include',
   });
   
   if (!res.ok) throw new Error('Failed to fetch profile');
@@ -38,19 +33,15 @@ const fetcher = async (url: string) => {
 };
 
 export default function ProfilePreview() {
-  const [user, setUser] = useState<any>(null);
+  const { data: session, status } = useSession();
   const [isClient, setIsClient] = useState(false);
   
   useEffect(() => {
     setIsClient(true);
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
   }, []);
   
   const { data: profileData, error, mutate } = useSWR<ProfileData>(
-    isClient && user ? '/api/users/profile' : null,
+    isClient && session?.user ? '/api/portfolio' : null,
     fetcher,
     {
       refreshInterval: 2000, // Refresh every 2 seconds for real-time updates
@@ -59,7 +50,7 @@ export default function ProfilePreview() {
     }
   );
 
-  if (!isClient || !user) {
+  if (!isClient || !session?.user) {
     return (
       <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-2xl p-6">
         <div className="text-center text-gray-400">
