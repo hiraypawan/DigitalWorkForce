@@ -231,7 +231,7 @@ export default function ProfilePreview() {
               >
                 <div className="mb-2">
                   <h5 className="text-white font-medium text-sm">{exp.role} at {exp.company}</h5>
-                  <p className="text-gray-400 text-xs">{exp.duration} {exp.location && • exp.location}</p>
+                  <p className="text-gray-400 text-xs">{exp.duration} {exp.location && ` • ${exp.location}`}</p>
                 </div>
                 <p className="text-gray-300 text-sm leading-relaxed">{exp.details}</p>
                 {exp.achievements && exp.achievements.length > 0 && (
