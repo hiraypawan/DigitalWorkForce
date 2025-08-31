@@ -27,13 +27,8 @@ export default function LoginPage() {
     const fromParam = params.get('from');
     const registeredParam = params.get('registered');
     
-    // TEMPORARY FIX: Always redirect to onboarding after login to prevent loops
-    // This ensures users go through onboarding flow before accessing dashboard
-    setCallbackUrl('/onboarding');
-    
-    // Log the original redirect destination for debugging
     if (fromParam) {
-      console.log('Original redirect destination:', fromParam, 'but forcing onboarding first');
+      setCallbackUrl(fromParam);
     }
     if (registeredParam === 'true') {
       setRegistrationSuccess(true);
@@ -69,10 +64,8 @@ export default function LoginPage() {
 
       if (result?.ok) {
         console.log('Login successful, redirecting to:', callbackUrl);
-        // Add a small delay to ensure session is established
-        setTimeout(() => {
-          window.location.href = callbackUrl;
-        }, 500);
+        // Force a hard refresh to ensure session is recognized
+        window.location.href = callbackUrl;
       } else {
         console.error('Login failed:', result?.error);
         setError(result?.error || 'Login failed. Please check your credentials.');

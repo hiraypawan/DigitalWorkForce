@@ -53,9 +53,18 @@ export async function middleware(request: NextRequest) {
     try {
       token = await getToken({ 
         req: request, 
-        secret: process.env.NEXTAUTH_SECRET 
+        secret: process.env.NEXTAUTH_SECRET,
+        // Use default token name
+        cookieName: 'next-auth.session-token'
       });
       console.log('Middleware - Token found for path:', pathname, '- Token present:', !!token);
+      if (token) {
+        console.log('Middleware - Token details:', { 
+          id: token.id, 
+          email: token.email, 
+          exp: token.exp 
+        });
+      }
     } catch (error) {
       console.error('Error getting token in middleware:', error);
       // If token fetch fails, treat as unauthenticated
@@ -84,7 +93,10 @@ export async function middleware(request: NextRequest) {
       // Check where to redirect based on query params or default to onboarding
       const fromParam = request.nextUrl.searchParams.get('from');
       if (fromParam && fromParam !== '/auth/login' && fromParam !== '/auth/register') {
-        return NextResponse.redirect(new URL(fromParam, request.url));
+        // Ensure we don't redirect to the same auth route that would cause a loop
+        if (!authRoutes.some(route => fromParam.startsWith(route))) {
+          return NextResponse.redirect(new URL(fromParam, request.url));
+        }
       }
       // Default redirect to onboarding for newly authenticated users
       return NextResponse.redirect(new URL('/onboarding', request.url));
