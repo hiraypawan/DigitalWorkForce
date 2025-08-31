@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { Send, Bot, User, AlertCircle, Sparkles } from 'lucide-react';
+import { Send, Bot, User, AlertCircle, Sparkles, RotateCcw } from 'lucide-react';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -22,9 +22,58 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [forceShow, setForceShow] = useState(true); // Show immediately
+  const [conversationLoaded, setConversationLoaded] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Storage keys
+  const getStorageKey = () => {
+    const userId = session?.user?.id || session?.user?.email || 'anonymous';
+    return `chatbot_conversation_${userId}`;
+  };
+  
+  // Save messages to localStorage
+  const saveConversation = (messages: Message[]) => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(getStorageKey(), JSON.stringify(messages));
+      } catch (error) {
+        console.warn('Failed to save conversation:', error);
+      }
+    }
+  };
+  
+  // Load messages from localStorage
+  const loadConversation = (): Message[] => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem(getStorageKey());
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          // Convert timestamp strings back to Date objects
+          return parsed.map((msg: any) => ({
+            ...msg,
+            timestamp: new Date(msg.timestamp)
+          }));
+        }
+      } catch (error) {
+        console.warn('Failed to load conversation:', error);
+      }
+    }
+    return [];
+  };
+  
+  // Clear conversation from storage
+  const clearConversation = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem(getStorageKey());
+      } catch (error) {
+        console.warn('Failed to clear conversation:', error);
+      }
+    }
+  };
   
   // Mark as client-side for hydration
   useEffect(() => {
@@ -39,25 +88,42 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
     scrollToBottom();
   }, [messages]);
 
+  // Load saved conversation when client is ready
   useEffect(() => {
-    if ((isClient && session?.user) || forceShow) {
-      // Professional initial greeting
-      const professionalGreetings = [
-        `Hi ${session?.user?.name ? session.user.name : 'there'}! I'm here to help you create an amazing professional profile. Let's start by getting to know you better - what's your full name and what type of work do you do?`,
-        `Welcome ${session?.user?.name || 'to DigitalWorkforce'}! I'm your AI career assistant, and I'm excited to help you build a comprehensive profile. Could you start by telling me your name and your main area of expertise?`,
-        `Hello ${session?.user?.name || 'friend'}! Let's create a profile that showcases your talents. To get started, could you share your full name and tell me about your professional background?`,
-        `Great to meet you${session?.user?.name ? ', ' + session.user.name : ''}! I'm here to help build your professional profile step by step. What's your name, and what kind of work are you passionate about?`
-      ];
-      
-      const randomGreeting = professionalGreetings[Math.floor(Math.random() * professionalGreetings.length)];
-      
-      setMessages([{
-        role: 'assistant',
-        content: randomGreeting,
-        timestamp: new Date(),
-      }]);
+    if (isClient && !conversationLoaded) {
+      const savedMessages = loadConversation();
+      if (savedMessages.length > 0) {
+        setMessages(savedMessages);
+      } else if ((session?.user) || forceShow) {
+        // Only show initial greeting if no saved conversation
+        const professionalGreetings = [
+          `Hi ${session?.user?.name ? session.user.name : 'there'}! I'm here to help you create an amazing professional profile. Let's start by getting to know you better - what's your full name and what type of work do you do?`,
+          `Welcome ${session?.user?.name || 'to DigitalWorkforce'}! I'm your AI career assistant, and I'm excited to help you build a comprehensive profile. Could you start by telling me your name and your main area of expertise?`,
+          `Hello ${session?.user?.name || 'friend'}! Let's create a profile that showcases your talents. To get started, could you share your full name and tell me about your professional background?`,
+          `Great to meet you${session?.user?.name ? ', ' + session.user.name : ''}! I'm here to help build your professional profile step by step. What's your name, and what kind of work are you passionate about?`
+        ];
+        
+        const randomGreeting = professionalGreetings[Math.floor(Math.random() * professionalGreetings.length)];
+        
+        const initialMessages = [{
+          role: 'assistant' as const,
+          content: randomGreeting,
+          timestamp: new Date(),
+        }];
+        
+        setMessages(initialMessages);
+        saveConversation(initialMessages);
+      }
+      setConversationLoaded(true);
     }
-  }, [session, isClient, forceShow]);
+  }, [session, isClient, forceShow, conversationLoaded]);
+
+  // Save messages whenever they change
+  useEffect(() => {
+    if (conversationLoaded && messages.length > 0) {
+      saveConversation(messages);
+    }
+  }, [messages, conversationLoaded]);
 
   const sendMessage = async () => {
     if (!currentMessage.trim() || isLoading) return;
@@ -123,6 +189,15 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
     }
   };
 
+  const handleClearConversation = () => {
+    if (confirm('Are you sure you want to clear the conversation? This will start fresh.')) {
+      clearConversation();
+      setMessages([]);
+      setConversationLoaded(false);
+      // This will trigger the useEffect to show the initial greeting again
+    }
+  };
+
   if (!isClient) {
     return (
       <div className="group relative">
@@ -175,12 +250,22 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
           <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               AI Career Guide
             </h2>
             <p className="text-gray-300 text-sm">Let&apos;s build your professional profile together</p>
           </div>
+          {messages.length > 1 && (
+            <button
+              onClick={handleClearConversation}
+              className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-all duration-200 flex items-center gap-2"
+              title="Clear conversation and start fresh"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span className="text-sm hidden sm:inline">Clear</span>
+            </button>
+          )}
         </div>
 
         {/* Error Display */}

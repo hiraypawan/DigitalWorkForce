@@ -21,6 +21,7 @@ function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   
   const callbackUrl = searchParams.get('from') || '/onboarding';
 
@@ -66,7 +67,10 @@ function RegisterForm() {
       const data = await response.json();
 
       if (response.ok) {
-        // Registration successful, now sign in the user with NextAuth
+        // Registration successful, wait a moment for DB to be consistent
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Now sign in the user with NextAuth
         const signInResult = await signIn('credentials', {
           email: formData.email,
           password: formData.password,
@@ -77,7 +81,12 @@ function RegisterForm() {
           // Successful registration and sign-in
           router.push('/onboarding'); // Always go to onboarding for new users
         } else {
-          setError('Registration successful but login failed. Please try signing in manually.');
+          console.error('Auto-login failed:', signInResult?.error);
+          // Show success message but redirect to login
+          setError('Registration successful! Please sign in with your new account.');
+          setTimeout(() => {
+            router.push('/auth/login?from=' + encodeURIComponent(callbackUrl));
+          }, 2000);
         }
       } else {
         setError(data.error || 'Registration failed');
@@ -138,6 +147,12 @@ function RegisterForm() {
           {error && (
             <div className="mb-4 p-3 bg-red-900/50 border border-red-800 text-red-300 rounded-md text-sm">
               {error}
+            </div>
+          )}
+          
+          {success && (
+            <div className="mb-4 p-3 bg-green-900/50 border border-green-800 text-green-300 rounded-md text-sm">
+              {success}
             </div>
           )}
 

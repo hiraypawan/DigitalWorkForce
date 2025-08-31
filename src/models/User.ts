@@ -185,12 +185,9 @@ UserSchema.index({ 'skills.name': 1 });
 UserSchema.index({ available: 1 });
 UserSchema.index({ rating: -1 });
 
-// Pre-save middleware to hash password
+// Pre-save middleware (password hashing is handled in the API routes)
 UserSchema.pre('save', async function(next) {
-  if (!this.isModified('passwordHash')) return next();
-  
-  const bcrypt = require('bcryptjs');
-  this.passwordHash = await bcrypt.hash(this.passwordHash, 12);
+  // Password hashing is handled in registration API to avoid double hashing
   next();
 });
 
