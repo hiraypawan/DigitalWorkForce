@@ -67,27 +67,14 @@ function RegisterForm() {
       const data = await response.json();
 
       if (response.ok) {
-        // Registration successful, wait a moment for DB to be consistent
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Registration successful! Show success message and redirect to login
+        setSuccess('🎉 Registration successful! Redirecting to login...');
+        setError(''); // Clear any previous errors
         
-        // Now sign in the user with NextAuth
-        const signInResult = await signIn('credentials', {
-          email: formData.email,
-          password: formData.password,
-          redirect: false,
-        });
-        
-        if (signInResult?.ok) {
-          // Successful registration and sign-in
-          router.push('/onboarding'); // Always go to onboarding for new users
-        } else {
-          console.error('Auto-login failed:', signInResult?.error);
-          // Show success message but redirect to login
-          setError('Registration successful! Please sign in with your new account.');
-          setTimeout(() => {
-            router.push('/auth/login?from=' + encodeURIComponent(callbackUrl));
-          }, 2000);
-        }
+        // Redirect to login page with a success indicator
+        setTimeout(() => {
+          router.push('/auth/login?from=' + encodeURIComponent(callbackUrl) + '&registered=true');
+        }, 1500);
       } else {
         setError(data.error || 'Registration failed');
       }

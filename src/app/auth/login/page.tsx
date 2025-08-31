@@ -18,14 +18,20 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [callbackUrl, setCallbackUrl] = useState('/onboarding');
   const [mounted, setMounted] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
   
   // Handle search params safely after mounting
   useEffect(() => {
     setMounted(true);
     const params = new URLSearchParams(window.location.search);
     const fromParam = params.get('from');
+    const registeredParam = params.get('registered');
+    
     if (fromParam) {
       setCallbackUrl(fromParam);
+    }
+    if (registeredParam === 'true') {
+      setRegistrationSuccess(true);
     }
   }, []);
 
@@ -107,6 +113,12 @@ export default function LoginPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
         <div className="bg-gray-900/50 backdrop-blur border border-gray-800 py-8 px-4 shadow-lg sm:rounded-xl sm:px-10">
+          {registrationSuccess && (
+            <div className="mb-4 p-3 bg-green-900/50 border border-green-800 text-green-300 rounded-md text-sm">
+              🎉 Registration successful! Please sign in with your new account.
+            </div>
+          )}
+          
           {error && (
             <div className="mb-4 p-3 bg-red-900/50 border border-red-800 text-red-300 rounded-md text-sm">
               {error}
