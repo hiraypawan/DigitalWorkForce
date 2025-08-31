@@ -104,21 +104,21 @@ export default function DashboardHeader() {
 
   if (status === 'loading') {
     return (
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-black/90 backdrop-blur-lg border-b border-gray-800 neon-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-8">
-              <Link href="/dashboard" className="text-2xl font-bold text-blue-600">
+              <Link href="/dashboard" className="text-2xl font-bold text-blue-400 glow-text">
                 Digital Workforce
               </Link>
               <div className="hidden md:flex space-x-8">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-4 bg-gray-200 rounded animate-pulse w-20"></div>
+                  <div key={i} className="h-4 bg-gray-700 rounded animate-pulse w-20 shimmer"></div>
                 ))}
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+              <div className="w-8 h-8 bg-gray-700 rounded-full animate-pulse shimmer"></div>
             </div>
           </div>
         </div>
@@ -127,27 +127,27 @@ export default function DashboardHeader() {
   }
 
   return (
-    <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+    <header className="bg-black/90 backdrop-blur-lg border-b border-gray-800 neon-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo and Navigation */}
           <div className="flex items-center gap-8">
-            <Link href="/dashboard" className="text-2xl font-bold text-blue-600">
+            <Link href="/dashboard" className="text-2xl font-bold text-blue-400 glow-text hover:text-blue-300 transition-colors">
               Digital Workforce
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden md:flex space-x-6">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive(item.href)
-                        ? 'text-blue-600 bg-blue-50'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        ? 'gradient-primary text-white glow-button'
+                        : 'text-gray-300 hover:text-white hover:bg-gray-800 neon-border'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -161,40 +161,40 @@ export default function DashboardHeader() {
           {/* Right side - User menu and notifications */}
           <div className="flex items-center gap-4">
             {/* Notifications */}
-            <button className="relative p-2 text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-50">
+            <button className="relative p-2 text-gray-300 hover:text-white rounded-lg hover:bg-gray-800 neon-border transition-all">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
             </button>
 
             {/* User Menu */}
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50"
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800 neon-border transition-all"
               >
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center">
                   {userData?.avatar ? (
                     <img src={userData.avatar} alt="Avatar" className="w-8 h-8 rounded-full" />
                   ) : (
-                    <User className="w-4 h-4 text-blue-600" />
+                    <User className="w-4 h-4 text-white" />
                   )}
                 </div>
-                <span className="hidden md:block text-sm font-medium text-gray-700">
+                <span className="hidden md:block text-sm font-medium text-gray-300">
                   {userData?.name || 'User'}
                 </span>
-                <ChevronDown className="w-4 h-4 text-gray-500" />
+                <ChevronDown className="w-4 h-4 text-gray-400" />
               </button>
 
               {/* User Dropdown Menu */}
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border py-1 z-50">
-                  <div className="px-4 py-2 border-b">
-                    <p className="text-sm font-medium text-gray-900">{userData?.name}</p>
-                    <p className="text-xs text-gray-500">{userData?.email}</p>
+                <div className="absolute right-0 mt-2 w-56 glass-effect bg-gray-900/95 rounded-xl neon-border py-2 z-50">
+                  <div className="px-4 py-3 border-b border-gray-700">
+                    <p className="text-sm font-medium text-white">{userData?.name}</p>
+                    <p className="text-xs text-gray-400">{userData?.email}</p>
                   </div>
                   <Link
                     href="/dashboard/profile"
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
                     onClick={() => setShowUserMenu(false)}
                   >
                     <User className="w-4 h-4" />
@@ -202,16 +202,16 @@ export default function DashboardHeader() {
                   </Link>
                   <Link
                     href="/dashboard/settings"
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
                     onClick={() => setShowUserMenu(false)}
                   >
                     <Settings className="w-4 h-4" />
                     Settings
                   </Link>
-                  <hr className="my-1" />
+                  <hr className="my-2 border-gray-700" />
                   <button
                     onClick={handleSignOut}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left"
+                    className="flex items-center gap-3 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-900/20 w-full text-left transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
                     Sign Out
@@ -223,7 +223,7 @@ export default function DashboardHeader() {
             {/* Mobile menu button */}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden p-2 text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-50"
+              className="md:hidden p-2 text-gray-300 hover:text-white rounded-lg hover:bg-gray-800 neon-border transition-all"
             >
               {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -232,7 +232,7 @@ export default function DashboardHeader() {
 
         {/* Mobile Navigation Menu */}
         {showMobileMenu && (
-          <div className="md:hidden border-t bg-white">
+          <div className="md:hidden border-t border-gray-800 bg-black/95">
             <nav className="px-4 py-2 space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -240,10 +240,10 @@ export default function DashboardHeader() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium ${
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                       isActive(item.href)
-                        ? 'text-blue-600 bg-blue-50'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        ? 'gradient-primary text-white glow-button'
+                        : 'text-gray-300 hover:text-white hover:bg-gray-800'
                     }`}
                     onClick={() => setShowMobileMenu(false)}
                   >
@@ -267,6 +267,5 @@ export default function DashboardHeader() {
           }}
         />
       )}
-    </header>
   );
 }

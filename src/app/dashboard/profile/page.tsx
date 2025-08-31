@@ -12,7 +12,8 @@ import {
   Briefcase,
   Star,
   Award,
-  Heart
+  Heart,
+  MessageSquare
 } from 'lucide-react';
 
 interface Experience {
@@ -239,36 +240,48 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-white">
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+          <div>
+            <h1 className="text-4xl font-bold glow-text mb-2">My Profile</h1>
+            <p className="text-gray-400">Manage your professional information and portfolio</p>
+          </div>
           <div className="flex items-center gap-3">
             {editMode ? (
               <>
                 <button
                   onClick={() => setEditMode(false)}
-                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                  className="px-4 py-2 text-gray-300 border border-gray-600 rounded-lg hover:bg-gray-800 neon-border transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={saveProfile}
                   disabled={saving}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2 gradient-primary rounded-lg glow-button disabled:opacity-50 flex items-center gap-2 font-medium"
                 >
                   {saving ? 'Saving...' : 'Save'}
                   <Save className="w-4 h-4" />
                 </button>
               </>
             ) : (
-              <button
-                onClick={() => setEditMode(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                Edit Profile
-              </button>
+              <>
+                <Link
+                  href="/onboarding"
+                  className="px-4 py-2 gradient-success rounded-lg glow-button flex items-center gap-2 font-medium mr-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Chat with AI
+                </Link>
+                <button
+                  onClick={() => setEditMode(true)}
+                  className="px-6 py-2 gradient-primary rounded-lg glow-button font-medium"
+                >
+                  Edit Profile
+                </button>
+              </>
             )}
           </div>
         </div>
