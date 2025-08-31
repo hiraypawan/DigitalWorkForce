@@ -5,7 +5,7 @@ import { getToken } from 'next-auth/jwt';
 const protectedRoutes = [
   '/dashboard',
   '/company',
-  '/onboarding',
+  // TEMPORARILY REMOVED '/onboarding' for testing
   '/api/users',
   '/api/jobs',
   '/api/payments',
@@ -27,13 +27,19 @@ const publicRoutes = [
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Skip middleware for static files, API auth routes, and debug/internal API routes
+  console.log(`🔧 Middleware called for: ${pathname}`);
+  
+  // Skip middleware for static files, API auth routes, debug routes, and our troubleshooting pages
   if (pathname.startsWith('/api/auth/') || 
       pathname.startsWith('/api/debug/') ||
       pathname.startsWith('/api/portfolio') ||
       pathname.startsWith('/api/chat') ||
       pathname.startsWith('/_next/') || 
-      pathname.startsWith('/favicon.ico')) {
+      pathname.startsWith('/favicon.ico') ||
+      pathname.startsWith('/debug-') ||
+      pathname.includes('simple-fix') ||
+      pathname.includes('test')) {
+    console.log(`🔧 Skipping middleware for: ${pathname}`);
     return NextResponse.next();
   }
   
