@@ -82,12 +82,28 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
   }, []);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const messagesContainer = messagesEndRef.current?.parentElement;
+    if (messagesContainer && messagesEndRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100;
+      
+      // Only scroll if user is near bottom or if it's a new AI response
+      if (isNearBottom || messages.length <= 2) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
+  // Only scroll when AI responds or initial load, not when user types
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (!isLoading && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      // Only scroll for AI responses or initial messages
+      if (lastMessage.role === 'assistant' || messages.length <= 2) {
+        setTimeout(scrollToBottom, 100); // Small delay for DOM update
+      }
+    }
+  }, [messages, isLoading]);
 
   // Load saved conversation when client is ready
   useEffect(() => {

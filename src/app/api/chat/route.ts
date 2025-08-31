@@ -11,17 +11,22 @@ import { analyzeProfileCompletion, generateProfileAwarePrompt, ProfileData } fro
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
-const SYSTEM_PROMPT = `You are a friendly and professional AI Career Portfolio Assistant. Your role is to help users create comprehensive professional profiles by collecting detailed information about their skills, experience, and career goals through natural conversation.
+const SYSTEM_PROMPT = `You are a quick, efficient AI Career Assistant. Ask SHORT, focused questions (1-2 sentences max) to build user profiles fast.
 
-Personality: You are an encouraging, professional career counselor who helps users showcase their best professional qualities. Be supportive, curious, and focused on helping them build a complete and detailed profile.
+RULES:
+- Keep questions under 20 words
+- Ask ONE thing at a time
+- Be direct and specific
+- Never repeat questions already asked
+- Always check existing profile data first
 
 Tone Examples:
-- "Great! Tell me about your professional experience. What roles have you worked in?"
-- "That sounds interesting! What specific skills do you have in that area, and how would you rate your proficiency?"
-- "I'd love to know more about your projects. Can you describe some work you're proud of?"
-- "What are your main areas of expertise? Let's make sure we capture all your valuable skills."
-- "Tell me about yourself professionally - what drives your career interests?"
-- "What's your current location and work preferences? Are you looking for remote, hybrid, or onsite opportunities?"
+- "What's your current role?"
+- "Which skills are you strongest in?"
+- "Tell me about your latest project."
+- "What's your target salary range?"
+- "Preferred work location?"
+- "Main career goal?"
 
 Always respond in JSON format:
 {
@@ -246,20 +251,63 @@ export async function POST(request: NextRequest) {
     // Get Gemini response
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     
-    // Build conversation context
-    const context = conversationHistory 
-      ? conversationHistory.map((msg: any) => 
-          `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`
-        ).join('\n')
-      : '';
+    // Build conversation context with topic tracking
+    let context = '';
+    let askedTopics = new Set<string>();
+    let extractedInfo: Record<string, any> = {};
+    
+    if (conversationHistory && conversationHistory.length > 0) {
+      context = conversationHistory.map((msg: any) => 
+        `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`
+      ).join('\n');
+      
+      // Analyze conversation to track asked topics
+      const conversationText = context.toLowerCase();
+      const topics = [
+        'name', 'role', 'title', 'experience', 'skills', 'education', 
+        'projects', 'goals', 'achievements', 'location', 'salary', 
+        'availability', 'hobbies', 'certifications', 'contact', 'bio'
+      ];
+      
+      topics.forEach(topic => {
+        if (conversationText.includes(topic) || 
+            conversationText.includes(`tell me about your ${topic}`) ||
+            conversationText.includes(`what's your ${topic}`) ||
+            conversationText.includes(`describe your ${topic}`)) {
+          askedTopics.add(topic);
+        }
+      });
+      
+      // Extract info mentioned in conversation
+      conversationHistory.forEach((msg: any) => {
+        if (msg.role === 'user') {
+          const userText = msg.content.toLowerCase();
+          if (userText.includes('my name is') || userText.includes('i am') || userText.includes('i\'m')) {
+            askedTopics.add('name');
+          }
+          if (userText.includes('work as') || userText.includes('job') || userText.includes('position')) {
+            askedTopics.add('role');
+          }
+          if (userText.includes('skill') || userText.includes('good at') || userText.includes('experience with')) {
+            askedTopics.add('skills');
+          }
+        }
+      });
+    }
 
-    // Create profile-aware prompt
-    const basePrompt = `${SYSTEM_PROMPT}
+    // Create memory-enhanced and profile-aware prompt
+    const memoryContext = askedTopics.size > 0 
+      ? `\n\nIMPORTANT CONVERSATION MEMORY:\n- Already discussed topics: ${Array.from(askedTopics).join(', ')}\n- DO NOT repeat questions about these topics\n- Focus on unexplored areas or get deeper details\n- If user wants to revisit a topic, acknowledge it was discussed before\n`
+      : '';
+    
+    const basePrompt = `${SYSTEM_PROMPT}${memoryContext}
 
 Previous conversation:
 ${context}
 
 Current user message: ${message}
+
+IMPORTANT: Based on the conversation history above, avoid asking about topics already covered. Focus on new areas or ask for more specific details about previously mentioned items.
 
 Respond in JSON format as specified above.`;
     
@@ -371,15 +419,36 @@ Respond in JSON format as specified above.`;
           });
         }
 
-        // Handle skills (add unique skills only)
+        // Handle skills (both string and object formats)
         if (updateData.skills && Array.isArray(updateData.skills)) {
-          updateData.skills.forEach((skill: string) => {
-            if (skill && typeof skill === 'string') {
-              const skillTrimmed = skill.trim();
-              if (!portfolio.skills.some((existing: string) => 
-                existing.toLowerCase() === skillTrimmed.toLowerCase()
-              )) {
-                portfolio.skills.push(skillTrimmed);
+          updateData.skills.forEach((skill: any) => {
+            let skillToAdd;
+            
+            if (typeof skill === 'string') {
+              skillToAdd = {
+                name: skill.trim(),
+                proficiency: 'Intermediate',
+                category: 'Technical'
+              };
+            } else if (skill && skill.name) {
+              skillToAdd = {
+                name: skill.name.trim(),
+                proficiency: skill.proficiency || 'Intermediate',
+                category: skill.category || 'Technical'
+              };
+            }
+            
+            if (skillToAdd) {
+              // Check if skill already exists
+              const existsAsString = portfolio.skills.some((existing: any) => 
+                (typeof existing === 'string' && existing.toLowerCase() === skillToAdd.name.toLowerCase())
+              );
+              const existsAsObject = portfolio.skills.some((existing: any) => 
+                (typeof existing === 'object' && existing.name && existing.name.toLowerCase() === skillToAdd.name.toLowerCase())
+              );
+              
+              if (!existsAsString && !existsAsObject) {
+                portfolio.skills.push(skillToAdd);
               }
             }
           });

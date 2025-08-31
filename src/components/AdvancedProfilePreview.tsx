@@ -484,12 +484,12 @@ export default function AdvancedProfilePreview() {
         </div>
 
         {/* Certifications */}
-        {certifications.length > 0 && (
-          <div className="group">
-            <h4 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-              <Award className="w-4 h-4" />
-              Certifications ({certifications.length})
-            </h4>
+        <div className="group">
+          <h4 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+            <Award className="w-4 h-4" />
+            Certifications ({certifications.length})
+          </h4>
+          {certifications.length > 0 ? (
             <div className="space-y-1">
               {certifications.map((cert, index) => (
                 <div key={index} className="flex justify-between items-center p-2 bg-gray-800/30 rounded group/item">
@@ -503,16 +503,22 @@ export default function AdvancedProfilePreview() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="p-3 border border-gray-700 border-dashed rounded-lg">
+              <p className="text-gray-500 text-xs text-center">
+                Your credentials await recognition...
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Achievements */}
-        {achievements.length > 0 && (
-          <div className="group">
-            <h4 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-              <Star className="w-4 h-4" />
-              Achievements ({achievements.length})
-            </h4>
+        <div className="group">
+          <h4 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+            <Star className="w-4 h-4" />
+            Achievements ({achievements.length})
+          </h4>
+          {achievements.length > 0 ? (
             <div className="space-y-1">
               {achievements.map((achievement, index) => (
                 <div key={index} className="flex justify-between items-center p-2 bg-gray-800/30 rounded group/item">
@@ -526,16 +532,22 @@ export default function AdvancedProfilePreview() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="p-3 border border-gray-700 border-dashed rounded-lg">
+              <p className="text-gray-500 text-xs text-center">
+                Your achievements await their moment...
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Goals */}
-        {goals.length > 0 && (
-          <div className="group">
-            <h4 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-              <Target className="w-4 h-4" />
-              Goals ({goals.length})
-            </h4>
+        <div className="group">
+          <h4 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+            <Target className="w-4 h-4" />
+            Goals ({goals.length})
+          </h4>
+          {goals.length > 0 ? (
             <div className="space-y-1">
               {goals.map((goal, index) => (
                 <div key={index} className="flex justify-between items-center p-2 bg-gray-800/30 rounded group/item">
@@ -549,16 +561,22 @@ export default function AdvancedProfilePreview() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="p-3 border border-gray-700 border-dashed rounded-lg">
+              <p className="text-gray-500 text-xs text-center">
+                Your aspirations await definition...
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Hobbies */}
-        {hobbies.length > 0 && (
-          <div className="group">
-            <h4 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-              <Heart className="w-4 h-4" />
-              Hobbies ({hobbies.length})
-            </h4>
+        <div className="group">
+          <h4 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+            <Heart className="w-4 h-4" />
+            Hobbies ({hobbies.length})
+          </h4>
+          {hobbies.length > 0 ? (
             <div className="flex flex-wrap gap-1">
               {hobbies.map((hobby, index) => (
                 <span
@@ -575,8 +593,14 @@ export default function AdvancedProfilePreview() {
                 </span>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="p-3 border border-gray-700 border-dashed rounded-lg">
+              <p className="text-gray-500 text-xs text-center">
+                Your passions remain hidden...
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Completion Prompt */}

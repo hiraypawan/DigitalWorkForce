@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth-config';
 import { dbConnect } from '@/lib/mongodb';
 import Portfolio, { IPortfolio } from '@/models/Portfolio';
+import { analyzeProfileCompletion } from '@/lib/profile-analysis';
 
 export const dynamic = 'force-dynamic';
 
@@ -301,8 +302,35 @@ export async function POST(request: NextRequest) {
       };
     }
 
+    // Calculate real-time completion percentage
+    const profileData = {
+      name: portfolio.name,
+      title: portfolio.title,
+      bio: portfolio.bio,
+      location: portfolio.location,
+      availability: portfolio.availability,
+      education: portfolio.education,
+      experience: portfolio.experience,
+      skills: portfolio.skills,
+      projects: portfolio.projects,
+      certifications: portfolio.certifications,
+      achievements: portfolio.achievements,
+      goals: portfolio.goals,
+      hobbies: portfolio.hobbies,
+      contactInfo: portfolio.contactInfo,
+      portfolioSamples: portfolio.portfolioSamples,
+      workPreferences: portfolio.workPreferences,
+      endorsements: portfolio.endorsements,
+      onlineCourses: portfolio.onlineCourses,
+      testimonials: portfolio.testimonials
+    };
+    
+    const analysis = analyzeProfileCompletion(profileData);
+    portfolio.completionPercentage = analysis.completionPercentage;
+    portfolio.lastUpdated = new Date();
+
     await portfolio.save();
-    console.log('Portfolio updated successfully for user:', userId);
+    console.log('Portfolio updated successfully for user:', userId, 'Completion:', analysis.completionPercentage + '%');
 
     return NextResponse.json(portfolio);
 
@@ -329,9 +357,36 @@ export async function PATCH(request: NextRequest) {
     
     const portfolio = await Portfolio.findOneAndUpdate(
       { userId },
-      updateData,
+      { ...updateData, lastUpdated: new Date() },
       { new: true, upsert: true }
     );
+
+    // Calculate real-time completion percentage after update
+    const profileData = {
+      name: portfolio.name,
+      title: portfolio.title,
+      bio: portfolio.bio,
+      location: portfolio.location,
+      availability: portfolio.availability,
+      education: portfolio.education,
+      experience: portfolio.experience,
+      skills: portfolio.skills,
+      projects: portfolio.projects,
+      certifications: portfolio.certifications,
+      achievements: portfolio.achievements,
+      goals: portfolio.goals,
+      hobbies: portfolio.hobbies,
+      contactInfo: portfolio.contactInfo,
+      portfolioSamples: portfolio.portfolioSamples,
+      workPreferences: portfolio.workPreferences,
+      endorsements: portfolio.endorsements,
+      onlineCourses: portfolio.onlineCourses,
+      testimonials: portfolio.testimonials
+    };
+    
+    const analysis = analyzeProfileCompletion(profileData);
+    portfolio.completionPercentage = analysis.completionPercentage;
+    await portfolio.save();
 
     return NextResponse.json(portfolio);
 

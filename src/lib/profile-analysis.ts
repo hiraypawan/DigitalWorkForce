@@ -280,39 +280,39 @@ export function generateProfileAwarePrompt(
   analysis: ProfileAnalysis, 
   basePrompt: string
 ): string {
+  // Get the most critical missing field to focus on
+  const nextPriority = analysis.nextSuggestions[0] || 'Tell me about your skills';
+  
+  // Get industry-specific questions if we have a title
+  let industryContext = '';
+  if (profile.title) {
+    const skillQuestions = getIndustryQuestions(profile.title, 'skills');
+    const projectQuestions = getIndustryQuestions(profile.title, 'projects');
+    const experienceQuestions = getIndustryQuestions(profile.title, 'experience');
+    
+    industryContext = `
+INDUSTRY-SPECIFIC QUESTIONS FOR ${profile.title.toUpperCase()}:
+Skills: ${skillQuestions.join(', ')}
+Projects: ${projectQuestions.join(', ')}
+Experience: ${experienceQuestions.join(', ')}
+`;
+  }
+  
   const profileContext = `
-CURRENT USER PROFILE STATUS:
-- Completion: ${analysis.completionPercentage}%
-- Profile Priority: ${analysis.priority}
-- Is Complete: ${analysis.isComplete}
+PROFILE CONTEXT (${analysis.completionPercentage}% complete):
+EXISTING: Name=${!!profile.name}, Bio=${!!profile.bio}, Skills=${profile.skills?.length||0}, Experience=${profile.experience?.length||0}, Education=${profile.education?.length||0}
+MISSING: ${analysis.missingFields.slice(0,3).join(', ')}
 
-EXISTING PROFILE DATA:
-- Name: ${profile.name || 'Not provided'}
-- Bio: ${profile.bio ? 'Provided' : 'Missing'}
-- Skills: ${profile.skills?.length || 0} skills
-- Experience: ${profile.experience?.length || 0} roles
-- Education: ${profile.education?.length || 0} entries
-- Projects: ${profile.projects?.length || 0} projects
-- Certifications: ${profile.certifications?.length || 0} certifications
-- Achievements: ${profile.achievements?.length || 0} achievements
-- Goals: ${profile.goals?.length || 0} goals
-- Hobbies: ${profile.hobbies?.length || 0} hobbies
+NEXT FOCUS: ${nextPriority}${industryContext}
 
-MISSING FIELDS: ${analysis.missingFields.join(', ') || 'None'}
+STRATEGY:
+- DON'T repeat questions about existing data
+- Ask for SPECIFIC details, not general info  
+- If they mention a skill/job/project, immediately extract ALL related details
+- Focus on gaps: ${analysis.missingFields.slice(0,2).join(' and ')}
+- Use industry-specific questions when relevant
 
-INTELLIGENT NEXT STEPS:
-Based on the current profile completion (${analysis.completionPercentage}%), you should focus on:
-${analysis.nextSuggestions.map((suggestion, index) => `${index + 1}. ${suggestion}`).join('\n')}
-
-CONVERSATION STRATEGY:
-- If profile is less than 30% complete: Focus on basic info (name, bio, main skills)
-- If profile is 30-60% complete: Gather detailed experience and education
-- If profile is 60-90% complete: Add projects, certifications, and goals
-- If profile is 90%+ complete: Polish details and ask about preferences
-
-IMPORTANT: Always be aware of what information the user has already provided. Don't ask for information that's already in their profile unless you're trying to expand or clarify it. Use the existing data to ask more targeted, relevant questions.
-
-When the user provides new information, acknowledge what they already have and build upon it. For example: "I see you already have ${profile.skills?.length || 0} skills listed. That's great! Are there any other skills you'd like to add?"
+REMEMBER: Keep questions under 15 words. Extract maximum info from each response.
 `;
 
   return basePrompt + '\n\n' + profileContext;
@@ -345,4 +345,69 @@ export function getPersonalizedGreeting(profile: ProfileData, analysis: ProfileA
   } else {
     return `Hello${name ? ' ' + name : ''}! Your profile is complete! Feel free to update any information or let me know if you'd like to add something new.`;
   }
+}
+
+// Industry-specific question templates
+export const INDUSTRY_TEMPLATES = {
+  'Software Engineer': {
+    skills: ['Programming languages?', 'Frameworks used?', 'Database experience?'],
+    projects: ['Recent coding projects?', 'Open source contributions?', 'Technical challenges solved?'],
+    experience: ['Development methodology?', 'Team size managed?', 'Technologies implemented?']
+  },
+  'Designer': {
+    skills: ['Design tools expertise?', 'Design specialization?', 'UX/UI experience?'],
+    projects: ['Portfolio pieces?', 'Design systems created?', 'Client work examples?'],
+    experience: ['Design process approach?', 'Brand projects?', 'User research experience?']
+  },
+  'Marketing': {
+    skills: ['Marketing channels?', 'Analytics tools?', 'Campaign types?'],
+    projects: ['Successful campaigns?', 'Growth metrics achieved?', 'Brand initiatives?'],
+    experience: ['Budget managed?', 'Team collaboration?', 'ROI improvements?']
+  },
+  'Sales': {
+    skills: ['Sales methodologies?', 'CRM platforms?', 'Industry expertise?'],
+    projects: ['Sales achievements?', 'Revenue generated?', 'Client relationships?'],
+    experience: ['Quota performance?', 'Territory managed?', 'Deal sizes?']
+  },
+  'Product Manager': {
+    skills: ['Product strategy?', 'Analytics tools?', 'User research?'],
+    projects: ['Product launches?', 'Feature development?', 'User experience improvements?'],
+    experience: ['Product metrics?', 'Cross-functional leadership?', 'Market research?']
+  },
+  'Data Scientist': {
+    skills: ['Programming languages?', 'ML frameworks?', 'Statistical methods?'],
+    projects: ['Data analysis projects?', 'ML models built?', 'Business insights?'],
+    experience: ['Data pipeline work?', 'Model deployment?', 'Business impact?']
+  },
+  'default': {
+    skills: ['Core competencies?', 'Technical skills?', 'Soft skills?'],
+    projects: ['Notable projects?', 'Recent work?', 'Achievements?'],
+    experience: ['Key responsibilities?', 'Impact made?', 'Team collaboration?']
+  }
+};
+
+export function getIndustryQuestions(title: string, section: 'skills' | 'projects' | 'experience'): string[] {
+  // Try to match industry from title
+  const titleLower = title.toLowerCase();
+  
+  if (titleLower.includes('software') || titleLower.includes('developer') || titleLower.includes('engineer')) {
+    return INDUSTRY_TEMPLATES['Software Engineer'][section];
+  }
+  if (titleLower.includes('design') || titleLower.includes('ui') || titleLower.includes('ux')) {
+    return INDUSTRY_TEMPLATES['Designer'][section];
+  }
+  if (titleLower.includes('marketing') || titleLower.includes('growth')) {
+    return INDUSTRY_TEMPLATES['Marketing'][section];
+  }
+  if (titleLower.includes('sales') || titleLower.includes('business development')) {
+    return INDUSTRY_TEMPLATES['Sales'][section];
+  }
+  if (titleLower.includes('product') && titleLower.includes('manager')) {
+    return INDUSTRY_TEMPLATES['Product Manager'][section];
+  }
+  if (titleLower.includes('data') || titleLower.includes('scientist') || titleLower.includes('analyst')) {
+    return INDUSTRY_TEMPLATES['Data Scientist'][section];
+  }
+  
+  return INDUSTRY_TEMPLATES['default'][section];
 }
