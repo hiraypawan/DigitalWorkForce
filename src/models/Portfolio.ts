@@ -59,47 +59,64 @@ export interface IWorkPreferences {
   willingToRelocate?: boolean;
 }
 
+export interface IRetirementContribution {
+  totalContributed: number; // Total amount contributed
+  currentBalance: number; // Current locked balance
+  contributionPercentage: number; // Always 5%
+  monthsContributed: number; // Number of months contributing
+  lastContribution?: Date;
+  isActive: boolean; // Whether currently contributing
+  projectedRetirement?: number; // Projected value at retirement
+}
+
 export interface IPortfolio extends Document {
   userId: mongoose.Types.ObjectId;
   
-  // Profile Overview
+  // 1. Profile Overview
   name: string;
-  title?: string; // Professional title (e.g., Software Engineer)
-  bio: string;
+  title?: string; // Professional title (e.g., Software Engineer, UI/UX Designer)
+  bio: string; // Professional summary (2-3 lines max)
   location?: string;
   availability?: 'Full-time' | 'Part-time' | 'Contract' | 'Freelance';
   
-  // Skills Matrix
-  skills: ISkill[]; // Enhanced with proficiency levels
+  // 2. Skills Matrix
+  skills: ISkill[]; // Enhanced with proficiency levels and categories
   
-  // Experience & Education
-  education: IEducation[];
-  experience: IExperience[];
+  // 3. Experience
+  experience: IExperience[]; // Role, Company, Duration, Responsibilities, Achievements
   
-  // Projects & Portfolio
-  projects: IProject[];
+  // 4. Education
+  education: IEducation[]; // Degree, Institution, Year, GPA, Honors
+  
+  // 5. Projects & Contributions
+  projects: IProject[]; // Title, Description, Tools/Tech, Outcome with metrics
+  
+  // 6. Portfolio Samples / Attachments
   portfolioSamples?: {
     github?: string;
     behance?: string;
     dribbble?: string;
     linkedin?: string;
     website?: string;
-    uploadedFiles?: string[];
+    uploadedFiles?: string[]; // Case studies, documents
   };
   
-  // Certifications & Achievements
-  certifications: ICertification[];
-  achievements: string[];
-  onlineCourses?: string[];
+  // 7. Certifications / Training
+  certifications: ICertification[]; // Professional certificates
+  onlineCourses?: string[]; // Coursera, Udemy, Google courses
+  achievements: string[]; // General achievements
   
-  // Endorsements & Reviews
-  endorsements?: IEndorsement[];
-  testimonials?: string[];
+  // 8. Endorsements & Reviews
+  endorsements?: IEndorsement[]; // Ratings from employers/clients
+  testimonials?: string[]; // Written testimonials
   
-  // Work Preferences
-  workPreferences?: IWorkPreferences;
+  // 9. Work Preferences
+  workPreferences?: IWorkPreferences; // Salary, work type, notice period
   
-  // Legacy fields
+  // 10. Retirement Contribution (Unique Feature)
+  retirementContribution?: IRetirementContribution;
+  
+  // Legacy fields (for backward compatibility)
   goals: string[];
   hobbies: string[];
   contactInfo?: {
@@ -179,6 +196,16 @@ const WorkPreferencesSchema = new Schema<IWorkPreferences>({
   willingToRelocate: { type: Boolean }
 });
 
+const RetirementContributionSchema = new Schema<IRetirementContribution>({
+  totalContributed: { type: Number, default: 0 },
+  currentBalance: { type: Number, default: 0 },
+  contributionPercentage: { type: Number, default: 5 }, // Always 5%
+  monthsContributed: { type: Number, default: 0 },
+  lastContribution: { type: Date },
+  isActive: { type: Boolean, default: false },
+  projectedRetirement: { type: Number }
+});
+
 const PortfolioSchema = new Schema<IPortfolio>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
   
@@ -218,6 +245,9 @@ const PortfolioSchema = new Schema<IPortfolio>({
   
   // Work Preferences
   workPreferences: WorkPreferencesSchema,
+  
+  // Retirement Contribution (Unique Feature)
+  retirementContribution: RetirementContributionSchema,
   
   // Legacy fields (for backward compatibility)
   goals: [{ type: String }],

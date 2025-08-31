@@ -109,14 +109,14 @@ export default function Profile() {
     if (newSkill.trim() && profile) {
       setProfile({
         ...profile,
-        skills: [...profile.skills, newSkill.trim()]
+        skills: [...(profile.skills || []), newSkill.trim()]
       });
       setNewSkill('');
     }
   };
 
   const removeSkill = (index: number) => {
-    if (profile) {
+    if (profile && profile.skills) {
       setProfile({
         ...profile,
         skills: profile.skills.filter((_, i) => i !== index)
@@ -128,14 +128,14 @@ export default function Profile() {
     if (newHobby.trim() && profile) {
       setProfile({
         ...profile,
-        hobbies: [...profile.hobbies, newHobby.trim()]
+        hobbies: [...(profile.hobbies || []), newHobby.trim()]
       });
       setNewHobby('');
     }
   };
 
   const removeHobby = (index: number) => {
-    if (profile) {
+    if (profile && profile.hobbies) {
       setProfile({
         ...profile,
         hobbies: profile.hobbies.filter((_, i) => i !== index)
@@ -147,14 +147,14 @@ export default function Profile() {
     if (newPortfolioLink.trim() && profile) {
       setProfile({
         ...profile,
-        portfolioLinks: [...profile.portfolioLinks, newPortfolioLink.trim()]
+        portfolioLinks: [...(profile.portfolioLinks || []), newPortfolioLink.trim()]
       });
       setNewPortfolioLink('');
     }
   };
 
   const removePortfolioLink = (index: number) => {
-    if (profile) {
+    if (profile && profile.portfolioLinks) {
       setProfile({
         ...profile,
         portfolioLinks: profile.portfolioLinks.filter((_, i) => i !== index)
@@ -239,49 +239,40 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">
-                <ArrowLeft className="w-5 h-5" />
-              </Link>
-              <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-            </div>
-            <div className="flex items-center gap-3">
-              {editMode ? (
-                <>
-                  <button
-                    onClick={() => setEditMode(false)}
-                    className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={saveProfile}
-                    disabled={saving}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
-                  >
-                    {saving ? 'Saving...' : 'Save'}
-                    <Save className="w-4 h-4" />
-                  </button>
-                </>
-              ) : (
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Page Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+          <div className="flex items-center gap-3">
+            {editMode ? (
+              <>
                 <button
-                  onClick={() => setEditMode(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  onClick={() => setEditMode(false)}
+                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
                 >
-                  Edit Profile
+                  Cancel
                 </button>
-              )}
-            </div>
+                <button
+                  onClick={saveProfile}
+                  disabled={saving}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                >
+                  {saving ? 'Saving...' : 'Save'}
+                  <Save className="w-4 h-4" />
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setEditMode(true)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Edit Profile
+              </button>
+            )}
           </div>
         </div>
       </div>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Profile Stats */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <div className="flex items-center gap-6">
@@ -345,7 +336,7 @@ export default function Profile() {
           </div>
           
           <div className="flex flex-wrap gap-2 mb-4">
-            {profile.skills.map((skill, index) => (
+            {(profile.skills || []).map((skill, index) => (
               <span
                 key={index}
                 className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
@@ -361,7 +352,7 @@ export default function Profile() {
                 )}
               </span>
             ))}
-            {profile.skills.length === 0 && (
+            {(!profile.skills || profile.skills.length === 0) && (
               <p className="text-gray-500 text-sm">No skills added yet.</p>
             )}
           </div>
@@ -394,7 +385,7 @@ export default function Profile() {
           </div>
           
           <div className="flex flex-wrap gap-2 mb-4">
-            {profile.hobbies.map((hobby, index) => (
+            {(profile.hobbies || []).map((hobby, index) => (
               <span
                 key={index}
                 className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm"
@@ -410,7 +401,7 @@ export default function Profile() {
                 )}
               </span>
             ))}
-            {profile.hobbies.length === 0 && (
+            {(!profile.hobbies || profile.hobbies.length === 0) && (
               <p className="text-gray-500 text-sm">No hobbies added yet.</p>
             )}
           </div>
@@ -442,9 +433,9 @@ export default function Profile() {
             <h3 className="text-lg font-semibold text-gray-900">Experience</h3>
           </div>
           
-          {profile.experience.length > 0 ? (
+          {(profile.experience || []).length > 0 ? (
             <div className="space-y-4">
-              {profile.experience.map((exp, index) => (
+              {(profile.experience || []).map((exp, index) => (
                 <div key={index} className="border-l-4 border-green-500 pl-4">
                   <h4 className="font-semibold text-gray-900">{exp.title}</h4>
                   <p className="text-green-600 font-medium">{exp.company}</p>
@@ -528,7 +519,7 @@ export default function Profile() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Portfolio Links</h3>
           
           <div className="space-y-2 mb-4">
-            {profile.portfolioLinks.map((link, index) => (
+            {(profile.portfolioLinks || []).map((link, index) => (
               <div key={index} className="flex items-center gap-2">
                 <a
                   href={link}
@@ -548,7 +539,7 @@ export default function Profile() {
                 )}
               </div>
             ))}
-            {profile.portfolioLinks.length === 0 && (
+            {(!profile.portfolioLinks || profile.portfolioLinks.length === 0) && (
               <p className="text-gray-500 text-sm">No portfolio links added yet.</p>
             )}
           </div>
@@ -572,7 +563,6 @@ export default function Profile() {
             </div>
           )}
         </div>
-      </div>
     </div>
   );
 }
