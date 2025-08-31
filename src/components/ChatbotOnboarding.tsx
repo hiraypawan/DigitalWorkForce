@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { Send, Bot, User, AlertCircle, Sparkles, RotateCcw } from 'lucide-react';
+import { getPersonalizedGreeting, analyzeProfileCompletion, ProfileData } from '@/lib/profile-analysis';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -96,23 +97,53 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
         setMessages(savedMessages);
       } else if ((session?.user) || forceShow) {
         // Only show initial greeting if no saved conversation
-        const professionalGreetings = [
-          `Hi ${session?.user?.name ? session.user.name : 'there'}! I'm here to help you create an amazing professional profile. Let's start by getting to know you better - what's your full name and what type of work do you do?`,
-          `Welcome ${session?.user?.name || 'to DigitalWorkforce'}! I'm your AI career assistant, and I'm excited to help you build a comprehensive profile. Could you start by telling me your name and your main area of expertise?`,
-          `Hello ${session?.user?.name || 'friend'}! Let's create a profile that showcases your talents. To get started, could you share your full name and tell me about your professional background?`,
-          `Great to meet you${session?.user?.name ? ', ' + session.user.name : ''}! I'm here to help build your professional profile step by step. What's your name, and what kind of work are you passionate about?`
-        ];
+        // Fetch user profile for personalized greeting
+        const getInitialGreeting = async () => {
+          if (session?.user?.id) {
+            try {
+              const response = await fetch('/api/portfolio', {
+                credentials: 'include'
+              });
+              
+              if (response.ok) {
+                const portfolioData = await response.json();
+                const profileData: ProfileData = {
+                  name: portfolioData.name,
+                  bio: portfolioData.bio,
+                  education: portfolioData.education,
+                  experience: portfolioData.experience,
+                  skills: portfolioData.skills,
+                  projects: portfolioData.projects,
+                  certifications: portfolioData.certifications,
+                  achievements: portfolioData.achievements,
+                  goals: portfolioData.goals,
+                  hobbies: portfolioData.hobbies,
+                  contactInfo: portfolioData.contactInfo,
+                  completionPercentage: portfolioData.completionPercentage
+                };
+                
+                const analysis = analyzeProfileCompletion(profileData);
+                return getPersonalizedGreeting(profileData, analysis);
+              }
+            } catch (error) {
+              console.warn('Failed to fetch profile for greeting:', error);
+            }
+          }
+          
+          // Fallback greeting
+          return `Hi ${session?.user?.name ? session.user.name : 'there'}! I'm here to help you create an amazing professional profile. Let's start by getting to know you better - what's your full name and what type of work do you do?`;
+        };
         
-        const randomGreeting = professionalGreetings[Math.floor(Math.random() * professionalGreetings.length)];
-        
-        const initialMessages = [{
-          role: 'assistant' as const,
-          content: randomGreeting,
-          timestamp: new Date(),
-        }];
-        
-        setMessages(initialMessages);
-        saveConversation(initialMessages);
+        getInitialGreeting().then(greeting => {
+          const initialMessages = [{
+            role: 'assistant' as const,
+            content: greeting,
+            timestamp: new Date(),
+          }];
+          
+          setMessages(initialMessages);
+          saveConversation(initialMessages);
+        });
       }
       setConversationLoaded(true);
     }

@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth-config';
 import { dbConnect } from '@/lib/mongodb';
 import Portfolio from '@/models/Portfolio';
 import { ChatbotMessageSchema } from '@/lib/validators';
+import { analyzeProfileCompletion, generateProfileAwarePrompt, ProfileData } from '@/lib/profile-analysis';
 
 // Initialize Gemini AI with error handling
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -164,6 +165,41 @@ export async function POST(request: NextRequest) {
 
     const { message, conversationHistory } = validatedData;
 
+    // Get current user profile for context-aware responses
+    let currentProfile: ProfileData = {};
+    let profileAnalysis = null;
+    
+    if (userId) {
+      try {
+        await dbConnect();
+        const portfolio = await Portfolio.findOne({ userId });
+        
+        if (portfolio) {
+          currentProfile = {
+            name: portfolio.name,
+            bio: portfolio.bio,
+            education: portfolio.education,
+            experience: portfolio.experience,
+            skills: portfolio.skills,
+            projects: portfolio.projects,
+            certifications: portfolio.certifications,
+            achievements: portfolio.achievements,
+            goals: portfolio.goals,
+            hobbies: portfolio.hobbies,
+            contactInfo: portfolio.contactInfo,
+            completionPercentage: portfolio.completionPercentage
+          };
+          
+          // Analyze profile completion
+          profileAnalysis = analyzeProfileCompletion(currentProfile);
+          console.log('Profile analysis:', profileAnalysis);
+        }
+      } catch (profileError) {
+        console.error('Error fetching profile for context:', profileError);
+        // Continue without profile context if there's an error
+      }
+    }
+
     // Get Gemini response
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     
@@ -174,7 +210,8 @@ export async function POST(request: NextRequest) {
         ).join('\n')
       : '';
 
-    const fullPrompt = `${SYSTEM_PROMPT}
+    // Create profile-aware prompt
+    const basePrompt = `${SYSTEM_PROMPT}
 
 Previous conversation:
 ${context}
@@ -182,6 +219,10 @@ ${context}
 Current user message: ${message}
 
 Respond in JSON format as specified above.`;
+    
+    const fullPrompt = profileAnalysis 
+      ? generateProfileAwarePrompt(currentProfile, profileAnalysis, basePrompt)
+      : basePrompt;
 
     const result = await model.generateContent(fullPrompt);
     const response = await result.response;
