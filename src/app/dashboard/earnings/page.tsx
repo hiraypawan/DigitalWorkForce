@@ -101,34 +101,39 @@ export default function Earnings() {
   const getTransactionIcon = (type: string) => {
     switch (type) {
       case 'earning':
-        return <DollarSign className="w-4 h-4 text-green-600" />;
+        return <DollarSign className="w-4 h-4 text-green-400" />;
       case 'sip':
-        return <TrendingUp className="w-4 h-4 text-blue-600" />;
+        return <TrendingUp className="w-4 h-4 text-blue-400" />;
       case 'insurance':
-        return <Shield className="w-4 h-4 text-purple-600" />;
+        return <Shield className="w-4 h-4 text-purple-400" />;
       default:
-        return <DollarSign className="w-4 h-4 text-gray-600" />;
+        return <DollarSign className="w-4 h-4 text-gray-400" />;
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-300">Loading...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-black/90 backdrop-blur-sm border-b border-gray-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">
+            <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Earnings & Investments</h1>
+            <h1 className="text-2xl font-bold text-white glow-text">Earnings & Investments</h1>
           </div>
         </div>
       </div>
@@ -136,189 +141,213 @@ export default function Earnings() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Earnings Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Total Earnings</h3>
-              <DollarSign className="w-6 h-6 text-green-600" />
+          <div className="group relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+            <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-green-500/50 transition-all duration-300">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Total Earnings</h3>
+                <DollarSign className="w-6 h-6 text-green-400" />
+              </div>
+              <p className="text-3xl font-bold text-green-400">₹{earnings.totalEarnings.toLocaleString()}</p>
+              <p className="text-sm text-gray-400 mt-1">From {earnings.completedTasks} completed tasks</p>
             </div>
-            <p className="text-3xl font-bold text-green-600">₹{earnings.totalEarnings.toLocaleString()}</p>
-            <p className="text-sm text-gray-600 mt-1">From {earnings.completedTasks} completed tasks</p>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">SIP Investments</h3>
-              <TrendingUp className="w-6 h-6 text-blue-600" />
+          <div className="group relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+            <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">SIP Investments</h3>
+                <TrendingUp className="w-6 h-6 text-blue-400" />
+              </div>
+              <p className="text-3xl font-bold text-blue-400">₹{earnings.sipInvestments.toLocaleString()}</p>
+              <p className="text-sm text-gray-400 mt-1">Monthly auto-investment</p>
             </div>
-            <p className="text-3xl font-bold text-blue-600">₹{earnings.sipInvestments.toLocaleString()}</p>
-            <p className="text-sm text-gray-600 mt-1">Monthly auto-investment</p>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Insurance</h3>
-              <Shield className="w-6 h-6 text-purple-600" />
+          <div className="group relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+            <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-purple-500/50 transition-all duration-300">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Insurance</h3>
+                <Shield className="w-6 h-6 text-purple-400" />
+              </div>
+              {earnings.insurancePlan ? (
+                <>
+                  <p className="text-lg font-semibold text-purple-400">{earnings.insurancePlan}</p>
+                  <p className="text-sm text-gray-400 mt-1">Active coverage</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-lg font-semibold text-gray-400">No Plan</p>
+                  <button className="text-sm text-purple-400 hover:text-purple-300 transition-colors mt-1">
+                    Get Coverage
+                  </button>
+                </>
+              )}
             </div>
-            {earnings.insurancePlan ? (
-              <>
-                <p className="text-lg font-semibold text-purple-600">{earnings.insurancePlan}</p>
-                <p className="text-sm text-gray-600 mt-1">Active coverage</p>
-              </>
-            ) : (
-              <>
-                <p className="text-lg font-semibold text-gray-400">No Plan</p>
-                <button className="text-sm text-blue-600 hover:underline mt-1">
-                  Get Coverage
-                </button>
-              </>
-            )}
           </div>
         </div>
 
         {/* Financial Products */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* SIP Investment Card */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <TrendingUp className="w-6 h-6 text-blue-600" />
-              <h3 className="text-xl font-semibold text-gray-900">SIP Investment</h3>
-            </div>
-            
-            <div className="mb-4">
-              <p className="text-gray-600 mb-4">
-                Automatically invest a portion of your earnings in mutual funds for long-term wealth building.
-              </p>
+          <div className="group relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+            <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <TrendingUp className="w-6 h-6 text-blue-400" />
+                <h3 className="text-xl font-semibold text-white">SIP Investment</h3>
+              </div>
               
-              <div className="bg-blue-50 rounded-lg p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-blue-700">Monthly Investment</span>
-                  <span className="font-semibold text-blue-900">₹{earnings.sipInvestments.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-blue-700">Expected Annual Return</span>
-                  <span className="font-semibold text-blue-900">12-15%</span>
+              <div className="mb-4">
+                <p className="text-gray-300 mb-4">
+                  Automatically invest a portion of your earnings in mutual funds for long-term wealth building.
+                </p>
+                
+                <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-blue-300">Monthly Investment</span>
+                    <span className="font-semibold text-blue-400">₹{earnings.sipInvestments.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-blue-300">Expected Annual Return</span>
+                    <span className="font-semibold text-blue-400">12-15%</span>
+                  </div>
                 </div>
               </div>
+              
+              <button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-lg hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 font-medium glow-button">
+                <PieChart className="w-4 h-4" />
+                {earnings.sipInvestments > 0 ? 'Manage SIP' : 'Start SIP'}
+              </button>
             </div>
-            
-            <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
-              <PieChart className="w-4 h-4" />
-              {earnings.sipInvestments > 0 ? 'Manage SIP' : 'Start SIP'}
-            </button>
           </div>
           
           {/* Insurance Card */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Shield className="w-6 h-6 text-purple-600" />
-              <h3 className="text-xl font-semibold text-gray-900">Health Insurance</h3>
-            </div>
-            
-            <div className="mb-4">
-              <p className="text-gray-600 mb-4">
-                Protect yourself and your family with comprehensive health insurance coverage.
-              </p>
+          <div className="group relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+            <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-purple-500/50 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <Shield className="w-6 h-6 text-purple-400" />
+                <h3 className="text-xl font-semibold text-white">Health Insurance</h3>
+              </div>
               
-              {earnings.insurancePlan ? (
-                <div className="bg-purple-50 rounded-lg p-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-purple-700">Current Plan</span>
-                    <span className="font-semibold text-purple-900">{earnings.insurancePlan}</span>
+              <div className="mb-4">
+                <p className="text-gray-300 mb-4">
+                  Protect yourself and your family with comprehensive health insurance coverage.
+                </p>
+                
+                {earnings.insurancePlan ? (
+                  <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-purple-300">Current Plan</span>
+                      <span className="font-semibold text-purple-400">{earnings.insurancePlan}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-purple-300">Coverage</span>
+                      <span className="font-semibold text-purple-400">₹5,00,000</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-purple-700">Coverage</span>
-                    <span className="font-semibold text-purple-900">₹5,00,000</span>
+                ) : (
+                  <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <p className="text-sm text-gray-400 text-center">No insurance plan active</p>
                   </div>
-                </div>
-              ) : (
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 text-center">No insurance plan active</p>
-                </div>
-              )}
+                )}
+              </div>
+              
+              <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 font-medium glow-button">
+                <Shield className="w-4 h-4" />
+                {earnings.insurancePlan ? 'Manage Insurance' : 'Get Insurance'}
+              </button>
             </div>
-            
-            <button className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition-colors flex items-center justify-center gap-2">
-              <Shield className="w-4 h-4" />
-              {earnings.insurancePlan ? 'Manage Insurance' : 'Get Insurance'}
-            </button>
           </div>
         </div>
 
         {/* Recent Transactions */}
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold text-gray-900">Recent Transactions</h3>
-            <button className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
-              <Download className="w-4 h-4" />
-              Export
-            </button>
-          </div>
-          
-          {transactions.length === 0 ? (
-            <div className="text-center py-12">
-              <DollarSign className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">No transactions yet</h4>
-              <p className="text-gray-600">Complete tasks to start earning money!</p>
+        <div className="group relative mb-8">
+          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+          <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-emerald-500/50 transition-all duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-white">Recent Transactions</h3>
+              <button className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors">
+                <Download className="w-4 h-4" />
+                Export
+              </button>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {transactions.map((transaction) => (
-                <div key={transaction.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    {getTransactionIcon(transaction.type)}
-                    <div>
-                      <p className="font-medium text-gray-900">{transaction.description}</p>
-                      <p className="text-sm text-gray-600">{transaction.date}</p>
+            
+            {transactions.length === 0 ? (
+              <div className="text-center py-12">
+                <DollarSign className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                <h4 className="text-lg font-semibold text-white mb-2">No transactions yet</h4>
+                <p className="text-gray-400">Complete tasks to start earning money!</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {transactions.map((transaction) => (
+                  <div key={transaction.id} className="flex items-center justify-between p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      {getTransactionIcon(transaction.type)}
+                      <div>
+                        <p className="font-medium text-white">{transaction.description}</p>
+                        <p className="text-sm text-gray-400">{transaction.date}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right">
+                      <p className={`font-semibold ${
+                        transaction.type === 'earning' 
+                          ? 'text-green-400' 
+                          : transaction.type === 'sip'
+                          ? 'text-blue-400'
+                          : 'text-purple-400'
+                      }`}>
+                        {transaction.type === 'earning' ? '+' : '-'}₹{transaction.amount.toLocaleString()}
+                      </p>
+                      <p className={`text-xs ${
+                        transaction.status === 'completed'
+                          ? 'text-green-400'
+                          : 'text-yellow-400'
+                      }`}>
+                        {transaction.status}
+                      </p>
                     </div>
                   </div>
-                  
-                  <div className="text-right">
-                    <p className={`font-semibold ${
-                      transaction.type === 'earning' 
-                        ? 'text-green-600' 
-                        : transaction.type === 'sip'
-                        ? 'text-blue-600'
-                        : 'text-purple-600'
-                    }`}>
-                      {transaction.type === 'earning' ? '+' : '-'}₹{transaction.amount.toLocaleString()}
-                    </p>
-                    <p className={`text-xs ${
-                      transaction.status === 'completed'
-                        ? 'text-green-600'
-                        : 'text-yellow-600'
-                    }`}>
-                      {transaction.status}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         
         {/* Coming Soon Features */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border">
-            <div className="flex items-center gap-3 mb-4">
-              <PieChart className="w-6 h-6 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Investment Portfolio</h3>
-            </div>
-            <p className="text-gray-700 mb-4">Track your SIP investments and portfolio performance in real-time.</p>
-            <div className="flex items-center gap-2 text-blue-600">
-              <span className="text-sm font-medium">Coming Soon</span>
-              <ExternalLink className="w-4 h-4" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="group relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <PieChart className="w-6 h-6 text-blue-400" />
+                <h3 className="text-lg font-semibold text-white">Investment Portfolio</h3>
+              </div>
+              <p className="text-gray-300 mb-4">Track your SIP investments and portfolio performance in real-time.</p>
+              <div className="flex items-center gap-2 text-blue-400">
+                <span className="text-sm font-medium">Coming Soon</span>
+                <ExternalLink className="w-4 h-4" />
+              </div>
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border">
-            <div className="flex items-center gap-3 mb-4">
-              <TrendingUp className="w-6 h-6 text-green-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Tax Planning</h3>
-            </div>
-            <p className="text-gray-700 mb-4">Automated tax calculations and optimization strategies for freelancers.</p>
-            <div className="flex items-center gap-2 text-green-600">
-              <span className="text-sm font-medium">Coming Soon</span>
-              <ExternalLink className="w-4 h-4" />
+          <div className="group relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-green-500/50 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <TrendingUp className="w-6 h-6 text-green-400" />
+                <h3 className="text-lg font-semibold text-white">Tax Planning</h3>
+              </div>
+              <p className="text-gray-300 mb-4">Automated tax calculations and optimization strategies for freelancers.</p>
+              <div className="flex items-center gap-2 text-green-400">
+                <span className="text-sm font-medium">Coming Soon</span>
+                <ExternalLink className="w-4 h-4" />
+              </div>
             </div>
           </div>
         </div>

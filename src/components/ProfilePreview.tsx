@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import Image from 'next/image';
-import { User, Mail, Star, Briefcase, Code, ExternalLink, MapPin } from 'lucide-react';
+import { User, Mail, Star, Briefcase, Code, ExternalLink, MapPin, X, Trash2 } from 'lucide-react';
 
 interface ProfileData {
   userId: string;
@@ -61,6 +61,7 @@ const fetcher = async (url: string) => {
 export default function ProfilePreview() {
   const { data: session, status } = useSession();
   const [isClient, setIsClient] = useState(false);
+  const [showClearDialog, setShowClearDialog] = useState(false);
   
   useEffect(() => {
     setIsClient(true);
@@ -142,13 +143,43 @@ export default function ProfilePreview() {
   // Use the completion percentage from the database
   const displayCompletionPercentage = completionPercentage || 0;
 
+  const handleClearProfile = async () => {
+    try {
+      const response = await fetch('/api/portfolio', {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      
+      if (response.ok) {
+        // Refresh the profile data
+        mutate();
+        setShowClearDialog(false);
+      } else {
+        console.error('Failed to clear profile');
+      }
+    } catch (error) {
+      console.error('Error clearing profile:', error);
+    }
+  };
+
   return (
     <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-2xl p-6 h-fit">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-          <User className="w-5 h-5 text-blue-400" />
-          Profile Preview
-        </h2>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <User className="w-5 h-5 text-blue-400" />
+            Profile Preview
+          </h2>
+          {profileData && completionPercentage > 0 && (
+            <button
+              onClick={() => setShowClearDialog(true)}
+              className="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-red-500/10"
+              title="Clear profile data"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+        </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-1 bg-gray-800 rounded-full h-2">
             <div 
@@ -415,6 +446,41 @@ export default function ProfilePreview() {
           <p className="text-blue-300 text-sm text-center">
             💬 Keep chatting with the AI to complete your profile!
           </p>
+        </div>
+      )}
+
+      {/* Clear Profile Dialog */}
+      {showClearDialog && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-md w-full">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Clear Profile</h3>
+              <button
+                onClick={() => setShowClearDialog(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-gray-300 mb-6">
+              Are you sure you want to clear all profile data? This action cannot be undone and you'll need to start over with the AI chat.
+            </p>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowClearDialog(false)}
+                className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleClearProfile}
+                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Clear Profile
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
