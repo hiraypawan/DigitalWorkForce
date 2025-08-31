@@ -3,9 +3,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import ChatbotOnboarding from '@/components/ChatbotOnboarding';
-import AdvancedProfilePreview from '@/components/AdvancedProfilePreview';
 import { CheckCircle, ArrowRight, Sparkles, User, LogOut } from 'lucide-react';
+
+// Lazy load heavy components
+const ChatbotOnboarding = dynamic(() => import('@/components/ChatbotOnboarding'), {
+  ssr: false,
+  loading: () => <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 flex items-center justify-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400"></div></div>
+});
+
+const AdvancedProfilePreview = dynamic(() => import('@/components/AdvancedProfilePreview'), {
+  ssr: false,
+  loading: () => <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 flex items-center justify-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-400"></div></div>
+});
+
+import dynamic from 'next/dynamic';
 
 export default function OnboardingPage() {
   const { data: session, status } = useSession();
