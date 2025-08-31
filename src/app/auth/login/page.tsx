@@ -27,8 +27,13 @@ export default function LoginPage() {
     const fromParam = params.get('from');
     const registeredParam = params.get('registered');
     
+    // TEMPORARY FIX: Always redirect to onboarding after login to prevent loops
+    // This ensures users go through onboarding flow before accessing dashboard
+    setCallbackUrl('/onboarding');
+    
+    // Log the original redirect destination for debugging
     if (fromParam) {
-      setCallbackUrl(fromParam);
+      console.log('Original redirect destination:', fromParam, 'but forcing onboarding first');
     }
     if (registeredParam === 'true') {
       setRegistrationSuccess(true);
