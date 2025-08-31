@@ -113,6 +113,11 @@ const fetcher = async (url: string) => {
 };
 
 const SkillBadge = ({ skill }: { skill: any }) => {
+  // Handle both string and object formats
+  const skillData = typeof skill === 'string' 
+    ? { name: skill, proficiency: 'Intermediate', category: 'Technical' }
+    : skill;
+
   const getProficiencyColor = (proficiency: string | number) => {
     if (typeof proficiency === 'number') {
       if (proficiency >= 4) return 'bg-green-500';
@@ -137,10 +142,10 @@ const SkillBadge = ({ skill }: { skill: any }) => {
 
   return (
     <div className="flex items-center gap-2 px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg">
-      <span className="text-gray-300 text-sm">{skill.name}</span>
+      <span className="text-gray-300 text-sm">{skillData.name}</span>
       <div className="flex items-center gap-1">
-        <div className={`w-2 h-2 rounded-full ${getProficiencyColor(skill.proficiency)}`}></div>
-        <span className="text-xs text-gray-400">{getProficiencyText(skill.proficiency)}</span>
+        <div className={`w-2 h-2 rounded-full ${getProficiencyColor(skillData.proficiency)}`}></div>
+        <span className="text-xs text-gray-400">{getProficiencyText(skillData.proficiency)}</span>
       </div>
     </div>
   );
@@ -506,20 +511,27 @@ export default function EnhancedProfilePreview() {
             Certifications & Training
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {certifications.map((cert, index) => (
-              <div key={index} className="p-4 bg-gray-800/30 border border-gray-700 rounded-xl">
-                <h4 className="text-white font-semibold">{cert.name}</h4>
-                <p className="text-blue-400 text-sm">{cert.issuer}</p>
-                <p className="text-gray-400 text-sm">Earned: {cert.year}</p>
-                {cert.link && (
-                  <a href={cert.link} target="_blank" rel="noopener noreferrer"
-                     className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm mt-2">
-                    <ExternalLink className="w-3 h-3" />
-                    View Certificate
-                  </a>
-                )}
-              </div>
-            ))}
+            {certifications.map((cert, index) => {
+              // Handle both string and object formats
+              const certData = typeof cert === 'string'
+                ? { name: cert, issuer: 'Unknown', year: new Date().getFullYear().toString() }
+                : cert;
+              
+              return (
+                <div key={index} className="p-4 bg-gray-800/30 border border-gray-700 rounded-xl">
+                  <h4 className="text-white font-semibold">{certData.name}</h4>
+                  <p className="text-blue-400 text-sm">{certData.issuer}</p>
+                  <p className="text-gray-400 text-sm">Earned: {certData.year}</p>
+                  {certData.link && (
+                    <a href={certData.link} target="_blank" rel="noopener noreferrer"
+                       className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm mt-2">
+                      <ExternalLink className="w-3 h-3" />
+                      View Certificate
+                    </a>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

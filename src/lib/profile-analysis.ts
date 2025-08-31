@@ -8,15 +8,85 @@ export interface ProfileAnalysis {
 
 export interface ProfileData {
   name?: string;
+  title?: string;
   bio?: string;
-  education?: any[];
-  experience?: any[];
-  skills?: string[];
-  projects?: any[];
-  certifications?: string[];
+  location?: string;
+  availability?: 'Full-time' | 'Part-time' | 'Contract' | 'Freelance';
+  
+  skills?: (string | {
+    name: string;
+    proficiency?: 'Beginner' | 'Intermediate' | 'Expert' | 'Advanced';
+    category?: 'Technical' | 'Soft' | 'Language' | 'Tool';
+  })[];
+  
+  experience?: {
+    role?: string;
+    company?: string;
+    duration?: string;
+    details?: string;
+    location?: string;
+    achievements?: string[];
+    responsibilities?: string[];
+  }[];
+  
+  education?: {
+    degree?: string;
+    institution?: string;
+    year?: string;
+    gpa?: string;
+    honors?: string;
+  }[];
+  
+  projects?: {
+    title?: string;
+    description?: string;
+    link?: string;
+    technologies?: string[];
+    status?: 'completed' | 'in-progress' | 'planned';
+    outcome?: string;
+    metrics?: string;
+  }[];
+  
+  certifications?: (string | {
+    name: string;
+    issuer?: string;
+    year?: string;
+    link?: string;
+  })[];
+  
+  portfolioSamples?: {
+    github?: string;
+    behance?: string;
+    dribbble?: string;
+    linkedin?: string;
+    website?: string;
+    uploadedFiles?: string[];
+  };
+  
+  endorsements?: {
+    rating?: number;
+    review?: string;
+    reviewer?: string;
+    role?: string;
+    company?: string;
+    date?: string;
+  }[];
+  
+  workPreferences?: {
+    expectedSalary?: string;
+    workType?: 'Remote' | 'Hybrid' | 'Onsite';
+    availability?: 'Full-time' | 'Part-time' | 'Contract' | 'Freelance';
+    noticePeriod?: string;
+    preferredIndustries?: string[];
+    willingToRelocate?: boolean;
+  };
+  
   achievements?: string[];
   goals?: string[];
   hobbies?: string[];
+  onlineCourses?: string[];
+  testimonials?: string[];
+  
   contactInfo?: {
     email?: string;
     phone?: string;
@@ -24,6 +94,7 @@ export interface ProfileData {
     github?: string;
     website?: string;
   };
+  
   completionPercentage?: number;
 }
 
@@ -35,7 +106,7 @@ export function analyzeProfileCompletion(profile: ProfileData): ProfileAnalysis 
   const missingFields: string[] = [];
   const nextSuggestions: string[] = [];
   
-  // Essential fields analysis
+  // Core essential fields (highest priority)
   if (!profile.name?.trim()) {
     missingFields.push('name');
     nextSuggestions.push('Tell me your full name');
@@ -46,32 +117,60 @@ export function analyzeProfileCompletion(profile: ProfileData): ProfileAnalysis 
     nextSuggestions.push('Share a brief professional summary about yourself');
   }
   
+  if (!profile.title?.trim()) {
+    missingFields.push('title');
+    nextSuggestions.push('What is your current job title or professional role?');
+  }
+  
+  // Skills analysis - check for both count and depth
   if (!profile.skills || profile.skills.length === 0) {
     missingFields.push('skills');
     nextSuggestions.push('What are your main technical and professional skills?');
+  } else if (profile.skills.length < 3) {
+    nextSuggestions.push('Can you share more of your key skills and expertise?');
+  } else {
+    // Check if skills have proficiency levels
+    const skillsWithProficiency = profile.skills.filter(skill => 
+      typeof skill === 'object' && skill.proficiency
+    ).length;
+    if (skillsWithProficiency < profile.skills.length / 2) {
+      nextSuggestions.push('Would you like to specify your proficiency level for your skills?');
+    }
   }
   
+  // Experience analysis
   if (!profile.experience || profile.experience.length === 0) {
     missingFields.push('experience');
     nextSuggestions.push('Tell me about your work experience and previous roles');
+  } else {
+    // Check for experience details
+    const experienceWithDetails = profile.experience.filter(exp => 
+      exp.role && exp.company && exp.details
+    ).length;
+    if (experienceWithDetails === 0) {
+      nextSuggestions.push('Can you provide more details about your work experience?');
+    }
   }
   
+  // Education analysis
   if (!profile.education || profile.education.length === 0) {
     missingFields.push('education');
     nextSuggestions.push('Share your educational background');
   }
   
+  // Projects analysis
   if (!profile.projects || profile.projects.length === 0) {
     missingFields.push('projects');
     nextSuggestions.push('Describe some projects you\'ve worked on');
   }
   
+  // Career development fields
   if (!profile.goals || profile.goals.length === 0) {
     missingFields.push('goals');
     nextSuggestions.push('What are your career goals and aspirations?');
   }
   
-  // Optional but valuable fields
+  // Professional credentials
   if (!profile.certifications || profile.certifications.length === 0) {
     if (!profile.achievements || profile.achievements.length === 0) {
       missingFields.push('certifications_achievements');
@@ -79,48 +178,97 @@ export function analyzeProfileCompletion(profile: ProfileData): ProfileAnalysis 
     }
   }
   
-  if (!profile.hobbies || profile.hobbies.length === 0) {
-    missingFields.push('hobbies');
-    nextSuggestions.push('What are your hobbies and interests outside of work?');
+  // Location and availability (important for job matching)
+  if (!profile.location?.trim()) {
+    missingFields.push('location');
+    nextSuggestions.push('What is your current location?');
   }
   
-  // Contact info analysis
+  if (!profile.availability) {
+    missingFields.push('availability');
+    nextSuggestions.push('Are you looking for full-time, part-time, contract, or freelance work?');
+  }
+  
+  // Work preferences for better job matching
+  if (!profile.workPreferences || Object.keys(profile.workPreferences).length === 0) {
+    missingFields.push('work_preferences');
+    nextSuggestions.push('What are your work preferences (remote vs onsite, salary expectations, etc.)?');
+  }
+  
+  // Contact and portfolio information
+  const portfolioLinks = profile.portfolioSamples;
+  const hasPortfolioLinks = portfolioLinks && (portfolioLinks.github || portfolioLinks.linkedin || portfolioLinks.website);
+  
   const contactFields = ['linkedin', 'github', 'website', 'phone'];
   const missingContactFields = contactFields.filter(field => 
     !profile.contactInfo?.[field as keyof typeof profile.contactInfo]
   );
   
-  if (missingContactFields.length > 2) {
+  if (missingContactFields.length > 2 && !hasPortfolioLinks) {
     missingFields.push('contact_info');
     nextSuggestions.push('Share your professional contact information (LinkedIn, GitHub, etc.)');
   }
   
-  // Calculate completion percentage (using same logic as Portfolio model)
+  // Personal touch (helps with culture fit)
+  if (!profile.hobbies || profile.hobbies.length === 0) {
+    missingFields.push('hobbies');
+    nextSuggestions.push('What are your hobbies and interests outside of work?');
+  }
+  
+  // Enhanced completion percentage calculation with weighted scoring
   let completed = 0;
-  const total = 8;
+  let total = 12; // Updated total for comprehensive profile
   
-  if (profile.name?.trim()) completed++;
-  if (profile.bio?.trim()) completed++;
-  if (profile.education && profile.education.length > 0) completed++;
-  if (profile.experience && profile.experience.length > 0) completed++;
-  if (profile.skills && profile.skills.length > 0) completed++;
-  if (profile.projects && profile.projects.length > 0) completed++;
-  if ((profile.certifications && profile.certifications.length > 0) || (profile.achievements && profile.achievements.length > 0)) completed++;
-  if (profile.goals && profile.goals.length > 0) completed++;
+  // Core fields (weight 2x)
+  if (profile.name?.trim()) completed += 2;
+  if (profile.bio?.trim()) completed += 2;
+  if (profile.title?.trim()) completed += 1;
+  if (profile.skills && profile.skills.length > 0) completed += 2;
+  if (profile.experience && profile.experience.length > 0) completed += 2;
+  if (profile.education && profile.education.length > 0) completed += 1;
   
+  // Professional development
+  if (profile.projects && profile.projects.length > 0) completed += 1;
+  if ((profile.certifications && profile.certifications.length > 0) || 
+      (profile.achievements && profile.achievements.length > 0)) completed += 1;
+  if (profile.goals && profile.goals.length > 0) completed += 1;
+  
+  // Practical information
+  if (profile.location?.trim()) completed += 1;
+  if (profile.availability) completed += 1;
+  if (profile.workPreferences && Object.keys(profile.workPreferences).length > 0) completed += 1;
+  
+  // Portfolio and contact
+  if (hasPortfolioLinks || (profile.contactInfo && Object.keys(profile.contactInfo).length > 2)) completed += 1;
+  
+  // Personal touch
+  if (profile.hobbies && profile.hobbies.length > 0) completed += 1;
+  
+  // Adjust total based on actual maximum possible score
+  total = 16;
   const completionPercentage = Math.round((completed / total) * 100);
   
-  // Determine priority based on completion
+  // Determine priority based on completion and missing critical fields
   let priority: 'high' | 'medium' | 'low' = 'high';
-  if (completionPercentage >= 75) priority = 'low';
-  else if (completionPercentage >= 50) priority = 'medium';
+  const hasCriticalFields = Boolean(
+    profile.name && 
+    profile.bio && 
+    profile.skills && profile.skills.length > 0 && 
+    profile.experience && profile.experience.length > 0
+  );
+  
+  if (completionPercentage >= 85 && hasCriticalFields) {
+    priority = 'low';
+  } else if (completionPercentage >= 60 && hasCriticalFields) {
+    priority = 'medium';
+  }
   
   return {
     completionPercentage,
     missingFields,
     nextSuggestions: nextSuggestions.slice(0, 3), // Limit to top 3 suggestions
     priority,
-    isComplete: completionPercentage >= 100
+    isComplete: completionPercentage >= 95 && hasCriticalFields
   };
 }
 

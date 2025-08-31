@@ -25,7 +25,7 @@ interface ProfileData {
     location?: string;
     achievements?: string[];
   }[];
-  skills: string[];
+  skills: (string | { name: string; proficiency?: string; category?: string; })[];
   projects: {
     title: string;
     description: string;
@@ -33,7 +33,7 @@ interface ProfileData {
     technologies?: string[];
     status?: string;
   }[];
-  certifications: string[];
+  certifications: (string | { name: string; issuer?: string; year?: string; })[];
   achievements: string[];
   goals: string[];
   hobbies: string[];
@@ -216,7 +216,7 @@ export default function ProfilePreview() {
                 key={index}
                 className="px-3 py-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 text-blue-300 text-xs rounded-full"
               >
-                {skill}
+                {typeof skill === 'string' ? skill : skill?.name || 'Unknown Skill'}
               </span>
             ))}
           </div>
@@ -351,7 +351,7 @@ export default function ProfilePreview() {
           <div className="space-y-1">
             {certifications.map((cert, index) => (
               <div key={index} className="p-2 bg-gray-800/30 border border-gray-700 rounded text-sm text-gray-300">
-                {cert}
+                {typeof cert === 'string' ? cert : cert?.name || 'Certification'}
               </div>
             ))}
           </div>

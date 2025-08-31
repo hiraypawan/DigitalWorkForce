@@ -67,7 +67,24 @@ export async function GET(request: NextRequest) {
       await portfolio.save();
     }
 
-    return NextResponse.json(portfolio);
+    // Ensure backward compatibility by transforming data if needed
+    const compatiblePortfolio = {
+      ...portfolio.toObject(),
+      skills: portfolio.skills?.map((skill: any) => {
+        if (typeof skill === 'string') {
+          return { name: skill, proficiency: 'Intermediate', category: 'Technical' };
+        }
+        return skill;
+      }) || [],
+      certifications: portfolio.certifications?.map((cert: any) => {
+        if (typeof cert === 'string') {
+          return { name: cert, issuer: 'Unknown', year: new Date().getFullYear().toString() };
+        }
+        return cert;
+      }) || []
+    };
+    
+    return NextResponse.json(compatiblePortfolio);
 
   } catch (error) {
     console.error('Portfolio GET error:', error);

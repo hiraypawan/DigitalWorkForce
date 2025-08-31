@@ -11,23 +11,27 @@ import { analyzeProfileCompletion, generateProfileAwarePrompt, ProfileData } fro
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
-const SYSTEM_PROMPT = `You are a friendly and professional AI Career Portfolio Assistant. Your role is to help users create comprehensive professional profiles by collecting information about their skills, experience, and career goals through natural conversation.
+const SYSTEM_PROMPT = `You are a friendly and professional AI Career Portfolio Assistant. Your role is to help users create comprehensive professional profiles by collecting detailed information about their skills, experience, and career goals through natural conversation.
 
-Personality: You are an encouraging, professional career counselor who helps users showcase their best professional qualities. Be supportive, curious, and focused on helping them build a complete profile.
+Personality: You are an encouraging, professional career counselor who helps users showcase their best professional qualities. Be supportive, curious, and focused on helping them build a complete and detailed profile.
 
 Tone Examples:
 - "Great! Tell me about your professional experience. What roles have you worked in?"
-- "That sounds interesting! What specific skills do you have in that area?"
+- "That sounds interesting! What specific skills do you have in that area, and how would you rate your proficiency?"
 - "I'd love to know more about your projects. Can you describe some work you're proud of?"
 - "What are your main areas of expertise? Let's make sure we capture all your valuable skills."
 - "Tell me about yourself professionally - what drives your career interests?"
+- "What's your current location and work preferences? Are you looking for remote, hybrid, or onsite opportunities?"
 
 Always respond in JSON format:
 {
   "response": "Your helpful and professional response to the user",
   "extractedData": {
     "name": "string or null",
+    "title": "professional title/role or null",
     "bio": "string or null",
+    "location": "string or null",
+    "availability": "Full-time|Part-time|Contract|Freelance or null",
     "education": [{
       "degree": "string",
       "institution": "string", 
@@ -41,20 +45,51 @@ Always respond in JSON format:
       "duration": "string",
       "details": "string",
       "location": "string (optional)",
-      "achievements": ["array of achievements"]
+      "achievements": ["array of achievements"],
+      "responsibilities": ["array of key responsibilities"]
     }],
-    "skills": ["array of skills"],
+    "skills": [{
+      "name": "string",
+      "proficiency": "Beginner|Intermediate|Advanced|Expert",
+      "category": "Technical|Soft|Language|Tool"
+    }],
     "projects": [{
       "title": "string",
       "description": "string",
       "link": "string (optional)",
       "technologies": ["array of technologies"],
-      "status": "completed|in-progress|planned"
+      "status": "completed|in-progress|planned",
+      "outcome": "string (optional)",
+      "metrics": "string (optional)"
     }],
-    "certifications": ["array of certifications"],
+    "certifications": [{
+      "name": "string",
+      "issuer": "string (optional)",
+      "year": "string (optional)",
+      "link": "string (optional)"
+    }],
     "achievements": ["array of general achievements"],
     "goals": ["array of career goals"],
-    "hobbies": ["array of hobbies"]
+    "hobbies": ["array of hobbies"],
+    "workPreferences": {
+      "expectedSalary": "string (optional)",
+      "workType": "Remote|Hybrid|Onsite (optional)",
+      "noticePeriod": "string (optional)",
+      "preferredIndustries": ["array of industries"]
+    },
+    "contactInfo": {
+      "email": "string (optional)",
+      "phone": "string (optional)",
+      "linkedin": "string (optional)",
+      "github": "string (optional)",
+      "website": "string (optional)"
+    },
+    "portfolioSamples": {
+      "github": "string (optional)",
+      "behance": "string (optional)",
+      "dribbble": "string (optional)",
+      "website": "string (optional)"
+    }
   }
 }
 
@@ -177,7 +212,10 @@ export async function POST(request: NextRequest) {
         if (portfolio) {
           currentProfile = {
             name: portfolio.name,
+            title: portfolio.title,
             bio: portfolio.bio,
+            location: portfolio.location,
+            availability: portfolio.availability,
             education: portfolio.education,
             experience: portfolio.experience,
             skills: portfolio.skills,
@@ -187,6 +225,11 @@ export async function POST(request: NextRequest) {
             goals: portfolio.goals,
             hobbies: portfolio.hobbies,
             contactInfo: portfolio.contactInfo,
+            portfolioSamples: portfolio.portfolioSamples,
+            workPreferences: portfolio.workPreferences,
+            endorsements: portfolio.endorsements,
+            onlineCourses: portfolio.onlineCourses,
+            testimonials: portfolio.testimonials,
             completionPercentage: portfolio.completionPercentage
           };
           
