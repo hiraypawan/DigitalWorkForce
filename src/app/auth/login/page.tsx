@@ -37,10 +37,14 @@ export default function LoginPage() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (status === 'authenticated') {
-      router.push(callbackUrl);
+    if (status === 'authenticated' && mounted) {
+      console.log('User already authenticated, redirecting to:', callbackUrl);
+      // Use window.location.href for more reliable redirect
+      setTimeout(() => {
+        window.location.href = callbackUrl;
+      }, 100);
     }
-  }, [status, router, callbackUrl]);
+  }, [status, callbackUrl, mounted]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -45,19 +45,26 @@ export default function OnboardingPage() {
   }, []);
 
   useEffect(() => {
-    if (status === 'loading') return;
+    console.log('Onboarding useEffect - Status:', status, 'Session:', session);
+    
+    if (status === 'loading') {
+      console.log('Authentication status still loading...');
+      return;
+    }
     
     if (status === 'unauthenticated') {
+      console.log('User unauthenticated, redirecting to login...');
       // Redirect unauthenticated users to login
       router.push('/auth/login?from=/onboarding');
       return;
     }
     
     if (status === 'authenticated') {
+      console.log('User authenticated, checking profile completeness...');
       // Check if user has already completed onboarding
       checkProfileCompleteness();
     }
-  }, [status, router, checkProfileCompleteness]);
+  }, [status, router, checkProfileCompleteness, session]);
 
   // Add a timeout fallback to prevent infinite loading
   useEffect(() => {
