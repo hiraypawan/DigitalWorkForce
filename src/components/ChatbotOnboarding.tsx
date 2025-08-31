@@ -205,6 +205,16 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
 
       const data = await response.json();
 
+      // Log profile update status for debugging
+      if (data.profileUpdate) {
+        console.log('Profile update status:', data.profileUpdate);
+        if (data.profileUpdate.updated) {
+          console.log('✅ Profile updated successfully, completion:', data.profileUpdate.completionPercentage + '%');
+        } else {
+          console.log('❌ Profile update failed:', data.profileUpdate.error || data.profileUpdate.reason);
+        }
+      }
+
       const botMessage = {
         role: 'assistant' as const,
         content: data.response,

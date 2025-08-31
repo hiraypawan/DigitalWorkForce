@@ -11,24 +11,31 @@ import { analyzeProfileCompletion, generateProfileAwarePrompt, ProfileData } fro
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
-const SYSTEM_PROMPT = `You are a quick, efficient AI Career Assistant. Ask SHORT, focused questions (1-2 sentences max) to build user profiles fast.
+const SYSTEM_PROMPT = `You are a smart AI Career Assistant that NEVER repeats questions. You have FULL ACCESS to the user's current profile data.
 
-RULES:
-- Keep questions under 20 words
-- Ask ONE thing at a time
-- Be direct and specific
-- Never repeat questions already asked
-- Always check existing profile data first
+CRITICAL ANTI-LOOP RULES:
+- NEVER ask about data that already exists in the profile
+- NEVER repeat any question from conversation history
+- If user has name → don't ask for name again
+- If user has skills → ask for MORE skills or different details
+- If user has experience → ask for DIFFERENT experience or details
+- Always check CURRENT PROFILE DATA before asking anything
+- When profile is complete → ask if they want to add/edit something specific
+
+QUESTION RULES:
+- MAX 15 words per question
+- ONE specific thing only
+- Ask about what's MISSING from their profile
+- Use their existing info to ask relevant follow-ups
 
 Tone Examples:
-- "What's your current role?"
-- "Which skills are you strongest in?"
-- "Tell me about your latest project."
-- "What's your target salary range?"
-- "Preferred work location?"
-- "Main career goal?"
+- "What's your current role?" (only if no title in profile)
+- "Any other key skills?" (if they have some skills already)
+- "Previous role before [current job]?" (specific follow-up)
+- "Main goal this year?" (if no goals in profile)
+- "Hobbies outside work?" (if missing hobbies)
 
-Always respond in JSON format:
+ALWAYS respond in JSON format:
 {
   "response": "Your helpful and professional response to the user",
   "extractedData": {
@@ -295,19 +302,46 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create memory-enhanced and profile-aware prompt
+    // Create detailed profile context to prevent loops
+    let profileContext = '';
+    if (currentProfile && Object.keys(currentProfile).length > 0) {
+      profileContext = `
+
+🔍 CURRENT PROFILE DATA (DO NOT ASK ABOUT THESE AGAIN):
+- Name: ${currentProfile.name ? `"${currentProfile.name}" ✅` : '❌ MISSING'}
+- Title: ${currentProfile.title ? `"${currentProfile.title}" ✅` : '❌ MISSING'}
+- Bio: ${currentProfile.bio ? `"${currentProfile.bio.substring(0, 50)}..." ✅` : '❌ MISSING'}
+- Location: ${currentProfile.location ? `"${currentProfile.location}" ✅` : '❌ MISSING'}
+- Skills: ${currentProfile.skills?.length ? `${currentProfile.skills.length} skills ✅` : '❌ MISSING'}
+- Experience: ${currentProfile.experience?.length ? `${currentProfile.experience.length} roles ✅` : '❌ MISSING'}
+- Education: ${currentProfile.education?.length ? `${currentProfile.education.length} degrees ✅` : '❌ MISSING'}
+- Projects: ${currentProfile.projects?.length ? `${currentProfile.projects.length} projects ✅` : '❌ MISSING'}
+- Goals: ${currentProfile.goals?.length ? `${currentProfile.goals.length} goals ✅` : '❌ MISSING'}
+- Hobbies: ${currentProfile.hobbies?.length ? `${currentProfile.hobbies.length} hobbies ✅` : '❌ MISSING'}
+- Certifications: ${currentProfile.certifications?.length ? `${currentProfile.certifications.length} certs ✅` : '❌ MISSING'}
+- Achievements: ${currentProfile.achievements?.length ? `${currentProfile.achievements.length} achievements ✅` : '❌ MISSING'}
+
+🚫 STRICT RULES:
+- NEVER ask about fields marked with ✅
+- ONLY ask about fields marked with ❌ MISSING
+- If ALL critical fields exist, ask for additional details or new sections
+- If profile is complete, ask if they want to edit something specific
+`;
+    }
+    
+    // Create memory-enhanced prompt
     const memoryContext = askedTopics.size > 0 
-      ? `\n\nIMPORTANT CONVERSATION MEMORY:\n- Already discussed topics: ${Array.from(askedTopics).join(', ')}\n- DO NOT repeat questions about these topics\n- Focus on unexplored areas or get deeper details\n- If user wants to revisit a topic, acknowledge it was discussed before\n`
+      ? `\n\nCONVERSATION MEMORY (NEVER REPEAT):\n- Topics discussed: ${Array.from(askedTopics).join(', ')}\n- DO NOT ask about these again\n`
       : '';
     
-    const basePrompt = `${SYSTEM_PROMPT}${memoryContext}
+    const basePrompt = `${SYSTEM_PROMPT}${profileContext}${memoryContext}
 
 Previous conversation:
 ${context}
 
 Current user message: ${message}
 
-IMPORTANT: Based on the conversation history above, avoid asking about topics already covered. Focus on new areas or ask for more specific details about previously mentioned items.
+🎯 YOUR MISSION: Look at the CURRENT PROFILE DATA above. Ask ONLY about missing (❌) fields. Never repeat questions from conversation history.
 
 Respond in JSON format as specified above.`;
     
@@ -491,18 +525,64 @@ Respond in JSON format as specified above.`;
           }
         });
 
+        // Calculate completion percentage immediately after update
+        const updatedProfileData = {
+          name: portfolio.name,
+          title: portfolio.title,
+          bio: portfolio.bio,
+          location: portfolio.location,
+          availability: portfolio.availability,
+          education: portfolio.education,
+          experience: portfolio.experience,
+          skills: portfolio.skills,
+          projects: portfolio.projects,
+          certifications: portfolio.certifications,
+          achievements: portfolio.achievements,
+          goals: portfolio.goals,
+          hobbies: portfolio.hobbies,
+          contactInfo: portfolio.contactInfo,
+          portfolioSamples: portfolio.portfolioSamples,
+          workPreferences: portfolio.workPreferences
+        };
+        
+        const newAnalysis = analyzeProfileCompletion(updatedProfileData);
+        portfolio.completionPercentage = newAnalysis.completionPercentage;
+        portfolio.lastUpdated = new Date();
+        
         await portfolio.save();
-        console.log('Portfolio updated successfully for user:', userId);
+        console.log('Portfolio updated successfully for user:', userId, 'New completion:', newAnalysis.completionPercentage + '%');
+        
+        // Return response with updated profile context for next interaction
+        return NextResponse.json({
+          response: parsedResponse.response,
+          extractedData: parsedResponse.extractedData,
+          profileUpdate: {
+            completionPercentage: newAnalysis.completionPercentage,
+            updated: true
+          }
+        });
         
       } catch (portfolioError) {
         console.error('Error updating portfolio:', portfolioError);
         // Continue execution even if portfolio update fails
+        return NextResponse.json({
+          response: parsedResponse.response,
+          extractedData: parsedResponse.extractedData,
+          profileUpdate: {
+            updated: false,
+            error: 'Failed to save to profile'
+          }
+        });
       }
     }
 
     return NextResponse.json({
       response: parsedResponse.response,
-      extractedData: parsedResponse.extractedData
+      extractedData: parsedResponse.extractedData,
+      profileUpdate: {
+        updated: false,
+        reason: 'No data extracted or not authenticated'
+      }
     });
 
   } catch (error) {

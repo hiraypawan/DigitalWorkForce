@@ -280,8 +280,39 @@ export function generateProfileAwarePrompt(
   analysis: ProfileAnalysis, 
   basePrompt: string
 ): string {
-  // Get the most critical missing field to focus on
-  const nextPriority = analysis.nextSuggestions[0] || 'Tell me about your skills';
+  // Identify what's actually missing vs what exists
+  const existingFields = [];
+  const missingFields = [];
+  
+  if (profile.name) existingFields.push('name');
+  else missingFields.push('name');
+  
+  if (profile.title) existingFields.push('title/role');
+  else missingFields.push('title/role');
+  
+  if (profile.bio) existingFields.push('bio');
+  else missingFields.push('bio');
+  
+  if (profile.skills?.length) existingFields.push(`${profile.skills.length} skills`);
+  else missingFields.push('skills');
+  
+  if (profile.experience?.length) existingFields.push(`${profile.experience.length} work roles`);
+  else missingFields.push('work experience');
+  
+  if (profile.education?.length) existingFields.push(`${profile.education.length} education`);
+  else missingFields.push('education');
+  
+  if (profile.projects?.length) existingFields.push(`${profile.projects.length} projects`);
+  else missingFields.push('projects');
+  
+  if (profile.goals?.length) existingFields.push(`${profile.goals.length} goals`);
+  else missingFields.push('career goals');
+  
+  if (profile.hobbies?.length) existingFields.push(`${profile.hobbies.length} hobbies`);
+  else missingFields.push('hobbies');
+  
+  // Get next most important missing field
+  const nextFocus = missingFields[0] || 'additional details';
   
   // Get industry-specific questions if we have a title
   let industryContext = '';
@@ -291,31 +322,35 @@ export function generateProfileAwarePrompt(
     const experienceQuestions = getIndustryQuestions(profile.title, 'experience');
     
     industryContext = `
-INDUSTRY-SPECIFIC QUESTIONS FOR ${profile.title.toUpperCase()}:
+
+📋 INDUSTRY-SPECIFIC QUESTIONS FOR ${profile.title.toUpperCase()}:
 Skills: ${skillQuestions.join(', ')}
 Projects: ${projectQuestions.join(', ')}
-Experience: ${experienceQuestions.join(', ')}
-`;
+Experience: ${experienceQuestions.join(', ')}`;
   }
   
   const profileContext = `
-PROFILE CONTEXT (${analysis.completionPercentage}% complete):
-EXISTING: Name=${!!profile.name}, Bio=${!!profile.bio}, Skills=${profile.skills?.length||0}, Experience=${profile.experience?.length||0}, Education=${profile.education?.length||0}
-MISSING: ${analysis.missingFields.slice(0,3).join(', ')}
 
-NEXT FOCUS: ${nextPriority}${industryContext}
+🎯 ANTI-LOOP PROFILE ANALYSIS (${analysis.completionPercentage}% complete):
+✅ ALREADY HAS: ${existingFields.join(', ') || 'Nothing yet'}
+❌ STILL MISSING: ${missingFields.join(', ') || 'All fields complete!'}
 
-STRATEGY:
-- DON'T repeat questions about existing data
-- Ask for SPECIFIC details, not general info  
-- If they mention a skill/job/project, immediately extract ALL related details
-- Focus on gaps: ${analysis.missingFields.slice(0,2).join(' and ')}
-- Use industry-specific questions when relevant
+🎯 NEXT FOCUS: Ask about "${nextFocus}" ONLY
+${industryContext}
 
-REMEMBER: Keep questions under 15 words. Extract maximum info from each response.
-`;
+🚫 CRITICAL LOOP PREVENTION:
+- User already provided: ${existingFields.join(', ')}
+- DO NOT ask about these existing fields again
+- ONLY ask about: ${missingFields.slice(0,2).join(' OR ')}
+- If nothing missing, ask for more details about existing items
 
-  return basePrompt + '\n\n' + profileContext;
+⚡ RESPONSE STRATEGY:
+- Max 15 words in your question
+- Ask ONE specific missing thing
+- Don't repeat any previous questions
+- Build on what they already shared`;
+
+  return basePrompt + profileContext;
 }
 
 /**
