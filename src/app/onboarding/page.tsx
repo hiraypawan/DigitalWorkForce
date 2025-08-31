@@ -32,9 +32,13 @@ export default function OnboardingPage() {
         console.log(`Profile completeness: ${completeness}%`);
       } else {
         console.error('Portfolio fetch failed:', response.status, response.statusText);
+        // Continue even if portfolio API fails
+        setProfileCompleteness(0);
       }
     } catch (error) {
       console.error('Error checking profile completeness:', error);
+      // Set default values if API fails
+      setProfileCompleteness(0);
     } finally {
       setLoading(false);
     }
@@ -54,6 +58,18 @@ export default function OnboardingPage() {
       checkProfileCompleteness();
     }
   }, [status, router, checkProfileCompleteness]);
+
+  // Add a timeout fallback to prevent infinite loading
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (loading) {
+        console.log('Force ending loading state after timeout');
+        setLoading(false);
+      }
+    }, 5000); // 5 second timeout
+
+    return () => clearTimeout(timeout);
+  }, [loading]);
 
   const handleComplete = (data: any) => {
     setExtractedData(data);

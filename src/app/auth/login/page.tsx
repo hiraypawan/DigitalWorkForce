@@ -47,6 +47,8 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
 
+    console.log('Starting login process...', { email: formData.email, callbackUrl });
+
     try {
       const result = await signIn('credentials', {
         email: formData.email,
@@ -54,16 +56,22 @@ export default function LoginPage() {
         redirect: false,
       });
 
+      console.log('Login result:', result);
+
       if (result?.ok) {
-        // Successful login - redirect will be handled by middleware and session check
-        router.push(callbackUrl);
+        console.log('Login successful, redirecting to:', callbackUrl);
+        // Add a small delay to ensure session is established
+        setTimeout(() => {
+          window.location.href = callbackUrl;
+        }, 500);
       } else {
+        console.error('Login failed:', result?.error);
         setError(result?.error || 'Login failed. Please check your credentials.');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Login error:', error);
       setError('Network error. Please try again.');
-    } finally {
       setLoading(false);
     }
   };
