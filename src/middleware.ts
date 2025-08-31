@@ -5,7 +5,7 @@ import { getToken } from 'next-auth/jwt';
 const protectedRoutes = [
   '/dashboard',
   '/company',
-  // TEMPORARILY REMOVED '/onboarding' for testing
+  '/onboarding', // Re-enabled after fixing component issues
   '/api/users',
   '/api/jobs',
   '/api/payments',
