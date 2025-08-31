@@ -124,7 +124,20 @@ export default function ProfilePreview() {
     );
   }
 
-  const { name, bio, skills, experience, projects, education, certifications, achievements, goals, hobbies, contactInfo, completionPercentage } = profileData;
+  const { 
+    name, 
+    bio, 
+    skills, 
+    experience, 
+    projects, 
+    education, 
+    certifications, 
+    achievements, 
+    goals, 
+    hobbies, 
+    contactInfo, 
+    completionPercentage 
+  } = profileData;
 
   // Use the completion percentage from the database
   const displayCompletionPercentage = completionPercentage || 0;
