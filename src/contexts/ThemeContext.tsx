@@ -33,35 +33,35 @@ export interface Theme {
   };
 }
 
-// Modern Dark Theme with Gradients - Professional yet engaging
+// Comfortable Dark Theme - Easy on the eyes, professional and balanced
 export const modernDarkTheme: Theme = {
   id: 'modern-dark',
-  name: 'DigitalWorkForce Modern',
+  name: 'DigitalWorkForce Comfortable',
   colors: {
-    primary: '#3B82F6',
-    primaryHover: '#2563EB',
-    secondary: '#8B5CF6',
-    accent: '#06B6D4',
-    background: '#0F0F23',
-    surface: '#1A1B3A',
-    surfaceHover: '#252653',
-    text: '#FFFFFF',
-    textSecondary: '#E2E8F0',
+    primary: '#60A5FA',    // Softer blue, less harsh
+    primaryHover: '#3B82F6',
+    secondary: '#A78BFA',  // Softer purple
+    accent: '#34D399',     // Softer green-cyan
+    background: '#0F172A', // Warmer dark background
+    surface: '#1E293B',    // Warmer surface
+    surfaceHover: '#334155',
+    text: '#F1F5F9',       // Softer white, less harsh
+    textSecondary: '#CBD5E1',
     textMuted: '#94A3B8',
-    border: '#334155',
-    borderHover: '#475569',
+    border: '#475569',
+    borderHover: '#64748B',
     borderLight: '#64748B',
-    success: '#10B981',
-    warning: '#F59E0B',
-    error: '#EF4444',
-    info: '#3B82F6'
+    success: '#22C55E',    // Softer green
+    warning: '#FBB928',    // Softer yellow
+    error: '#F87171',      // Softer red
+    info: '#60A5FA'
   },
   gradients: {
-    primary: 'from-blue-600 via-blue-700 to-indigo-800',
-    secondary: 'from-purple-600 via-violet-700 to-indigo-800',
-    accent: 'from-cyan-500 via-blue-600 to-indigo-700',
-    background: 'linear-gradient(135deg, #0F0F23, #1A1B3A)',
-    card: 'linear-gradient(135deg, #1A1B3A, #252653)'
+    primary: 'from-slate-900 via-slate-800 to-slate-900',
+    secondary: 'from-slate-800 via-slate-700 to-slate-800',
+    accent: 'from-slate-900 via-blue-900/20 to-slate-900',
+    background: 'linear-gradient(135deg, #0F172A, #1E293B, #0F172A)',
+    card: 'linear-gradient(135deg, #1E293B, #334155)'
   }
 };
 

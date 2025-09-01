@@ -92,28 +92,28 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-black">
+      <section className="relative py-24 md:py-32 lg:py-40 flex items-center justify-center overflow-hidden bg-black">
         {/* Animated Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-green-900/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-purple-900/10 to-green-900/10"></div>
           
-          {/* Glowing Orbs */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-          <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-green-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+          {/* Subtle Glowing Orbs */}
+          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute bottom-1/4 left-1/2 w-72 h-72 bg-green-500/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
           
-          {/* Grid Pattern */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+          {/* Subtle Grid Pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.01)_1px,transparent_1px)] bg-[size:60px_60px]"></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
           {/* Main Headline */}
           <div className="mb-8">
-            <h1 className="text-7xl md:text-8xl lg:text-9xl font-black mb-6 leading-none">
-              <span className="block bg-gradient-to-r from-white via-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              <span className="block bg-gradient-to-r from-slate-200 via-blue-400 to-purple-400 bg-clip-text text-transparent">
                 BUILDING THE
               </span>
-              <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent glow-text">
+              <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent">
                 FUTURE
               </span>
               <span className="block bg-gradient-to-r from-purple-400 via-green-400 to-blue-400 bg-clip-text text-transparent">
@@ -122,11 +122,11 @@ export default function Home() {
             </h1>
           </div>
           
-          <div className="mb-12">
-            <p className="text-2xl md:text-3xl text-gray-300 mb-4 font-light">
+          <div className="mb-10">
+            <p className="text-xl md:text-2xl text-gray-300 mb-4 font-light">
               Get matched with <span className="text-blue-400 font-semibold">real projects</span>. Work, earn, grow.
             </p>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
               Unlike traditional hiring platforms, we connect skilled professionals with MNCs and service-based companies for instant workforce activation.
             </p>
           </div>
@@ -192,13 +192,13 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold text-white mb-6">
+      <section className="py-16 bg-gray-900">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Introducing <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">AI Matching</span>
             </h2>
-            <p className="text-xl text-gray-300">See only the projects you want to join</p>
+            <p className="text-lg text-gray-300">See only the projects you want to join</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -248,26 +248,26 @@ export default function Home() {
       </section>
 
       {/* Trust Builders */}
-      <section className="py-20 bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="mb-16">
-              <p className="text-gray-400 mb-4">Top companies hiring right now &rarr; don&apos;t miss out</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <section className="py-16 bg-black">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="mb-12">
+              <p className="text-gray-400 mb-6">Top companies hiring right now → don&apos;t miss out</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
               <div>
-                <div className="text-4xl font-bold text-white mb-2">2,000+</div>
-                <div className="text-gray-400">Employees matched with projects</div>
+                <div className="text-3xl font-bold text-white mb-2">2,000+</div>
+                <div className="text-gray-400 text-sm">Employees matched</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-2">150+</div>
-                <div className="text-gray-400">MNC & Service Companies</div>
+                <div className="text-3xl font-bold text-white mb-2">150+</div>
+                <div className="text-gray-400 text-sm">MNC & Service Companies</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-2">₹2Cr+</div>
-                <div className="text-gray-400">Paid to Employees</div>
+                <div className="text-3xl font-bold text-white mb-2">₹2Cr+</div>
+                <div className="text-gray-400 text-sm">Paid to Employees</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-2">4.9★</div>
-                <div className="text-gray-400">Platform Rating</div>
+                <div className="text-3xl font-bold text-white mb-2">4.9★</div>
+                <div className="text-gray-400 text-sm">Platform Rating</div>
               </div>
             </div>
           </div>
@@ -275,13 +275,13 @@ export default function Home() {
       </section>
 
       {/* AI Chat Preview */}
-      <section className="py-20 bg-gray-900">
+      <section className="py-16 bg-gray-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Meet Your <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">AI Career Guide</span>
             </h2>
-            <p className="text-xl text-gray-300">Talk to your AI career guide → get matched instantly</p>
+            <p className="text-lg text-gray-300">Talk to your AI career guide → get matched instantly</p>
           </div>
           
           <div className="relative max-w-2xl mx-auto">
@@ -331,28 +331,28 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-black relative overflow-hidden">
+      <section className="py-16 bg-black relative overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-blue-500/3 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-purple-500/3 rounded-full blur-3xl"></div>
         </div>
         
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Don&apos;t wait — the <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">future of work</span> is already here.
           </h2>
-          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
             Join the AI-powered workforce revolution. Start earning, growing, and building your future today.
           </p>
           
           <Link
             href="/auth/register"
-            className="group relative inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-12 py-6 rounded-2xl font-bold text-xl hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105"
+            className="group relative inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105"
           >
-            <span className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-300"></span>
+            <span className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-300"></span>
             <span className="relative">Sign Up Free</span>
-            <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform relative" />
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative" />
           </Link>
         </div>
       </section>
