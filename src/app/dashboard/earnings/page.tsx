@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useTheme } from '@/contexts/ThemeContext';
 import { 
   ArrowLeft, 
   DollarSign, 
@@ -33,6 +34,7 @@ interface Transaction {
 }
 
 export default function Earnings() {
+  const { currentTheme, formatCurrency } = useTheme();
   const [earnings, setEarnings] = useState<EarningsData>({
     totalEarnings: 0,
     thisMonth: 0,
@@ -71,25 +73,8 @@ export default function Earnings() {
         });
       }
       
-      // Mock transaction data
-      setTransactions([
-        {
-          id: '1',
-          date: new Date().toISOString().split('T')[0],
-          description: 'Task completion payment',
-          amount: 500,
-          type: 'earning',
-          status: 'completed',
-        },
-        {
-          id: '2',
-          date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
-          description: 'SIP Investment',
-          amount: 1000,
-          type: 'sip',
-          status: 'completed',
-        },
-      ]);
+      // Set empty transactions array - no demo data
+      setTransactions([]);
       
     } catch (error) {
       console.error('Failed to fetch earnings data:', error);
@@ -113,33 +98,29 @@ export default function Earnings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div 
+        className="min-h-screen flex items-center justify-center transition-colors duration-300"
+        style={{ background: currentTheme.gradients.background }}
+      >
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <div 
+            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+            style={{ background: currentTheme.gradients.card }}
+          >
+            <div 
+              className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
+              style={{ borderColor: currentTheme.colors.primary }}
+            ></div>
           </div>
-          <p className="text-gray-300">Loading...</p>
+          <p style={{ color: currentTheme.colors.textMuted }}>Loading earnings...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Header */}
-      <div className="bg-black/90 backdrop-blur-sm border-b border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <h1 className="text-2xl font-bold text-white glow-text">Earnings & Investments</h1>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Earnings Overview */}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ background: currentTheme.gradients.background, minHeight: '100vh' }}>
+      {/* Earnings Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="group relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
@@ -351,7 +332,6 @@ export default function Earnings() {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

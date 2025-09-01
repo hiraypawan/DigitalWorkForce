@@ -27,49 +27,25 @@ export default function BrowseProjects() {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
-    // Simulate loading projects
-    setTimeout(() => {
-      setProjects([
-        {
-          id: '1',
-          title: 'React Dashboard Development',
-          description: 'Looking for an experienced React developer to build a modern admin dashboard with data visualization.',
-          budget: '$500-1000',
-          duration: '2-3 weeks',
-          location: 'Remote',
-          skills: ['React', 'TypeScript', 'Chart.js', 'Tailwind CSS'],
-          postedBy: 'TechCorp Solutions',
-          rating: 4.8,
-          applicants: 12,
-          urgent: true
-        },
-        {
-          id: '2',
-          title: 'Mobile App UI/UX Design',
-          description: 'Need a creative designer to create modern UI/UX for our fitness tracking mobile application.',
-          budget: '$300-600',
-          duration: '1-2 weeks',
-          location: 'Remote',
-          skills: ['Figma', 'Mobile Design', 'Prototyping', 'User Research'],
-          postedBy: 'FitLife Startup',
-          rating: 4.5,
-          applicants: 8
-        },
-        {
-          id: '3',
-          title: 'WordPress Site Development',
-          description: 'Build a professional business website using WordPress with custom theme and plugins.',
-          budget: '$200-400',
-          duration: '1 week',
-          location: 'Remote',
-          skills: ['WordPress', 'PHP', 'CSS', 'SEO'],
-          postedBy: 'Local Business Group',
-          rating: 4.2,
-          applicants: 15
-        }
-      ]);
-      setLoading(false);
-    }, 1000);
+    // Fetch real projects data
+    const fetchProjects = async () => {
+      try {
+        // TODO: Replace with actual API call
+        // const response = await fetch('/api/projects');
+        // const data = await response.json();
+        // setProjects(data);
+        
+        // Set empty array - no demo data
+        setProjects([]);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        setProjects([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProjects();
   }, []);
 
   const categories = [
@@ -166,8 +142,53 @@ export default function BrowseProjects() {
       </div>
 
       {/* Project Cards */}
-      <div className="space-y-4">
-        {projects.map(project => (
+      {projects.length === 0 ? (
+        <div className="glass-card text-center py-16">
+          <div 
+            className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center"
+            style={{ 
+              backgroundColor: `${currentTheme.colors.primary}15`,
+              color: currentTheme.colors.primary
+            }}
+          >
+            <Search className="w-10 h-10" />
+          </div>
+          
+          <h3 
+            className="text-2xl font-semibold mb-4"
+            style={{ color: currentTheme.colors.text }}
+          >
+            No Projects Available
+          </h3>
+          
+          <p 
+            className="text-lg mb-8 max-w-md mx-auto"
+            style={{ color: currentTheme.colors.textMuted }}
+          >
+            There are currently no projects available. Check back soon for new opportunities!
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/ai-chat"
+              className="btn-primary inline-flex items-center gap-2 px-8 py-3"
+            >
+              <Bot className="w-5 h-5" />
+              Get AI Recommendations
+            </Link>
+            
+            <Link 
+              href="/dashboard/profile"
+              className="btn-secondary inline-flex items-center gap-2 px-8 py-3"
+            >
+              <Briefcase className="w-5 h-5" />
+              Update Profile
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {projects.map(project => (
           <div key={project.id} className="glass-card p-6 group hover:scale-102 transition-all duration-300 relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-0 group-hover:opacity-25 transition duration-300"></div>
             <div className="relative">
@@ -264,14 +285,17 @@ export default function BrowseProjects() {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
 
-      {/* Load More */}
-      <div className="text-center mt-8">
-        <button className="btn-primary px-8 py-4 glow-button">
-          Load More Projects
-        </button>
-      </div>
+      {/* Load More - only show if there are projects */}
+      {projects.length > 0 && (
+        <div className="text-center mt-8">
+          <button className="btn-primary px-8 py-4 glow-button">
+            Load More Projects
+          </button>
+        </div>
+      )}
     </div>
   );
 }
