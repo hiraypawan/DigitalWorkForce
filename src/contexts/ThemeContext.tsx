@@ -18,6 +18,7 @@ export interface Theme {
     textMuted: string;
     border: string;
     borderHover: string;
+    borderLight: string;
     success: string;
     warning: string;
     error: string;
@@ -49,6 +50,7 @@ export const modernDarkTheme: Theme = {
     textMuted: '#94A3B8',
     border: '#334155',
     borderHover: '#475569',
+    borderLight: '#64748B',
     success: '#10B981',
     warning: '#F59E0B',
     error: '#EF4444',
