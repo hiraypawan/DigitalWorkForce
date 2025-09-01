@@ -68,6 +68,33 @@ export async function GET(request: NextRequest) {
       await portfolio.save();
     }
 
+    // Recalculate completion percentage for accurate display
+    const profileData = {
+      name: portfolio.name,
+      title: portfolio.title,
+      bio: portfolio.bio,
+      location: portfolio.location,
+      availability: portfolio.availability,
+      education: portfolio.education,
+      experience: portfolio.experience,
+      skills: portfolio.skills,
+      projects: portfolio.projects,
+      certifications: portfolio.certifications,
+      achievements: portfolio.achievements,
+      goals: portfolio.goals,
+      hobbies: portfolio.hobbies,
+      contactInfo: portfolio.contactInfo,
+      portfolioSamples: portfolio.portfolioSamples,
+      workPreferences: portfolio.workPreferences,
+      endorsements: portfolio.endorsements,
+      onlineCourses: portfolio.onlineCourses,
+      testimonials: portfolio.testimonials
+    };
+    
+    const analysis = analyzeProfileCompletion(profileData);
+    portfolio.completionPercentage = analysis.completionPercentage;
+    await portfolio.save();
+
     // Ensure backward compatibility by transforming data if needed
     const compatiblePortfolio = {
       ...portfolio.toObject(),
@@ -396,7 +423,7 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// DELETE /api/portfolio - Delete specific portfolio entries
+// DELETE /api/portfolio - Delete specific portfolio entries or clear entire profile
 export async function DELETE(request: NextRequest) {
   try {
     // Get session using NextAuth
@@ -407,7 +434,9 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { field, index } = await request.json();
+    // Check if request has body
+    const requestText = await request.text();
+    const hasBody = requestText.trim().length > 0;
     
     await dbConnect();
     
@@ -417,6 +446,32 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Portfolio not found' }, { status: 404 });
     }
 
+    // If no body, clear entire profile
+    if (!hasBody) {
+      portfolio.name = '';
+      portfolio.bio = '';
+      portfolio.education = [];
+      portfolio.experience = [];
+      portfolio.skills = [];
+      portfolio.projects = [];
+      portfolio.certifications = [];
+      portfolio.achievements = [];
+      portfolio.goals = [];
+      portfolio.hobbies = [];
+      portfolio.contactInfo = {};
+      portfolio.preferences = {};
+      portfolio.completionPercentage = 0;
+      portfolio.lastUpdated = new Date();
+      
+      await portfolio.save();
+      console.log('Entire portfolio cleared for user:', userId);
+      
+      return NextResponse.json(portfolio);
+    }
+
+    // Otherwise, handle specific item deletion
+    const { field, index } = JSON.parse(requestText);
+    
     // Remove specific item based on field and index
     if (field && index !== undefined) {
       if (Array.isArray(portfolio[field as keyof IPortfolio])) {

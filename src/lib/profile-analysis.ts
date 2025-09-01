@@ -217,9 +217,9 @@ export function analyzeProfileCompletion(profile: ProfileData): ProfileAnalysis 
   
   // Enhanced completion percentage calculation with weighted scoring
   let completed = 0;
-  let total = 12; // Updated total for comprehensive profile
+  let total = 16; // Total points possible
   
-  // Core fields (weight 2x)
+  // Core fields (weight 2x) - most important for basic profile
   if (profile.name?.trim()) completed += 2;
   if (profile.bio?.trim()) completed += 2;
   if (profile.title?.trim()) completed += 1;
@@ -244,9 +244,8 @@ export function analyzeProfileCompletion(profile: ProfileData): ProfileAnalysis 
   // Personal touch
   if (profile.hobbies && profile.hobbies.length > 0) completed += 1;
   
-  // Adjust total based on actual maximum possible score
-  total = 16;
-  const completionPercentage = Math.round((completed / total) * 100);
+  // Ensure we never show more than 100% or negative percentages
+  const completionPercentage = Math.max(0, Math.min(100, Math.round((completed / total) * 100)));
   
   // Determine priority based on completion and missing critical fields
   let priority: 'high' | 'medium' | 'low' = 'high';

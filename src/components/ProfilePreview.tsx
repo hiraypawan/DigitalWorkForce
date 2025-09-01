@@ -166,54 +166,23 @@ export default function ProfilePreview() {
     if (!profileData) return;
     
     try {
-      const updatedData = { ...profileData };
-      
-      switch (section) {
-        case 'skills':
-          updatedData.skills = updatedData.skills.filter((_, i) => i !== index);
-          break;
-        case 'experience':
-          updatedData.experience = updatedData.experience.filter((_, i) => i !== index);
-          break;
-        case 'projects':
-          updatedData.projects = updatedData.projects.filter((_, i) => i !== index);
-          break;
-        case 'education':
-          updatedData.education = updatedData.education.filter((_, i) => i !== index);
-          break;
-        case 'certifications':
-          updatedData.certifications = updatedData.certifications.filter((_, i) => i !== index);
-          break;
-        case 'achievements':
-          updatedData.achievements = updatedData.achievements.filter((_, i) => i !== index);
-          break;
-        case 'goals':
-          updatedData.goals = updatedData.goals.filter((_, i) => i !== index);
-          break;
-        case 'hobbies':
-          updatedData.hobbies = updatedData.hobbies.filter((_, i) => i !== index);
-          break;
-        default:
-          return;
-      }
-      
       const response = await fetch('/api/portfolio', {
-        method: 'PUT',
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify({ field: section, index }),
       });
       
       if (response.ok) {
         // Refresh the profile data
         mutate();
       } else {
-        console.error('Failed to update profile');
+        console.error('Failed to delete item');
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('Error deleting item:', error);
     }
   };
 

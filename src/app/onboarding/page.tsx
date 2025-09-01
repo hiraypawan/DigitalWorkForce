@@ -25,7 +25,8 @@ export default function OnboardingPage() {
       if (response.ok) {
         const data = await response.json();
         console.log('Portfolio data:', data);
-        const completeness = data.completionPercentage || 0;
+        // Ensure we always get an accurate completion percentage
+        const completeness = Math.max(0, data.completionPercentage || 0);
         setProfileCompleteness(completeness);
         
         // Don't auto-redirect on onboarding page, let user complete the flow
