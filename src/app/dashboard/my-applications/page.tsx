@@ -59,14 +59,14 @@ export default function MyApplicationsPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ backgroundColor: currentTheme.colors.background }}>
       {/* Header */}
-      <div className="mb-8">
+      <div className="professional-card p-6 mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div 
             className="w-10 h-10 rounded-xl flex items-center justify-center"
             style={{ 
-              backgroundColor: `${currentTheme.colors.primary}20`,
+              backgroundColor: `${currentTheme.colors.primary}15`,
               color: currentTheme.colors.primary
             }}
           >
@@ -89,18 +89,12 @@ export default function MyApplicationsPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div 
-          className="p-4 rounded-xl border"
-          style={{
-            backgroundColor: `${currentTheme.colors.surface}80`,
-            borderColor: currentTheme.colors.border
-          }}
-        >
+        <div className="professional-card p-4">
           <div className="flex items-center gap-3">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{ 
-                backgroundColor: `${currentTheme.colors.primary}20`,
+                backgroundColor: `${currentTheme.colors.primary}15`,
                 color: currentTheme.colors.primary
               }}
             >
@@ -123,19 +117,13 @@ export default function MyApplicationsPage() {
           </div>
         </div>
 
-        <div 
-          className="p-4 rounded-xl border"
-          style={{
-            backgroundColor: `${currentTheme.colors.surface}80`,
-            borderColor: currentTheme.colors.border
-          }}
-        >
+        <div className="professional-card p-4">
           <div className="flex items-center gap-3">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{ 
-                backgroundColor: `${currentTheme.colors.secondary}20`,
-                color: currentTheme.colors.secondary
+                backgroundColor: `${currentTheme.colors.primary}15`,
+                color: currentTheme.colors.primary
               }}
             >
               <Clock className="w-4 h-4" />
@@ -157,13 +145,7 @@ export default function MyApplicationsPage() {
           </div>
         </div>
 
-        <div 
-          className="p-4 rounded-xl border"
-          style={{
-            backgroundColor: `${currentTheme.colors.surface}80`,
-            borderColor: currentTheme.colors.border
-          }}
-        >
+        <div className="professional-card p-4">
           <div className="flex items-center gap-3">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -191,15 +173,15 @@ export default function MyApplicationsPage() {
           </div>
         </div>
 
-        <div 
-          className="p-4 rounded-xl border"
-          style={{
-            backgroundColor: `${currentTheme.colors.surface}80`,
-            borderColor: currentTheme.colors.border
-          }}
-        >
+        <div className="professional-card p-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-green-500/20 text-green-400">
+            <div 
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ 
+                backgroundColor: '#10B98120',
+                color: '#10B981'
+              }}
+            >
               <CheckCircle className="w-4 h-4" />
             </div>
             <div>
@@ -221,18 +203,11 @@ export default function MyApplicationsPage() {
       </div>
 
       {/* Empty State */}
-      <div 
-        className="text-center py-16 rounded-2xl border"
-        style={{
-          backgroundColor: `${currentTheme.colors.surface}40`,
-          borderColor: currentTheme.colors.border,
-          background: `linear-gradient(135deg, ${currentTheme.colors.surface}40, ${currentTheme.colors.primary}05)`
-        }}
-      >
+      <div className="professional-card text-center py-16">
         <div 
           className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center"
           style={{ 
-            backgroundColor: `${currentTheme.colors.primary}10`,
+            backgroundColor: `${currentTheme.colors.primary}15`,
             color: currentTheme.colors.primary
           }}
         >
@@ -256,11 +231,7 @@ export default function MyApplicationsPage() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link 
             href="/dashboard/browse-projects"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: currentTheme.colors.primary,
-              color: 'white'
-            }}
+            className="btn-primary inline-flex items-center gap-2 px-8 py-3"
           >
             <Search className="w-5 h-5" />
             Browse Projects
@@ -269,12 +240,7 @@ export default function MyApplicationsPage() {
           
           <Link 
             href="/dashboard/profile"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}80`,
-              color: currentTheme.colors.text,
-              border: `1px solid ${currentTheme.colors.border}`
-            }}
+            className="btn-secondary inline-flex items-center gap-2 px-8 py-3"
           >
             <Building className="w-5 h-5" />
             Complete Profile
@@ -283,17 +249,11 @@ export default function MyApplicationsPage() {
 
         {/* Tips Section */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <div 
-            className="p-4 rounded-xl border text-left"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}60`,
-              borderColor: currentTheme.colors.border
-            }}
-          >
+          <div className="professional-card p-4 text-left">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
               style={{ 
-                backgroundColor: `${currentTheme.colors.primary}20`,
+                backgroundColor: `${currentTheme.colors.primary}15`,
                 color: currentTheme.colors.primary
               }}
             >
@@ -313,18 +273,12 @@ export default function MyApplicationsPage() {
             </p>
           </div>
 
-          <div 
-            className="p-4 rounded-xl border text-left"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}60`,
-              borderColor: currentTheme.colors.border
-            }}
-          >
+          <div className="professional-card p-4 text-left">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
               style={{ 
-                backgroundColor: `${currentTheme.colors.secondary}20`,
-                color: currentTheme.colors.secondary
+                backgroundColor: `${currentTheme.colors.primary}15`,
+                color: currentTheme.colors.primary
               }}
             >
               <Plus className="w-4 h-4" />
@@ -343,13 +297,7 @@ export default function MyApplicationsPage() {
             </p>
           </div>
 
-          <div 
-            className="p-4 rounded-xl border text-left"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}60`,
-              borderColor: currentTheme.colors.border
-            }}
-          >
+          <div className="professional-card p-4 text-left">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
               style={{ 
