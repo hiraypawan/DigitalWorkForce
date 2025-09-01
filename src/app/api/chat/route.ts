@@ -427,8 +427,20 @@ Respond in JSON format as specified above.`;
           portfolio.name = updateData.name.trim();
         }
 
+        if (updateData.title && typeof updateData.title === 'string') {
+          portfolio.title = updateData.title.trim();
+        }
+
         if (updateData.bio && typeof updateData.bio === 'string') {
           portfolio.bio = updateData.bio.trim();
+        }
+
+        if (updateData.location && typeof updateData.location === 'string') {
+          portfolio.location = updateData.location.trim();
+        }
+
+        if (updateData.availability && typeof updateData.availability === 'string') {
+          portfolio.availability = updateData.availability as 'Full-time' | 'Part-time' | 'Contract' | 'Freelance';
         }
 
         // Handle education
@@ -547,6 +559,22 @@ Respond in JSON format as specified above.`;
             });
           }
         });
+
+        // Handle contact info
+        if (updateData.contactInfo && typeof updateData.contactInfo === 'object') {
+          portfolio.contactInfo = {
+            ...portfolio.contactInfo,
+            ...updateData.contactInfo
+          };
+        }
+
+        // Handle work preferences
+        if (updateData.workPreferences && typeof updateData.workPreferences === 'object') {
+          portfolio.workPreferences = {
+            ...portfolio.workPreferences,
+            ...updateData.workPreferences
+          };
+        }
 
         // Calculate completion percentage immediately after update
         const updatedProfileData = {

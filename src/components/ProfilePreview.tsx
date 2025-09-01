@@ -9,6 +9,7 @@ import { User, Mail, Star, Briefcase, Code, ExternalLink, MapPin, X, Trash2, Pho
 interface ProfileData {
   userId: string;
   name: string;
+  title?: string;
   bio: string;
   education: {
     degree: string;
@@ -127,6 +128,7 @@ export default function ProfilePreview() {
 
   const { 
     name, 
+    title,
     bio, 
     skills, 
     experience, 
@@ -223,6 +225,9 @@ export default function ProfilePreview() {
           <h3 className="text-lg font-semibold text-white">
             {name || session?.user?.name || 'Complete your profile'}
           </h3>
+          {title && (
+            <p className="text-blue-300 text-sm font-medium mb-1">{title}</p>
+          )}
           <div className="flex items-center gap-2 text-sm text-gray-400">
             <Mail className="w-4 h-4" />
             {contactInfo?.email || session?.user?.email}
