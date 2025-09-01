@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
-import ThemeSwitcher from './ThemeSwitcher';
+import CurrencySwitcher from './ThemeSwitcher';
 import {
   Home,
   User,
@@ -149,9 +149,9 @@ export default function DashboardHeader() {
 
   return (
     <header 
-      className="backdrop-blur-lg border-b sticky top-0 z-50"
+      className="border-b sticky top-0 z-50 shadow-sm"
       style={{
-        backgroundColor: `${currentTheme.colors.surface}90`,
+        backgroundColor: currentTheme.colors.primary,
         borderColor: currentTheme.colors.border
       }}
     >
@@ -162,24 +162,24 @@ export default function DashboardHeader() {
             <Link 
               href="/dashboard" 
               className="text-2xl font-bold transition-colors hover:opacity-80"
-              style={{ color: currentTheme.colors.primary }}
+              style={{ color: 'white' }}
             >
-              Digital Workforce
+              TalentSync
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-2">
+            <nav className="hidden lg:flex space-x-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-white/10"
                     style={{
-                      backgroundColor: isActive(item.href) ? `${currentTheme.colors.primary}20` : 'transparent',
-                      color: isActive(item.href) ? currentTheme.colors.primary : currentTheme.colors.text,
-                      border: isActive(item.href) ? `1px solid ${currentTheme.colors.primary}40` : '1px solid transparent'
+                      backgroundColor: isActive(item.href) ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+                      color: 'white',
+                      borderBottom: isActive(item.href) ? `2px solid ${currentTheme.colors.accent}` : '2px solid transparent'
                     }}
                   >
                     <Icon className="w-4 h-4" />
@@ -190,25 +190,23 @@ export default function DashboardHeader() {
             </nav>
           </div>
 
-          {/* Right side - Theme switcher, notifications, and user menu */}
+          {/* Right side - Currency switcher, notifications, and user menu */}
           <div className="flex items-center gap-2">
-            {/* Theme Switcher */}
+            {/* Currency Switcher */}
             <div className="hidden md:block">
-              <ThemeSwitcher />
+              <CurrencySwitcher />
             </div>
 
             {/* Notifications */}
             <button 
-              className="relative p-2 rounded-lg transition-all duration-200 hover:scale-105"
+              className="relative p-2 rounded-lg transition-all duration-200 hover:bg-white/10"
               style={{
-                backgroundColor: `${currentTheme.colors.surface}60`,
-                border: `1px solid ${currentTheme.colors.border}`,
-                color: currentTheme.colors.text
+                color: 'white'
               }}
             >
               <Bell className="w-5 h-5" />
               <span 
-                className="absolute top-1 right-1 w-2 h-2 rounded-full animate-pulse"
+                className="absolute top-1 right-1 w-2 h-2 rounded-full"
                 style={{ backgroundColor: currentTheme.colors.accent }}
               ></span>
             </button>
@@ -217,16 +215,14 @@ export default function DashboardHeader() {
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-2 rounded-lg transition-all duration-200 hover:scale-105"
+                className="flex items-center gap-2 p-2 rounded-lg transition-all duration-200 hover:bg-white/10"
                 style={{
-                  backgroundColor: `${currentTheme.colors.surface}60`,
-                  border: `1px solid ${currentTheme.colors.border}`,
-                  color: currentTheme.colors.text
+                  color: 'white'
                 }}
               >
                 <div 
                   className="w-8 h-8 rounded-full flex items-center justify-center"
-                  style={{ background: currentTheme.gradients.card }}
+                  style={{ backgroundColor: currentTheme.colors.accent }}
                 >
                   {userData?.avatar ? (
                     <Image src={userData.avatar} alt="Avatar" width={32} height={32} className="w-8 h-8 rounded-full" />
@@ -317,9 +313,9 @@ export default function DashboardHeader() {
               backgroundColor: `${currentTheme.colors.surface}95`
             }}
           >
-            {/* Theme switcher for mobile */}
+            {/* Currency switcher for mobile */}
             <div className="md:hidden px-4 py-2 border-b" style={{ borderColor: currentTheme.colors.border }}>
-              <ThemeSwitcher />
+              <CurrencySwitcher />
             </div>
             <nav className="px-4 py-2 space-y-1">
               {navItems.map((item) => {

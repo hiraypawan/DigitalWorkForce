@@ -32,16 +32,16 @@ export default function DashboardPage() {
     return (
       <div 
         className="min-h-screen flex items-center justify-center transition-colors duration-300"
-        style={{ background: currentTheme.gradients.background }}
+        style={{ backgroundColor: currentTheme.colors.background }}
       >
         <div className="text-center">
           <div 
             className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-            style={{ background: currentTheme.gradients.card }}
+            style={{ backgroundColor: currentTheme.colors.primary }}
           >
             <div 
               className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
-              style={{ borderColor: currentTheme.colors.primary }}
+              style={{ borderColor: 'white' }}
             ></div>
           </div>
           <p style={{ color: currentTheme.colors.textMuted }}>Loading dashboard...</p>
@@ -55,14 +55,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ backgroundColor: currentTheme.colors.background }}>
       {/* Welcome Section */}
-      <div className="mb-8">
+      <div className="professional-card p-6 mb-8">
         <h1 
-          className="text-4xl font-bold mb-4"
+          className="text-3xl font-bold mb-2"
           style={{ color: currentTheme.colors.text }}
         >
-          Welcome back, {session?.user?.name?.split(' ')[0] || 'Employee'}
+          Welcome back, {session?.user?.name?.split(' ')[0] || 'Employee'} 👋
         </h1>
         <p 
           className="text-lg"
@@ -75,20 +75,13 @@ export default function DashboardPage() {
       {/* Quick Actions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {/* Browse Projects */}
-        <Link href="/dashboard/browse-projects" className="group">
-          <div 
-            className="p-6 rounded-2xl border transition-all duration-300 hover:scale-105 hover:shadow-xl"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}80`,
-              borderColor: currentTheme.colors.border,
-              boxShadow: `0 4px 6px -1px ${currentTheme.colors.primary}10`
-            }}
-          >
+        <Link href="/dashboard/browse-projects" className="group block">
+          <div className="professional-card p-6 group-hover:scale-105 transition-transform duration-200">
             <div className="flex items-center gap-4 mb-4">
               <div 
                 className="w-12 h-12 rounded-xl flex items-center justify-center"
                 style={{ 
-                  backgroundColor: `${currentTheme.colors.primary}20`,
+                  backgroundColor: `${currentTheme.colors.primary}15`,
                   color: currentTheme.colors.primary
                 }}
               >
@@ -102,14 +95,14 @@ export default function DashboardPage() {
               </h3>
             </div>
             <p 
-              className="text-sm mb-4"
+              className="text-sm mb-4 leading-relaxed"
               style={{ color: currentTheme.colors.textMuted }}
             >
               Discover new opportunities from top companies and apply to projects that match your skills.
             </p>
             <div 
               className="inline-flex items-center text-sm font-medium"
-              style={{ color: currentTheme.colors.primary }}
+              style={{ color: currentTheme.colors.accent }}
             >
               Explore opportunities →
             </div>
@@ -117,21 +110,14 @@ export default function DashboardPage() {
         </Link>
 
         {/* My Applications */}
-        <Link href="/dashboard/my-applications" className="group">
-          <div 
-            className="p-6 rounded-2xl border transition-all duration-300 hover:scale-105 hover:shadow-xl"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}80`,
-              borderColor: currentTheme.colors.border,
-              boxShadow: `0 4px 6px -1px ${currentTheme.colors.secondary}10`
-            }}
-          >
+        <Link href="/dashboard/my-applications" className="group block">
+          <div className="professional-card p-6 group-hover:scale-105 transition-transform duration-200">
             <div className="flex items-center gap-4 mb-4">
               <div 
                 className="w-12 h-12 rounded-xl flex items-center justify-center"
                 style={{ 
-                  backgroundColor: `${currentTheme.colors.secondary}20`,
-                  color: currentTheme.colors.secondary
+                  backgroundColor: `${currentTheme.colors.primary}15`,
+                  color: currentTheme.colors.primary
                 }}
               >
                 <FileText className="w-6 h-6" />
@@ -144,14 +130,14 @@ export default function DashboardPage() {
               </h3>
             </div>
             <p 
-              className="text-sm mb-4"
+              className="text-sm mb-4 leading-relaxed"
               style={{ color: currentTheme.colors.textMuted }}
             >
               Track the status of your project applications and manage your active submissions.
             </p>
             <div 
               className="inline-flex items-center text-sm font-medium"
-              style={{ color: currentTheme.colors.secondary }}
+              style={{ color: currentTheme.colors.accent }}
             >
               View applications →
             </div>
@@ -159,21 +145,14 @@ export default function DashboardPage() {
         </Link>
 
         {/* Messages */}
-        <Link href="/dashboard/messages" className="group">
-          <div 
-            className="p-6 rounded-2xl border transition-all duration-300 hover:scale-105 hover:shadow-xl"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}80`,
-              borderColor: currentTheme.colors.border,
-              boxShadow: `0 4px 6px -1px ${currentTheme.colors.accent}10`
-            }}
-          >
+        <Link href="/dashboard/messages" className="group block">
+          <div className="professional-card p-6 group-hover:scale-105 transition-transform duration-200">
             <div className="flex items-center gap-4 mb-4">
               <div 
                 className="w-12 h-12 rounded-xl flex items-center justify-center"
                 style={{ 
-                  backgroundColor: `${currentTheme.colors.accent}20`,
-                  color: currentTheme.colors.accent
+                  backgroundColor: `${currentTheme.colors.primary}15`,
+                  color: currentTheme.colors.primary
                 }}
               >
                 <MessageSquare className="w-6 h-6" />
@@ -186,7 +165,7 @@ export default function DashboardPage() {
               </h3>
             </div>
             <p 
-              className="text-sm mb-4"
+              className="text-sm mb-4 leading-relaxed"
               style={{ color: currentTheme.colors.textMuted }}
             >
               Communicate with potential employers and collaborate on active projects.
@@ -204,18 +183,11 @@ export default function DashboardPage() {
       {/* Profile & Earnings Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Profile Card */}
-        <div 
-          className="p-6 rounded-2xl border"
-          style={{
-            backgroundColor: `${currentTheme.colors.surface}80`,
-            borderColor: currentTheme.colors.border,
-            background: currentTheme.gradients.card
-          }}
-        >
+        <div className="professional-card p-6">
           <div className="flex items-center gap-4 mb-6">
             <div 
               className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl"
-              style={{ background: currentTheme.gradients.card }}
+              style={{ backgroundColor: currentTheme.colors.accent }}
             >
               {session?.user?.name?.charAt(0) || 'U'}
             </div>
@@ -236,12 +208,7 @@ export default function DashboardPage() {
           </div>
           <Link 
             href="/dashboard/profile"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: `${currentTheme.colors.primary}20`,
-              color: currentTheme.colors.primary,
-              border: `1px solid ${currentTheme.colors.primary}40`
-            }}
+            className="btn-secondary inline-flex items-center gap-2"
           >
             <User className="w-4 h-4" />
             Edit Profile
@@ -249,19 +216,13 @@ export default function DashboardPage() {
         </div>
 
         {/* Earnings Overview */}
-        <div 
-          className="p-6 rounded-2xl border"
-          style={{
-            backgroundColor: `${currentTheme.colors.surface}80`,
-            borderColor: currentTheme.colors.border
-          }}
-        >
+        <div className="professional-card p-6">
           <div className="flex items-center gap-4 mb-6">
             <div 
               className="w-12 h-12 rounded-xl flex items-center justify-center"
               style={{ 
-                backgroundColor: `${currentTheme.colors.secondary}20`,
-                color: currentTheme.colors.secondary
+                backgroundColor: `${currentTheme.colors.primary}15`,
+                color: currentTheme.colors.primary
               }}
             >
               <DollarSign className="w-6 h-6" />
@@ -281,33 +242,28 @@ export default function DashboardPage() {
               </p>
             </div>
           </div>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center py-2">
               <span style={{ color: currentTheme.colors.textMuted }}>Total Earned</span>
               <span 
-                className="font-semibold"
-                style={{ color: currentTheme.colors.text }}
+                className="font-semibold text-lg"
+                style={{ color: currentTheme.colors.accent }}
               >
                 {formatCurrency(0)}
               </span>
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center py-2">
               <span style={{ color: currentTheme.colors.textMuted }}>This Month</span>
               <span 
-                className="font-semibold"
-                style={{ color: currentTheme.colors.text }}
+                className="font-semibold text-lg"
+                style={{ color: currentTheme.colors.accent }}
               >
                 {formatCurrency(0)}
               </span>
             </div>
             <Link 
               href="/dashboard/earnings"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 hover:scale-105"
-              style={{
-                backgroundColor: `${currentTheme.colors.secondary}20`,
-                color: currentTheme.colors.secondary,
-                border: `1px solid ${currentTheme.colors.secondary}40`
-              }}
+              className="btn-secondary inline-flex items-center gap-2 mt-4"
             >
               <TrendingUp className="w-4 h-4" />
               View Details
@@ -317,18 +273,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Getting Started Section */}
-      <div 
-        className="p-6 rounded-2xl border text-center"
-        style={{
-          backgroundColor: `${currentTheme.colors.surface}60`,
-          borderColor: currentTheme.colors.border,
-          background: `linear-gradient(135deg, ${currentTheme.colors.surface}60, ${currentTheme.colors.primary}05)`
-        }}
-      >
+      <div className="professional-card p-8 text-center">
         <div 
-          className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
+          className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center"
           style={{ 
-            backgroundColor: `${currentTheme.colors.primary}20`,
+            backgroundColor: `${currentTheme.colors.primary}15`,
             color: currentTheme.colors.primary
           }}
         >
@@ -341,32 +290,23 @@ export default function DashboardPage() {
           Ready to Start Your Journey?
         </h3>
         <p 
-          className="text-lg mb-6 max-w-2xl mx-auto"
+          className="text-lg mb-8 max-w-2xl mx-auto leading-relaxed"
           style={{ color: currentTheme.colors.textMuted }}
         >
           Complete your profile and start applying to projects from top companies. 
-          Build your professional network and grow your career with Digital Workforce.
+          Build your professional network and grow your career with TalentSync.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link 
             href="/dashboard/browse-projects"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: currentTheme.colors.primary,
-              color: 'white'
-            }}
+            className="btn-primary inline-flex items-center gap-2 px-8 py-3"
           >
             <Search className="w-5 h-5" />
             Browse Projects
           </Link>
           <Link 
             href="/dashboard/profile"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}80`,
-              color: currentTheme.colors.text,
-              border: `1px solid ${currentTheme.colors.border}`
-            }}
+            className="btn-secondary inline-flex items-center gap-2 px-8 py-3"
           >
             <User className="w-5 h-5" />
             Complete Profile

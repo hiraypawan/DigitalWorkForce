@@ -1,12 +1,26 @@
-# WARP.md
+# WARP.md - DigitalWorkforce Project
 
-This file provides guidance to WARP (warp.dev) when working with code in this repository.
+**Last Updated**: January 2025  
+**Project Status**: Production Ready with Complete Theme System  
+**Build Status**: ✅ Passing (0 errors, 0 warnings)  
 
-## Project Overview
+This file provides comprehensive guidance for WARP AI when working with the DigitalWorkforce codebase.
 
-DigitalWorkforce is an AI-powered digital workforce platform built with Next.js 14 (App Router), TypeScript, MongoDB Atlas, and Google Gemini AI. The platform connects talented individuals with companies for micro-task execution, featuring automated project splitting, skill-based matching, and integrated payment systems.
+## 🚀 Project Overview
 
-**Key Value Proposition**: Unlike traditional hiring platforms, this provides instant workforce activation and project execution through AI-powered task breakdown and automated assignment.
+**DigitalWorkforce** is a modern AI-powered workforce platform built with Next.js 14 (App Router), TypeScript, and cutting-edge UI/UX design. The platform connects skilled employees with companies for project-based work, featuring intelligent matching, comprehensive theme system, and professional user experience.
+
+### 🎯 Core Mission
+Transform the traditional hiring process by providing instant workforce activation through AI-powered matching and professional project management tools.
+
+### 🏗️ Current Architecture Stack
+- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
+- **UI System**: 6 Professional Themes with Context API
+- **Authentication**: NextAuth.js with JWT tokens
+- **Database**: MongoDB Atlas with Mongoose ODM
+- **AI Integration**: Google Gemini AI for conversational onboarding
+- **Styling**: Theme-aware components with CSS custom properties
+- **State Management**: React Context (Theme) + SWR (data fetching)
 
 ## Essential Commands
 
@@ -170,6 +184,113 @@ STRIPE_SECRET_KEY=          # Payment processing
 RAZORPAY_KEY_ID=           # Alternative payment provider
 GOOGLE_CLIENT_ID=          # OAuth login
 OPENAI_API_KEY=            # Fallback AI provider
+```
+
+## 🎨 Professional Theme System (Latest Major Feature)
+
+### Theme Architecture
+Implemented a comprehensive 6-theme system with professional design patterns:
+
+#### Available Themes
+1. **Midnight Professional** - Dark blue/indigo corporate theme
+2. **Ocean Breeze** - Teal/cyan modern theme  
+3. **Forest Elite** - Green/emerald nature-inspired theme
+4. **Sunset Executive** - Red/orange warm executive theme
+5. **Royal Purple** - Violet/purple luxury theme
+6. **Platinum Pro** - Silver/gray minimalist theme
+
+#### Theme System Components
+```typescript
+// Core theme context
+src/contexts/ThemeContext.tsx
+- Theme interface with complete color palettes
+- 6 professional themes with gradients
+- Currency support (USD/INR)
+- localStorage persistence
+- CSS custom properties injection
+
+// Theme switcher UI
+src/components/ThemeSwitcher.tsx
+- Professional dropdown with theme previews
+- Currency toggle with proper icons
+- Mobile-responsive design
+- Smooth animations and transitions
+```
+
+#### Theme Features
+- **Dynamic Colors**: 20+ color variables per theme
+- **Gradient Support**: Professional gradients for backgrounds/cards
+- **Currency Integration**: USD/INR formatting with theme colors
+- **Persistence**: Theme selection saved in localStorage
+- **Real-time Updates**: Instant theme switching across entire app
+- **Professional Design**: Backdrop blur, shadows, rounded corners
+- **Responsive**: Works perfectly on all screen sizes
+
+### Updated Dashboard Architecture
+
+#### Clean Dashboard Design
+```typescript
+// Main dashboard
+src/app/dashboard/page.tsx
+- Welcome section with personalized greeting
+- Quick action cards (Browse Projects, Applications, Messages)
+- Profile and earnings overview cards
+- Getting started section with CTAs
+- Complete theme integration
+
+// Professional header
+src/components/DashboardHeader.tsx
+- Theme-aware navigation
+- Integrated theme switcher
+- Responsive mobile menu
+- User profile dropdown
+```
+
+#### Empty State Pages (Ready for API)
+```typescript
+// Clean applications page
+src/app/dashboard/my-applications/page.tsx
+- Stats overview cards
+- Professional empty state design
+- Action-oriented CTAs
+- Tips and guidance sections
+
+// Clean messages page  
+src/app/dashboard/messages/page.tsx
+- Communication stats overview
+- Encouraging empty state
+- Quick action buttons
+- Professional messaging guidance
+```
+
+### Theme Integration Patterns
+
+#### Context Usage
+```typescript
+const { currentTheme, formatCurrency, setTheme, currency } = useTheme();
+
+// Dynamic styling
+style={{
+  backgroundColor: currentTheme.colors.surface,
+  color: currentTheme.colors.text,
+  border: `1px solid ${currentTheme.colors.border}`
+}}
+
+// Currency formatting
+{formatCurrency(1234)} // $1,234.00 or ₹1,234.00
+```
+
+#### Component Patterns
+```typescript
+// Professional cards with theme integration
+<div 
+  className="p-6 rounded-2xl border transition-all duration-300 hover:scale-105"
+  style={{
+    backgroundColor: `${currentTheme.colors.surface}80`,
+    borderColor: currentTheme.colors.border,
+    background: currentTheme.gradients.card
+  }}
+>
 ```
 
 ## Fixed Issues (Latest Updates)

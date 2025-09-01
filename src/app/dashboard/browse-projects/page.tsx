@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Filter, MapPin, Clock, DollarSign, Briefcase, Star, Bot } from 'lucide-react';
+import { Search, Filter, MapPin, Clock, DollarSign, Briefcase, Star, Bot, BookmarkIcon } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 import Link from 'next/link';
 
 interface Project {
@@ -19,6 +20,7 @@ interface Project {
 }
 
 export default function BrowseProjects() {
+  const { currentTheme, formatCurrency } = useTheme();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -82,18 +84,18 @@ export default function BrowseProjects() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-black min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ backgroundColor: currentTheme.colors.background }}>
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-700 rounded w-1/4 mb-6"></div>
+          <div className="h-8 rounded w-1/4 mb-6" style={{ backgroundColor: currentTheme.colors.border }}></div>
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6">
-                <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-gray-700 rounded w-1/2 mb-4"></div>
+              <div key={i} className="professional-card p-6">
+                <div className="h-4 rounded w-3/4 mb-2" style={{ backgroundColor: currentTheme.colors.borderLight }}></div>
+                <div className="h-3 rounded w-1/2 mb-4" style={{ backgroundColor: currentTheme.colors.borderLight }}></div>
                 <div className="flex gap-2">
-                  <div className="h-6 bg-gray-700 rounded w-16"></div>
-                  <div className="h-6 bg-gray-700 rounded w-16"></div>
-                  <div className="h-6 bg-gray-700 rounded w-16"></div>
+                  <div className="h-6 rounded w-16" style={{ backgroundColor: currentTheme.colors.borderLight }}></div>
+                  <div className="h-6 rounded w-16" style={{ backgroundColor: currentTheme.colors.borderLight }}></div>
+                  <div className="h-6 rounded w-16" style={{ backgroundColor: currentTheme.colors.borderLight }}></div>
                 </div>
               </div>
             ))}
@@ -104,130 +106,152 @@ export default function BrowseProjects() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-black min-h-screen">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ backgroundColor: currentTheme.colors.background }}>
       {/* Page Header */}
-      <div className="mb-8 flex justify-between items-center">
+      <div className="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 glow-text">Browse Projects</h1>
-          <p className="text-gray-300">Find exciting projects that match your skills and interests</p>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: currentTheme.colors.text }}>Browse Projects</h1>
+          <p style={{ color: currentTheme.colors.textMuted }}>Find exciting projects that match your skills and interests</p>
         </div>
-        <Link href="/ai-chat" className="group relative">
-          <div className="absolute -inset-1 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
-          <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-lg px-4 py-3 hover:border-cyan-500/50 transition-all duration-300 flex items-center gap-2 text-cyan-400 hover:text-white">
-            <Bot className="w-5 h-5" />
-            <span className="text-sm font-medium">AI Project Match</span>
-          </div>
+        <Link href="/ai-chat" className="btn-secondary inline-flex items-center gap-2">
+          <Bot className="w-5 h-5" />
+          <span>AI Project Match</span>
         </Link>
       </div>
 
       {/* Search and Filters */}
-      <div className="group relative mb-6">
-        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-        <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="w-5 h-5 absolute left-3 top-3 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search projects..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+      <div className="professional-card p-6 mb-6">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <div className="relative">
+              <Search 
+                className="w-5 h-5 absolute left-3 top-3" 
+                style={{ color: currentTheme.colors.textMuted }}
+              />
+              <input
+                type="text"
+                placeholder="Search projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="professional-input w-full pl-10"
+              />
             </div>
-            <div className="md:w-48">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {categories.map(category => (
-                  <option key={category.value} value={category.value} className="bg-gray-900 text-white">
-                    {category.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button className="flex items-center gap-2 px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-gray-300 hover:text-white hover:border-blue-500/50 transition-colors">
-              <Filter className="w-4 h-4" />
-              More Filters
-            </button>
           </div>
+          
+          {/* Filter Chips */}
+          <div className="flex gap-2">
+            {categories.map((category) => (
+              <button
+                key={category.value}
+                onClick={() => setSelectedCategory(category.value)}
+                className={`filter-chip ${
+                  selectedCategory === category.value ? 'active' : ''
+                }`}
+              >
+                {category.label}
+              </button>
+            ))}
+          </div>
+          
+          <button className="btn-secondary flex items-center gap-2">
+            <Filter className="w-4 h-4" />
+            More Filters
+          </button>
         </div>
       </div>
 
       {/* Project Cards */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         {projects.map(project => (
-          <div key={project.id} className="group relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
-            <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-xl font-semibold text-white">{project.title}</h3>
+          <div key={project.id} className="professional-card p-6">
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+              <div className="flex-1">
+                {/* Title and Urgent Badge */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xl font-semibold" style={{ color: currentTheme.colors.text }}>
+                      {project.title}
+                    </h3>
                     {project.urgent && (
-                      <span className="px-2 py-1 bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-medium rounded-full">
+                      <span 
+                        className="px-2 py-1 text-xs font-medium rounded-full"
+                        style={{ 
+                          backgroundColor: `${currentTheme.colors.error}20`,
+                          color: currentTheme.colors.error,
+                          border: `1px solid ${currentTheme.colors.error}40`
+                        }}
+                      >
                         Urgent
                       </span>
                     )}
                   </div>
-                  <p className="text-gray-300 mb-4">{project.description}</p>
-                  
-                  {/* Skills */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.skills.map((skill, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-blue-500/20 text-blue-300 border border-blue-500/30 text-sm rounded-full"
-                      >
-                        {skill}
-                      </span>
-                    ))}
+                </div>
+                
+                {/* Company Info */}
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="flex items-center gap-1 text-sm" style={{ color: currentTheme.colors.textMuted }}>
+                    <Briefcase className="w-4 h-4" />
+                    <span>by {project.postedBy}</span>
+                  </div>
+                  <div className="flex items-center gap-6 text-sm" style={{ color: currentTheme.colors.textMuted }}>
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>{project.duration}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      <span>{project.location}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span>{project.applicants} applicants</span>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-green-400 mb-1">{project.budget}</div>
-                  <div className="flex items-center gap-1 text-sm text-gray-400 mb-1">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                <p className="mb-4" style={{ color: currentTheme.colors.textSecondary }}>
+                  {project.description}
+                </p>
+                
+                {/* Skills */}
+                <div className="flex flex-wrap gap-2">
+                  {project.skills.map((skill, index) => (
+                    <span key={index} className="skill-tag">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Right Side - Budget and Actions */}
+              <div className="lg:text-right lg:min-w-[200px] flex flex-row lg:flex-col gap-4 lg:gap-3">
+                <div className="flex-1 lg:flex-none">
+                  <div className="text-2xl font-bold mb-2" style={{ color: currentTheme.colors.accent }}>
+                    {project.budget}
+                  </div>
+                  <div className="flex items-center gap-1 text-sm" style={{ color: currentTheme.colors.textMuted }}>
+                    <Star className="w-4 h-4" style={{ color: '#FCD34D', fill: '#FCD34D' }} />
                     <span>{project.rating}</span>
                   </div>
                 </div>
-              </div>
-              
-              {/* Project Details */}
-              <div className="flex items-center gap-6 text-sm text-gray-400 mb-4">
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  <span>{project.duration}</span>
+                
+                {/* Actions */}
+                <div className="flex lg:flex-col gap-2 lg:w-full">
+                  <button className="btn-primary flex-1 lg:w-full">
+                    Apply Now
+                  </button>
+                  <div className="flex gap-2">
+                    <button 
+                      className="btn-secondary flex items-center gap-1 px-3"
+                      title="Save Project"
+                    >
+                      <BookmarkIcon className="w-4 h-4" />
+                      Save
+                    </button>
+                    <button className="btn-secondary px-3">
+                      View Details
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{project.location}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Briefcase className="w-4 h-4" />
-                  <span>by {project.postedBy}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span>{project.applicants} applicants</span>
-                </div>
-              </div>
-              
-              {/* Actions */}
-              <div className="flex items-center gap-3">
-                <button className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:shadow-lg hover:shadow-blue-500/25 font-medium transition-all duration-300 transform hover:scale-105 glow-button">
-                  Apply Now
-                </button>
-                <button className="px-4 py-2 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 hover:border-gray-600 transition-colors">
-                  Save
-                </button>
-                <button className="px-4 py-2 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 hover:border-gray-600 transition-colors">
-                  View Details
-                </button>
               </div>
             </div>
           </div>
@@ -236,7 +260,7 @@ export default function BrowseProjects() {
 
       {/* Load More */}
       <div className="text-center mt-8">
-        <button className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 glow-button">
+        <button className="btn-primary px-8 py-3">
           Load More Projects
         </button>
       </div>
