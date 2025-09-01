@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import Image from 'next/image';
-import { User, Mail, Star, Briefcase, Code, ExternalLink, MapPin, X, Trash2 } from 'lucide-react';
+import { User, Mail, Star, Briefcase, Code, ExternalLink, MapPin, X, Trash2, Phone, Linkedin, Github, Globe } from 'lucide-react';
 
 interface ProfileData {
   userId: string;
@@ -162,6 +162,61 @@ export default function ProfilePreview() {
     }
   };
 
+  const handleRemoveItem = async (section: string, index: number) => {
+    if (!profileData) return;
+    
+    try {
+      const updatedData = { ...profileData };
+      
+      switch (section) {
+        case 'skills':
+          updatedData.skills = updatedData.skills.filter((_, i) => i !== index);
+          break;
+        case 'experience':
+          updatedData.experience = updatedData.experience.filter((_, i) => i !== index);
+          break;
+        case 'projects':
+          updatedData.projects = updatedData.projects.filter((_, i) => i !== index);
+          break;
+        case 'education':
+          updatedData.education = updatedData.education.filter((_, i) => i !== index);
+          break;
+        case 'certifications':
+          updatedData.certifications = updatedData.certifications.filter((_, i) => i !== index);
+          break;
+        case 'achievements':
+          updatedData.achievements = updatedData.achievements.filter((_, i) => i !== index);
+          break;
+        case 'goals':
+          updatedData.goals = updatedData.goals.filter((_, i) => i !== index);
+          break;
+        case 'hobbies':
+          updatedData.hobbies = updatedData.hobbies.filter((_, i) => i !== index);
+          break;
+        default:
+          return;
+      }
+      
+      const response = await fetch('/api/portfolio', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(updatedData),
+      });
+      
+      if (response.ok) {
+        // Refresh the profile data
+        mutate();
+      } else {
+        console.error('Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
   return (
     <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-2xl p-6 h-fit">
       <div className="mb-6">
@@ -170,15 +225,6 @@ export default function ProfilePreview() {
             <User className="w-5 h-5 text-blue-400" />
             Profile Preview
           </h2>
-          {profileData && completionPercentage > 0 && (
-            <button
-              onClick={() => setShowClearDialog(true)}
-              className="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-red-500/10"
-              title="Clear profile data"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          )}
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-1 bg-gray-800 rounded-full h-2">
@@ -245,9 +291,16 @@ export default function ProfilePreview() {
             {skills.map((skill, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 text-blue-300 text-xs rounded-full"
+                className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 text-blue-300 text-xs rounded-full"
               >
                 {typeof skill === 'string' ? skill : skill?.name || 'Unknown Skill'}
+                <button
+                  onClick={() => handleRemoveItem('skills', index)}
+                  className="hover:bg-red-500/20 rounded-full p-0.5 transition-colors ml-1 group"
+                  title="Remove skill"
+                >
+                  <X className="w-3 h-3 text-gray-400 group-hover:text-red-400" />
+                </button>
               </span>
             ))}
           </div>
@@ -271,9 +324,16 @@ export default function ProfilePreview() {
             {experience.map((exp, index) => (
               <div
                 key={index}
-                className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg"
+                className="group relative p-3 bg-gray-800/50 border border-gray-700 rounded-lg"
               >
-                <div className="mb-2">
+                <button
+                  onClick={() => handleRemoveItem('experience', index)}
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 hover:bg-red-500/20 rounded-full p-1 transition-all"
+                  title="Remove experience"
+                >
+                  <X className="w-3 h-3 text-gray-400 hover:text-red-400" />
+                </button>
+                <div className="mb-2 pr-8">
                   <h5 className="text-white font-medium text-sm">{exp.role} at {exp.company}</h5>
                   <p className="text-gray-400 text-xs">{exp.duration} {exp.location && ` • ${exp.location}`}</p>
                 </div>
@@ -308,9 +368,16 @@ export default function ProfilePreview() {
             {education.map((edu, index) => (
               <div
                 key={index}
-                className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg"
+                className="group relative p-3 bg-gray-800/50 border border-gray-700 rounded-lg"
               >
-                <div>
+                <button
+                  onClick={() => handleRemoveItem('education', index)}
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 hover:bg-red-500/20 rounded-full p-1 transition-all"
+                  title="Remove education"
+                >
+                  <X className="w-3 h-3 text-gray-400 hover:text-red-400" />
+                </button>
+                <div className="pr-8">
                   <h5 className="text-white font-medium text-sm">{edu.degree}</h5>
                   <p className="text-gray-400 text-xs">{edu.institution} • {edu.year}</p>
                   {edu.gpa && <p className="text-blue-400 text-xs">GPA: {edu.gpa}</p>}
@@ -333,9 +400,16 @@ export default function ProfilePreview() {
             {projects.map((project, index) => (
               <div
                 key={index}
-                className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg"
+                className="group relative p-3 bg-gray-800/50 border border-gray-700 rounded-lg"
               >
-                <div className="mb-2">
+                <button
+                  onClick={() => handleRemoveItem('projects', index)}
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 hover:bg-red-500/20 rounded-full p-1 transition-all"
+                  title="Remove project"
+                >
+                  <X className="w-3 h-3 text-gray-400 hover:text-red-400" />
+                </button>
+                <div className="mb-2 pr-8">
                   <h5 className="text-white font-medium text-sm">{project.title}</h5>
                   {project.status && (
                     <span className={`text-xs px-2 py-1 rounded ${
@@ -381,8 +455,20 @@ export default function ProfilePreview() {
           </h4>
           <div className="space-y-1">
             {certifications.map((cert, index) => (
-              <div key={index} className="p-2 bg-gray-800/30 border border-gray-700 rounded text-sm text-gray-300">
-                {typeof cert === 'string' ? cert : cert?.name || 'Certification'}
+              <div key={index} className="group relative p-2 bg-gray-800/30 border border-gray-700 rounded text-sm text-gray-300">
+                <button
+                  onClick={() => handleRemoveItem('certifications', index)}
+                  className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 hover:bg-red-500/20 rounded-full p-0.5 transition-all"
+                  title="Remove certification"
+                >
+                  <X className="w-2.5 h-2.5 text-gray-400 hover:text-red-400" />
+                </button>
+                <div className="pr-6">
+                  {typeof cert === 'string' ? cert : cert?.name || 'Certification'}
+                  {typeof cert === 'object' && cert?.issuer && (
+                    <p className="text-gray-400 text-xs mt-1">{cert.issuer} {cert.year && `• ${cert.year}`}</p>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -398,8 +484,17 @@ export default function ProfilePreview() {
           </h4>
           <div className="space-y-1">
             {achievements.map((achievement, index) => (
-              <div key={index} className="p-2 bg-gray-800/30 border border-gray-700 rounded text-sm text-gray-300">
-                {achievement}
+              <div key={index} className="group relative p-2 bg-gray-800/30 border border-gray-700 rounded text-sm text-gray-300">
+                <button
+                  onClick={() => handleRemoveItem('achievements', index)}
+                  className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 hover:bg-red-500/20 rounded-full p-0.5 transition-all"
+                  title="Remove achievement"
+                >
+                  <X className="w-2.5 h-2.5 text-gray-400 hover:text-red-400" />
+                </button>
+                <div className="pr-6">
+                  {achievement}
+                </div>
               </div>
             ))}
           </div>
@@ -415,10 +510,61 @@ export default function ProfilePreview() {
           </h4>
           <div className="space-y-1">
             {goals.map((goal, index) => (
-              <div key={index} className="p-2 bg-gray-800/30 border border-gray-700 rounded text-sm text-gray-300">
-                {goal}
+              <div key={index} className="group relative p-2 bg-gray-800/30 border border-gray-700 rounded text-sm text-gray-300">
+                <button
+                  onClick={() => handleRemoveItem('goals', index)}
+                  className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 hover:bg-red-500/20 rounded-full p-0.5 transition-all"
+                  title="Remove goal"
+                >
+                  <X className="w-2.5 h-2.5 text-gray-400 hover:text-red-400" />
+                </button>
+                <div className="pr-6">
+                  {goal}
+                </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Contact Info */}
+      {contactInfo && (contactInfo.phone || contactInfo.linkedin || contactInfo.github || contactInfo.website) && (
+        <div className="mb-6">
+          <h4 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+            <Mail className="w-4 h-4" />
+            Contact Information
+          </h4>
+          <div className="space-y-2">
+            {contactInfo.phone && (
+              <div className="flex items-center gap-2 text-sm">
+                <Phone className="w-3 h-3 text-gray-400" />
+                <span className="text-gray-300">{contactInfo.phone}</span>
+              </div>
+            )}
+            {contactInfo.linkedin && (
+              <div className="flex items-center gap-2 text-sm">
+                <Linkedin className="w-3 h-3 text-blue-400" />
+                <a href={contactInfo.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
+                  LinkedIn Profile
+                </a>
+              </div>
+            )}
+            {contactInfo.github && (
+              <div className="flex items-center gap-2 text-sm">
+                <Github className="w-3 h-3 text-gray-400" />
+                <a href={contactInfo.github} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
+                  GitHub Profile
+                </a>
+              </div>
+            )}
+            {contactInfo.website && (
+              <div className="flex items-center gap-2 text-sm">
+                <Globe className="w-3 h-3 text-green-400" />
+                <a href={contactInfo.website} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 transition-colors">
+                  Personal Website
+                </a>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -432,8 +578,15 @@ export default function ProfilePreview() {
           </h4>
           <div className="flex flex-wrap gap-2">
             {hobbies.map((hobby, index) => (
-              <span key={index} className="px-3 py-1 bg-gray-800/50 text-gray-300 text-xs rounded-full border border-gray-700">
+              <span key={index} className="inline-flex items-center gap-1 px-3 py-1 bg-gray-800/50 text-gray-300 text-xs rounded-full border border-gray-700">
                 {hobby}
+                <button
+                  onClick={() => handleRemoveItem('hobbies', index)}
+                  className="hover:bg-red-500/20 rounded-full p-0.5 transition-colors group"
+                  title="Remove hobby"
+                >
+                  <X className="w-2.5 h-2.5 text-gray-400 group-hover:text-red-400" />
+                </button>
               </span>
             ))}
           </div>
@@ -441,10 +594,20 @@ export default function ProfilePreview() {
       )}
 
       {/* Completion Prompt */}
-      {completionPercentage < 100 && (
+      {completionPercentage < 60 && (
+        <div className="mt-6 p-4 bg-gradient-to-r from-orange-600/10 to-red-600/10 border border-orange-500/20 rounded-lg">
+          <p className="text-orange-300 text-sm text-center font-semibold">
+            🚀 We're building your portfolio! You need 60-70% completion to access the full site.
+          </p>
+          <p className="text-orange-400 text-xs text-center mt-2">
+            Keep chatting with the AI to unlock all features!
+          </p>
+        </div>
+      )}
+      {completionPercentage >= 60 && completionPercentage < 100 && (
         <div className="mt-6 p-4 bg-gradient-to-r from-blue-600/10 to-purple-600/10 border border-blue-500/20 rounded-lg">
           <p className="text-blue-300 text-sm text-center">
-            💬 Keep chatting with the AI to complete your profile!
+            💬 Great progress! Keep chatting with the AI to complete your profile!
           </p>
         </div>
       )}
