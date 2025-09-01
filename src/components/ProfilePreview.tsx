@@ -463,7 +463,7 @@ export default function ProfilePreview() {
               </button>
             </div>
             <p className="text-gray-300 mb-6">
-              Are you sure you want to clear all profile data? This action cannot be undone and you'll need to start over with the AI chat.
+              Are you sure you want to clear all profile data? This action cannot be undone and you&apos;ll need to start over with the AI chat.
             </p>
             <div className="flex items-center gap-3">
               <button

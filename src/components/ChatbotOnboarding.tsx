@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { Send, Bot, User, AlertCircle, Sparkles, RotateCcw } from 'lucide-react';
 import { getPersonalizedGreeting, analyzeProfileCompletion, ProfileData } from '@/lib/profile-analysis';
@@ -29,13 +29,13 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
   const inputRef = useRef<HTMLInputElement>(null);
   
   // Storage keys
-  const getStorageKey = () => {
+  const getStorageKey = useCallback(() => {
     const userId = session?.user?.id || session?.user?.email || 'anonymous';
     return `chatbot_conversation_${userId}`;
-  };
+  }, [session]);
   
   // Save messages to localStorage
-  const saveConversation = (messages: Message[]) => {
+  const saveConversation = useCallback((messages: Message[]) => {
     if (typeof window !== 'undefined') {
       try {
         localStorage.setItem(getStorageKey(), JSON.stringify(messages));
@@ -43,10 +43,10 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
         console.warn('Failed to save conversation:', error);
       }
     }
-  };
+  }, [getStorageKey]);
   
   // Load messages from localStorage
-  const loadConversation = (): Message[] => {
+  const loadConversation = useCallback((): Message[] => {
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem(getStorageKey());
@@ -63,10 +63,10 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
       }
     }
     return [];
-  };
+  }, [getStorageKey]);
   
   // Clear conversation from storage
-  const clearConversation = () => {
+  const clearConversation = useCallback(() => {
     if (typeof window !== 'undefined') {
       try {
         localStorage.removeItem(getStorageKey());
@@ -74,14 +74,14 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
         console.warn('Failed to clear conversation:', error);
       }
     }
-  };
+  }, [getStorageKey]);
   
   // Mark as client-side for hydration
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     const messagesContainer = messagesEndRef.current?.parentElement;
     if (messagesContainer && messagesEndRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
@@ -92,7 +92,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
         messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
       }
     }
-  };
+  }, [messages.length]);
 
   // Only scroll when AI responds or initial load, not when user types
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
         setTimeout(scrollToBottom, 100); // Small delay for DOM update
       }
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, scrollToBottom]);
 
   // Load saved conversation when client is ready
   useEffect(() => {
@@ -163,14 +163,14 @@ export default function ChatbotOnboarding({ onComplete }: ChatbotOnboardingProps
       }
       setConversationLoaded(true);
     }
-  }, [session, isClient, forceShow, conversationLoaded]);
+  }, [session, isClient, forceShow, conversationLoaded, loadConversation, saveConversation]);
 
   // Save messages whenever they change
   useEffect(() => {
     if (conversationLoaded && messages.length > 0) {
       saveConversation(messages);
     }
-  }, [messages, conversationLoaded]);
+  }, [messages, conversationLoaded, saveConversation]);
 
   const sendMessage = async () => {
     if (!currentMessage.trim() || isLoading) return;

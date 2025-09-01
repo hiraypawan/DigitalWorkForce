@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import {
@@ -174,7 +175,7 @@ export default function DashboardHeader() {
               >
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center">
                   {userData?.avatar ? (
-                    <img src={userData.avatar} alt="Avatar" className="w-8 h-8 rounded-full" />
+                    <Image src={userData.avatar} alt="Avatar" width={32} height={32} className="w-8 h-8 rounded-full" />
                   ) : (
                     <User className="w-4 h-4 text-white" />
                   )}
