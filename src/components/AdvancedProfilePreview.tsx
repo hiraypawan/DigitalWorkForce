@@ -34,19 +34,55 @@ interface Project {
   status?: 'completed' | 'in-progress' | 'planned';
 }
 
+interface Skill {
+  name: string;
+  proficiency: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+  category?: 'Technical' | 'Soft' | 'Language' | 'Tool';
+}
+
+interface Certification {
+  name: string;
+  issuer: string;
+  year: string;
+  link?: string;
+}
+
+interface WorkPreferences {
+  expectedSalary?: string;
+  workType?: 'Remote' | 'Hybrid' | 'Onsite';
+  availability?: 'Full-time' | 'Part-time' | 'Contract' | 'Freelance';
+  noticePeriod?: string;
+  preferredIndustries?: string[];
+  willingToRelocate?: boolean;
+}
+
+interface Endorsement {
+  rating: number;
+  review: string;
+  reviewer: string;
+  role?: string;
+  company?: string;
+  date: string;
+}
+
 interface PortfolioData {
   _id: string;
   userId: string;
   name: string;
+  title?: string; // Professional title
   bio: string;
+  location?: string;
+  availability?: 'Full-time' | 'Part-time' | 'Contract' | 'Freelance';
+  
   education: Education[];
   experience: Experience[];
-  skills: string[];
+  skills: (string | Skill)[]; // Support both formats for backward compatibility
   projects: Project[];
-  certifications: string[];
+  certifications: (string | Certification)[];
   achievements: string[];
   goals: string[];
   hobbies: string[];
+  
   contactInfo?: {
     email?: string;
     phone?: string;
@@ -54,11 +90,28 @@ interface PortfolioData {
     github?: string;
     website?: string;
   };
+  
+  portfolioSamples?: {
+    github?: string;
+    behance?: string;
+    dribbble?: string;
+    linkedin?: string;
+    website?: string;
+    uploadedFiles?: string[];
+  };
+  
+  workPreferences?: WorkPreferences;
+  endorsements?: Endorsement[];
+  testimonials?: string[];
+  onlineCourses?: string[];
+  
+  // Legacy fields for backward compatibility
   preferences?: {
     workType?: string[];
     salaryRange?: string;
     availability?: string;
   };
+  
   lastUpdated: string;
   completionPercentage: number;
 }
@@ -287,12 +340,61 @@ export default function AdvancedProfilePreview() {
         </div>
       </div>
 
-      <div className="space-y-6 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600">
+      <div className="space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600">
+        {/* Professional Overview */}
+        <div className="space-y-3">
+          {/* Title & Availability */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-2 bg-gray-800/30 rounded-lg">
+              <p className="text-xs text-gray-400 mb-1">Title</p>
+              <p className="text-white text-sm font-medium">
+                {portfolioData.title || 'Not specified'}
+              </p>
+            </div>
+            <div className="p-2 bg-gray-800/30 rounded-lg">
+              <p className="text-xs text-gray-400 mb-1">Availability</p>
+              <p className="text-white text-sm font-medium">
+                {portfolioData.availability || 'Not specified'}
+              </p>
+            </div>
+          </div>
+          
+          {/* Location & Contact */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-2 bg-gray-800/30 rounded-lg">
+              <p className="text-xs text-gray-400 mb-1">Location</p>
+              <p className="text-white text-sm">
+                {portfolioData.location || 'Not specified'}
+              </p>
+            </div>
+            <div className="p-2 bg-gray-800/30 rounded-lg">
+              <p className="text-xs text-gray-400 mb-1">Contact</p>
+              <div className="flex gap-1">
+                {contactInfo?.linkedin && (
+                  <a href={contactInfo.linkedin} target="_blank" className="text-blue-400 hover:text-blue-300">
+                    <span className="text-xs">LI</span>
+                  </a>
+                )}
+                {contactInfo?.github && (
+                  <a href={contactInfo.github} target="_blank" className="text-purple-400 hover:text-purple-300">
+                    <span className="text-xs">GH</span>
+                  </a>
+                )}
+                {contactInfo?.website && (
+                  <a href={contactInfo.website} target="_blank" className="text-green-400 hover:text-green-300">
+                    <span className="text-xs">WEB</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Bio Section */}
         <div className="group">
           <h4 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
             <User className="w-4 h-4" />
-            Bio
+            Professional Summary
           </h4>
           {bio ? (
             <div className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
@@ -356,7 +458,7 @@ export default function AdvancedProfilePreview() {
                   key={index}
                   className="group/item px-3 py-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 text-blue-300 text-xs rounded-full flex items-center gap-1 hover:from-blue-600/30 hover:to-purple-600/30 transition-all"
                 >
-                  {skill}
+                  {typeof skill === 'string' ? skill : skill.name}
                   <button
                     onClick={() => deleteItem('skills', index)}
                     className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-300 transition-all"
@@ -493,7 +595,7 @@ export default function AdvancedProfilePreview() {
             <div className="space-y-1">
               {certifications.map((cert, index) => (
                 <div key={index} className="flex justify-between items-center p-2 bg-gray-800/30 rounded group/item">
-                  <p className="text-gray-300 text-xs">{cert}</p>
+                  <p className="text-gray-300 text-xs">{typeof cert === 'string' ? cert : cert.name}</p>
                   <button
                     onClick={() => deleteItem('certifications', index)}
                     className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-300 transition-all"

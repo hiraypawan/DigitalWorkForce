@@ -597,7 +597,7 @@ export default function ProfilePreview() {
       {completionPercentage < 60 && (
         <div className="mt-6 p-4 bg-gradient-to-r from-orange-600/10 to-red-600/10 border border-orange-500/20 rounded-lg">
           <p className="text-orange-300 text-sm text-center font-semibold">
-            🚀 We're building your portfolio! You need 60-70% completion to access the full site.
+            🚀 We&apos;re building your portfolio! You need 60-70% completion to access the full site.
           </p>
           <p className="text-orange-400 text-xs text-center mt-2">
             Keep chatting with the AI to unlock all features!
