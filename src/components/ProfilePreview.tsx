@@ -72,7 +72,7 @@ export default function ProfilePreview() {
     isClient && session?.user ? '/api/portfolio' : null,
     fetcher,
     {
-      refreshInterval: 2000, // Refresh every 2 seconds for real-time updates
+      refreshInterval: 3000, // Refresh every 3 seconds to sync with onboarding page
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
     }

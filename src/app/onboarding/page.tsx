@@ -45,6 +45,17 @@ export default function OnboardingPage() {
     }
   }, []);
 
+  // Add periodic refresh to sync with ProfilePreview updates
+  useEffect(() => {
+    if (session?.user) {
+      const interval = setInterval(() => {
+        checkProfileCompleteness();
+      }, 3000); // Refresh every 3 seconds to stay in sync
+      
+      return () => clearInterval(interval);
+    }
+  }, [session, checkProfileCompleteness]);
+
   useEffect(() => {
     console.log('Onboarding useEffect - Status:', status, 'Session:', session);
     
