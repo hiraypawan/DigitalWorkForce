@@ -568,17 +568,17 @@ export default function ProfilePreview() {
       )}
 
       {/* Completion Prompt */}
-      {completionPercentage < 60 && (
+      {completionPercentage < 75 && (
         <div className="mt-6 p-4 bg-gradient-to-r from-orange-600/10 to-red-600/10 border border-orange-500/20 rounded-lg">
           <p className="text-orange-300 text-sm text-center font-semibold">
-            🚀 We&apos;re building your portfolio! You need 60-70% completion to access the full site.
+            🚀 Chat with AI to build your portfolio in just 1-2 minutes! You need 75% completion to start.
           </p>
           <p className="text-orange-400 text-xs text-center mt-2">
             Keep chatting with the AI to unlock all features!
           </p>
         </div>
       )}
-      {completionPercentage >= 60 && completionPercentage < 100 && (
+      {completionPercentage >= 75 && completionPercentage < 100 && (
         <div className="mt-6 p-4 bg-gradient-to-r from-blue-600/10 to-purple-600/10 border border-blue-500/20 rounded-lg">
           <p className="text-blue-300 text-sm text-center">
             💬 Great progress! Keep chatting with the AI to complete your profile!

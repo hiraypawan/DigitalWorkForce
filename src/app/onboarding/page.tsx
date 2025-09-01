@@ -176,7 +176,7 @@ export default function OnboardingPage() {
             </h1>
           </div>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Let&apos;s set up your profile with our AI assistant to get you started with the perfect projects.
+            Chat with our AI assistant for just 1-2 minutes to build your professional portfolio and get started!
           </p>
           {profileCompleteness > 0 && (
             <div className="mt-6 max-w-md mx-auto">
@@ -192,7 +192,7 @@ export default function OnboardingPage() {
                   />
                 </div>
                 <p className="text-xs text-gray-400 mt-2">
-                  Continue chatting to complete your profile
+                  Just 1-2 minutes of chatting to build your portfolio!
                 </p>
               </div>
             </div>
@@ -213,7 +213,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Profile Completion Section */}
-        {profileCompleteness >= 70 && (
+        {profileCompleteness >= 75 && (
           <div className="mt-12 max-w-4xl mx-auto">
             <div className="bg-gradient-to-r from-green-900/50 to-blue-900/50 border border-green-500/50 rounded-2xl p-8 text-center">
               <div className="flex items-center justify-center mb-6">
@@ -258,7 +258,7 @@ export default function OnboardingPage() {
         )}
 
         {/* Steps Indicator - Show when profile is not complete */}
-        {profileCompleteness < 70 && (
+        {profileCompleteness < 75 && (
           <div className="mt-16 max-w-4xl mx-auto">
             <div className="group relative">
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-25"></div>
@@ -279,12 +279,12 @@ export default function OnboardingPage() {
                   </div>
                   
                   <div className="text-center">
-                    <div className={`w-16 h-16 ${profileCompleteness >= 70 ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-purple-500 to-green-500'} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                      {profileCompleteness >= 70 ? <CheckCircle className="w-8 h-8 text-white" /> : <span className="text-2xl font-bold text-white">2</span>}
+                    <div className={`w-16 h-16 ${profileCompleteness >= 75 ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-purple-500 to-green-500'} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                      {profileCompleteness >= 75 ? <CheckCircle className="w-8 h-8 text-white" /> : <span className="text-2xl font-bold text-white">2</span>}
                     </div>
                     <h4 className="font-semibold text-white mb-2">Get Matched</h4>
                     <p className="text-gray-300 text-sm">Our algorithm matches you with relevant projects</p>
-                    {profileCompleteness >= 70 && <p className="text-green-400 text-xs mt-1">✓ Ready</p>}
+                    {profileCompleteness >= 75 && <p className="text-green-400 text-xs mt-1">✓ Ready</p>}
                   </div>
                   
                   <div className="text-center">
@@ -298,7 +298,7 @@ export default function OnboardingPage() {
                 
                 <div className="mt-8 text-center">
                   <p className="text-gray-400 text-sm mb-4">
-                    Keep chatting with our AI to reach 70% completion and unlock your dashboard!
+                    Keep chatting with our AI to reach 75% completion and unlock your dashboard!
                   </p>
                   <div className="bg-black/30 rounded-lg p-3 max-w-md mx-auto">
                     <p className="text-xs text-gray-500">Tips: Share your skills, experience, projects, and career goals</p>
