@@ -6,6 +6,15 @@ import { dbConnect } from '@/lib/mongodb';
 import Portfolio from '@/models/Portfolio';
 import { ChatbotMessageSchema } from '@/lib/validators';
 import { analyzeProfileCompletion, generateProfileAwarePrompt, ProfileData } from '@/lib/profile-analysis';
+import { 
+  professionalizeText, 
+  professionalizeSkills, 
+  professionalizeRole, 
+  processExperienceDescription,
+  processProjectDescription,
+  processSkillsInput,
+  extractUrls
+} from '@/lib/text-processing';
 
 // Initialize Gemini AI with error handling
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -422,17 +431,17 @@ Respond in JSON format as specified above.`;
           });
         }
 
-        // Update fields based on extracted data
+        // Update fields based on extracted data with professional formatting
         if (updateData.name && typeof updateData.name === 'string') {
-          portfolio.name = updateData.name.trim();
+          portfolio.name = professionalizeText(updateData.name.trim());
         }
 
         if (updateData.title && typeof updateData.title === 'string') {
-          portfolio.title = updateData.title.trim();
+          portfolio.title = professionalizeRole(updateData.title.trim());
         }
 
         if (updateData.bio && typeof updateData.bio === 'string') {
-          portfolio.bio = updateData.bio.trim();
+          portfolio.bio = professionalizeText(updateData.bio.trim());
         }
 
         if (updateData.location && typeof updateData.location === 'string') {
@@ -465,7 +474,7 @@ Respond in JSON format as specified above.`;
           });
         }
 
-        // Handle experience
+        // Handle experience with URL extraction and professional formatting
         if (updateData.experience && Array.isArray(updateData.experience)) {
           updateData.experience.forEach((exp: any) => {
             if (exp.role && exp.company && exp.duration && exp.details) {
@@ -475,39 +484,49 @@ Respond in JSON format as specified above.`;
               );
               
               if (!exists) {
+                // Process experience description to extract URLs and clean text
+                const processedExp = processExperienceDescription(exp.details);
+                
                 portfolio.experience.push({
-                  role: exp.role,
+                  role: professionalizeRole(exp.role),
                   company: exp.company,
                   duration: exp.duration,
-                  details: exp.details,
+                  details: processedExp.cleanDescription,
                   location: exp.location,
-                  achievements: exp.achievements || []
+                  achievements: exp.achievements || [],
+                  websiteUrl: processedExp.websiteUrl,
+                  projectUrls: processedExp.projectUrls
                 });
               }
             }
           });
         }
 
-        // Handle skills (both string and object formats)
+        // Handle skills with professional formatting
         if (updateData.skills && Array.isArray(updateData.skills)) {
           updateData.skills.forEach((skill: any) => {
-            let skillToAdd;
-            
             if (typeof skill === 'string') {
-              skillToAdd = {
-                name: skill.trim(),
-                proficiency: 'Intermediate',
-                category: 'Technical'
-              };
+              // Process skills from string input
+              const processedSkills = processSkillsInput(skill);
+              processedSkills.forEach(processedSkill => {
+                const existsAsString = portfolio.skills.some((existing: any) => 
+                  (typeof existing === 'string' && existing.toLowerCase() === processedSkill.name.toLowerCase())
+                );
+                const existsAsObject = portfolio.skills.some((existing: any) => 
+                  (typeof existing === 'object' && existing.name && existing.name.toLowerCase() === processedSkill.name.toLowerCase())
+                );
+                
+                if (!existsAsString && !existsAsObject) {
+                  portfolio.skills.push(processedSkill);
+                }
+              });
             } else if (skill && skill.name) {
-              skillToAdd = {
-                name: skill.name.trim(),
+              const skillToAdd = {
+                name: professionalizeSkills([skill.name.trim()])[0],
                 proficiency: skill.proficiency || 'Intermediate',
                 category: skill.category || 'Technical'
               };
-            }
-            
-            if (skillToAdd) {
+              
               // Check if skill already exists
               const existsAsString = portfolio.skills.some((existing: any) => 
                 (typeof existing === 'string' && existing.toLowerCase() === skillToAdd.name.toLowerCase())

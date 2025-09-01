@@ -25,6 +25,8 @@ interface ProfileData {
     details: string;
     location?: string;
     achievements?: string[];
+    websiteUrl?: string;
+    projectUrls?: string[];
   }[];
   skills: (string | { name: string; proficiency?: string; category?: string; })[];
   projects: {
@@ -316,6 +318,32 @@ export default function ProfilePreview() {
                   <div className="mt-2">
                     {exp.achievements.map((achievement, achIndex) => (
                       <p key={achIndex} className="text-green-400 text-xs">• {achievement}</p>
+                    ))}
+                  </div>
+                )}
+                {/* Display extracted URLs */}
+                {(exp.websiteUrl || (exp.projectUrls && exp.projectUrls.length > 0)) && (
+                  <div className="mt-2 space-y-1">
+                    {exp.websiteUrl && (
+                      <a 
+                        href={exp.websiteUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-blue-400 hover:text-blue-300 text-xs inline-flex items-center gap-1"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Company Website
+                      </a>
+                    )}
+                    {exp.projectUrls && exp.projectUrls.map((url, urlIndex) => (
+                      <a 
+                        key={urlIndex}
+                        href={url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-purple-400 hover:text-purple-300 text-xs inline-flex items-center gap-1 ml-2"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Project Link
+                      </a>
                     ))}
                   </div>
                 )}
