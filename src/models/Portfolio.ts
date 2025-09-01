@@ -16,6 +16,8 @@ export interface IExperience {
   location?: string;
   achievements?: string[];
   responsibilities?: string[];
+  websiteUrl?: string;
+  projectUrls?: string[];
 }
 
 export interface IProject {
@@ -158,7 +160,9 @@ const ExperienceSchema = new Schema<IExperience>({
   details: { type: String, required: true },
   location: { type: String },
   achievements: [{ type: String }],
-  responsibilities: [{ type: String }]
+  responsibilities: [{ type: String }],
+  websiteUrl: { type: String },
+  projectUrls: [{ type: String }]
 });
 
 const ProjectSchema = new Schema<IProject>({

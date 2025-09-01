@@ -95,6 +95,9 @@ export async function GET(request: NextRequest) {
     portfolio.completionPercentage = analysis.completionPercentage;
     await portfolio.save();
 
+    // Debug log experience data
+    console.log('Portfolio API - Experience data:', JSON.stringify(portfolio.experience, null, 2));
+    
     // Ensure backward compatibility by transforming data if needed
     const compatiblePortfolio = {
       ...portfolio.toObject(),
@@ -109,6 +112,27 @@ export async function GET(request: NextRequest) {
           return { name: cert, issuer: 'Unknown', year: new Date().getFullYear().toString() };
         }
         return cert;
+      }) || [],
+      experience: portfolio.experience?.map((exp: any) => {
+        // Fix any malformed experience data
+        if (typeof exp === 'string' || !exp.role || !exp.company) {
+          console.log('Portfolio API - Found malformed experience:', exp);
+          return {
+            role: exp?.role || 'Unknown Role',
+            company: exp?.company || 'Unknown Company', 
+            duration: exp?.duration || 'Unknown Duration',
+            details: exp?.details || exp || 'No details provided',
+            location: exp?.location || undefined,
+            achievements: exp?.achievements || [],
+            websiteUrl: exp?.websiteUrl || undefined,
+            projectUrls: exp?.projectUrls || []
+          };
+        }
+        return {
+          ...exp,
+          websiteUrl: exp?.websiteUrl || undefined,
+          projectUrls: exp?.projectUrls || []
+        };
       }) || []
     };
     
