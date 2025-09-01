@@ -264,6 +264,32 @@ export default function AdvancedProfilePreview() {
     contactInfo, completionPercentage 
   } = portfolioData;
 
+  // Calculate real-time completion percentage for more accuracy
+  const calculateRealTimeCompletion = () => {
+    let completed = 0;
+    const total = 12; // Total essential sections
+
+    // Essential fields (weighted scoring)
+    if (name?.trim()) completed += 1.5; // Name is critical
+    if (bio?.trim()) completed += 1.5; // Bio is critical
+    if (portfolioData.title?.trim()) completed += 1; // Professional title
+    if (portfolioData.location?.trim()) completed += 0.5; // Location
+    if (skills && skills.length > 0) completed += 1.5; // Skills are critical
+    if (experience && experience.length > 0) completed += 1.5; // Experience is critical
+    if (education && education.length > 0) completed += 1; // Education
+    if (projects && projects.length > 0) completed += 1; // Projects
+    if (certifications && certifications.length > 0) completed += 0.5; // Certifications
+    if (achievements && achievements.length > 0) completed += 0.5; // Achievements
+    if (goals && goals.length > 0) completed += 0.5; // Goals
+    if (hobbies && hobbies.length > 0) completed += 0.5; // Hobbies
+    if (contactInfo && Object.values(contactInfo).some(v => v)) completed += 0.5; // Contact info
+    
+    return Math.min(Math.round((completed / total) * 100), 100);
+  };
+
+  const realTimeCompletion = calculateRealTimeCompletion();
+  const displayCompletion = Math.max(completionPercentage, realTimeCompletion);
+
   return (
     <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-2xl p-6 h-fit sticky top-4">
       {/* Header */}
@@ -289,10 +315,10 @@ export default function AdvancedProfilePreview() {
           <div className="flex-1 bg-gray-800 rounded-full h-2">
             <div 
               className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500"
-              style={{ width: `${completionPercentage}%` }}
+              style={{ width: `${displayCompletion}%` }}
             />
           </div>
-          <span className="text-gray-400">{completionPercentage}%</span>
+          <span className="text-gray-400">{displayCompletion}%</span>
         </div>
 
         {/* Export Options */}
@@ -706,20 +732,20 @@ export default function AdvancedProfilePreview() {
       </div>
 
       {/* Completion Prompt */}
-      {completionPercentage < 100 && (
+      {displayCompletion < 100 && (
         <div className="mt-6 p-4 bg-gradient-to-r from-blue-600/10 to-purple-600/10 border border-blue-500/20 rounded-lg">
           <p className="text-blue-300 text-sm text-center">
             🌑 Your portfolio hungers for more... Feed it your secrets.
           </p>
           <div className="mt-2 text-center">
             <span className="text-xs text-gray-400">
-              {8 - Math.ceil((completionPercentage / 100) * 8)} more sections to complete
+              {Math.max(1, 8 - Math.ceil((displayCompletion / 100) * 8))} more sections to complete
             </span>
           </div>
         </div>
       )}
 
-      {completionPercentage === 100 && (
+      {displayCompletion === 100 && (
         <div className="mt-6 p-4 bg-gradient-to-r from-green-600/10 to-blue-600/10 border border-green-500/20 rounded-lg">
           <p className="text-green-300 text-sm text-center">
             ⚡ Your portfolio is complete. Your story is ready to conquer the world.

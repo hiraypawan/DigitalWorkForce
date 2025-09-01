@@ -421,7 +421,37 @@ export async function DELETE(request: NextRequest) {
     if (field && index !== undefined) {
       if (Array.isArray(portfolio[field as keyof IPortfolio])) {
         (portfolio[field as keyof IPortfolio] as any[]).splice(index, 1);
+        
+        // Recalculate completion percentage after deletion
+        const profileData = {
+          name: portfolio.name,
+          title: portfolio.title,
+          bio: portfolio.bio,
+          location: portfolio.location,
+          availability: portfolio.availability,
+          education: portfolio.education,
+          experience: portfolio.experience,
+          skills: portfolio.skills,
+          projects: portfolio.projects,
+          certifications: portfolio.certifications,
+          achievements: portfolio.achievements,
+          goals: portfolio.goals,
+          hobbies: portfolio.hobbies,
+          contactInfo: portfolio.contactInfo,
+          portfolioSamples: portfolio.portfolioSamples,
+          workPreferences: portfolio.workPreferences,
+          endorsements: portfolio.endorsements,
+          onlineCourses: portfolio.onlineCourses,
+          testimonials: portfolio.testimonials
+        };
+        
+        const analysis = analyzeProfileCompletion(profileData);
+        portfolio.completionPercentage = analysis.completionPercentage;
+        portfolio.lastUpdated = new Date();
+        
         await portfolio.save();
+        
+        console.log('Portfolio item deleted for user:', userId, 'New completion:', analysis.completionPercentage + '%');
       }
     }
 
