@@ -61,9 +61,9 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ backgroundColor: currentTheme.colors.background }}>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ background: currentTheme.gradients.background, minHeight: '100vh' }}>
       {/* Header */}
-      <div className="professional-card p-6 mb-8">
+      <div className="glass-card p-6 mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div 
             className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -91,7 +91,7 @@ export default function MessagesPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="professional-card p-4">
+        <div className="glass-card p-4">
           <div className="flex items-center gap-3">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -119,7 +119,7 @@ export default function MessagesPage() {
           </div>
         </div>
 
-        <div className="professional-card p-4">
+        <div className="glass-card p-4">
           <div className="flex items-center gap-3">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -147,7 +147,7 @@ export default function MessagesPage() {
           </div>
         </div>
 
-        <div className="professional-card p-4">
+        <div className="glass-card p-4">
           <div className="flex items-center gap-3">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -175,7 +175,7 @@ export default function MessagesPage() {
           </div>
         </div>
 
-        <div className="professional-card p-4">
+        <div className="glass-card p-4">
           <div className="flex items-center gap-3">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -205,7 +205,7 @@ export default function MessagesPage() {
       </div>
 
       {/* Empty State */}
-      <div className="professional-card text-center py-16">
+      <div className="glass-card text-center py-16">
         <div 
           className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center"
           style={{ 
@@ -251,7 +251,7 @@ export default function MessagesPage() {
 
         {/* Tips Section */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <div className="professional-card p-4 text-left">
+          <div className="glass-card p-4 text-left">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
               style={{ 
@@ -275,7 +275,7 @@ export default function MessagesPage() {
             </p>
           </div>
 
-          <div className="professional-card p-4 text-left">
+          <div className="glass-card p-4 text-left">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
               style={{ 
@@ -299,7 +299,7 @@ export default function MessagesPage() {
             </p>
           </div>
 
-          <div className="professional-card p-4 text-left">
+          <div className="glass-card p-4 text-left">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
               style={{ 
