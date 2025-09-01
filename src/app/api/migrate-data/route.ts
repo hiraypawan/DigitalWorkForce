@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
           websiteUrl: exp.websiteUrl || undefined,
           projectUrls: exp.projectUrls || []
         };
-      }).filter(exp => exp !== null); // Remove null entries
+      }).filter((exp: any) => exp !== null); // Remove null entries
     }
     
     console.log('Fixed experience data:', JSON.stringify(portfolio.experience, null, 2));
