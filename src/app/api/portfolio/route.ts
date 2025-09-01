@@ -114,26 +114,28 @@ export async function GET(request: NextRequest) {
         return cert;
       }) || [],
       experience: portfolio.experience?.map((exp: any) => {
-        // Fix any malformed experience data
-        if (typeof exp === 'string' || !exp.role || !exp.company) {
-          console.log('Portfolio API - Found malformed experience:', exp);
-          return {
-            role: exp?.role || 'Unknown Role',
-            company: exp?.company || 'Unknown Company', 
-            duration: exp?.duration || 'Unknown Duration',
-            details: exp?.details || exp || 'No details provided',
-            location: exp?.location || undefined,
-            achievements: exp?.achievements || [],
-            websiteUrl: exp?.websiteUrl || undefined,
-            projectUrls: exp?.projectUrls || []
-          };
+        console.log('Processing experience:', exp);
+        
+        // Fix any malformed experience data - be more aggressive
+        if (!exp || typeof exp === 'string' || !exp.role || !exp.company || 
+            exp.role === 'string' || exp.company === 'string' ||
+            typeof exp.role !== 'string' || typeof exp.company !== 'string') {
+          console.log('Portfolio API - Found malformed experience, removing:', exp);
+          return null; // Mark for removal
         }
+        
+        // Ensure valid experience structure
         return {
-          ...exp,
-          websiteUrl: exp?.websiteUrl || undefined,
-          projectUrls: exp?.projectUrls || []
+          role: String(exp.role),
+          company: String(exp.company),
+          duration: String(exp.duration || 'Not specified'),
+          details: String(exp.details || 'No details provided'),
+          location: exp.location ? String(exp.location) : undefined,
+          achievements: Array.isArray(exp.achievements) ? exp.achievements.map(String) : [],
+          websiteUrl: exp.websiteUrl ? String(exp.websiteUrl) : undefined,
+          projectUrls: Array.isArray(exp.projectUrls) ? exp.projectUrls.map(String) : []
         };
-      }) || []
+      }).filter((exp: any) => exp !== null) || []
     };
     
     return NextResponse.json(compatiblePortfolio);
