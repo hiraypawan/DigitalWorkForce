@@ -138,7 +138,7 @@ export default function Home() {
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
               <div className="relative bg-black/50 backdrop-blur border border-gray-800 rounded-3xl p-8 hover:border-blue-500/50 transition-all duration-300">
                 <User className="w-12 h-12 text-blue-400 mb-4 mx-auto" />
-                <h3 className="text-2xl font-bold mb-4 text-white">Are you a <span className="text-blue-400">worker</span>?</h3>
+                <h3 className="text-2xl font-bold mb-4 text-white">Are you an <span className="text-blue-400">employee</span>?</h3>
                 <p className="text-gray-400 mb-6">Get real projects + earnings.</p>
                 <Link
                   href="/auth/register"
@@ -177,7 +177,7 @@ export default function Home() {
                 <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-full border-2 border-gray-900"></div>
               </div>
               <span className="text-gray-300 text-sm">
-                <span className="text-white font-semibold">2,000+ workers</span> already matched with projects
+                <span className="text-white font-semibold">2,000+ employees</span> already matched with projects
               </span>
             </div>
           </div>
@@ -255,7 +255,7 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div>
                 <div className="text-4xl font-bold text-white mb-2">2,000+</div>
-                <div className="text-gray-400">Workers matched with projects</div>
+                <div className="text-gray-400">Employees matched with projects</div>
               </div>
               <div>
                 <div className="text-4xl font-bold text-white mb-2">150+</div>
@@ -263,7 +263,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-4xl font-bold text-white mb-2">₹2Cr+</div>
-                <div className="text-gray-400">Paid to Workers</div>
+                <div className="text-gray-400">Paid to Employees</div>
               </div>
               <div>
                 <div className="text-4xl font-bold text-white mb-2">4.9★</div>

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTheme } from '@/contexts/ThemeContext';
+import ThemeSwitcher from './ThemeSwitcher';
 import {
   Home,
   User,
@@ -37,6 +39,7 @@ export default function DashboardHeader() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const { currentTheme } = useTheme();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -105,21 +108,38 @@ export default function DashboardHeader() {
 
   if (status === 'loading') {
     return (
-      <header className="bg-black/90 backdrop-blur-lg border-b border-gray-800 neon-border">
+      <header 
+        className="backdrop-blur-lg border-b sticky top-0 z-50"
+        style={{
+          backgroundColor: `${currentTheme.colors.surface}90`,
+          borderColor: currentTheme.colors.border
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-8">
-              <Link href="/dashboard" className="text-2xl font-bold text-blue-400 glow-text">
+              <Link 
+                href="/dashboard" 
+                className="text-2xl font-bold transition-colors"
+                style={{ color: currentTheme.colors.primary }}
+              >
                 Digital Workforce
               </Link>
               <div className="hidden md:flex space-x-8">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-4 bg-gray-700 rounded animate-pulse w-20 shimmer"></div>
+                  <div 
+                    key={i} 
+                    className="h-4 rounded animate-pulse w-20"
+                    style={{ backgroundColor: currentTheme.colors.border }}
+                  ></div>
                 ))}
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="w-8 h-8 bg-gray-700 rounded-full animate-pulse shimmer"></div>
+              <div 
+                className="w-8 h-8 rounded-full animate-pulse"
+                style={{ backgroundColor: currentTheme.colors.border }}
+              ></div>
             </div>
           </div>
         </div>
@@ -128,28 +148,39 @@ export default function DashboardHeader() {
   }
 
   return (
-    <header className="bg-black/90 backdrop-blur-lg border-b border-gray-800 neon-border sticky top-0 z-50">
+    <header 
+      className="backdrop-blur-lg border-b sticky top-0 z-50"
+      style={{
+        backgroundColor: `${currentTheme.colors.surface}90`,
+        borderColor: currentTheme.colors.border
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo and Navigation */}
           <div className="flex items-center gap-8">
-            <Link href="/dashboard" className="text-2xl font-bold text-blue-400 glow-text hover:text-blue-300 transition-colors">
+            <Link 
+              href="/dashboard" 
+              className="text-2xl font-bold transition-colors hover:opacity-80"
+              style={{ color: currentTheme.colors.primary }}
+            >
               Digital Workforce
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-6">
+            <nav className="hidden lg:flex space-x-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                      isActive(item.href)
-                        ? 'gradient-primary text-white glow-button'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-800 neon-border'
-                    }`}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105"
+                    style={{
+                      backgroundColor: isActive(item.href) ? `${currentTheme.colors.primary}20` : 'transparent',
+                      color: isActive(item.href) ? currentTheme.colors.primary : currentTheme.colors.text,
+                      border: isActive(item.href) ? `1px solid ${currentTheme.colors.primary}40` : '1px solid transparent'
+                    }}
                   >
                     <Icon className="w-4 h-4" />
                     {item.label}
@@ -159,43 +190,82 @@ export default function DashboardHeader() {
             </nav>
           </div>
 
-          {/* Right side - User menu and notifications */}
-          <div className="flex items-center gap-4">
+          {/* Right side - Theme switcher, notifications, and user menu */}
+          <div className="flex items-center gap-2">
+            {/* Theme Switcher */}
+            <div className="hidden md:block">
+              <ThemeSwitcher />
+            </div>
+
             {/* Notifications */}
-            <button className="relative p-2 text-gray-300 hover:text-white rounded-lg hover:bg-gray-800 neon-border transition-all">
+            <button 
+              className="relative p-2 rounded-lg transition-all duration-200 hover:scale-105"
+              style={{
+                backgroundColor: `${currentTheme.colors.surface}60`,
+                border: `1px solid ${currentTheme.colors.border}`,
+                color: currentTheme.colors.text
+              }}
+            >
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+              <span 
+                className="absolute top-1 right-1 w-2 h-2 rounded-full animate-pulse"
+                style={{ backgroundColor: currentTheme.colors.accent }}
+              ></span>
             </button>
 
             {/* User Menu */}
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800 neon-border transition-all"
+                className="flex items-center gap-2 p-2 rounded-lg transition-all duration-200 hover:scale-105"
+                style={{
+                  backgroundColor: `${currentTheme.colors.surface}60`,
+                  border: `1px solid ${currentTheme.colors.border}`,
+                  color: currentTheme.colors.text
+                }}
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center">
+                <div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center"
+                  style={{ background: currentTheme.gradients.card }}
+                >
                   {userData?.avatar ? (
                     <Image src={userData.avatar} alt="Avatar" width={32} height={32} className="w-8 h-8 rounded-full" />
                   ) : (
                     <User className="w-4 h-4 text-white" />
                   )}
                 </div>
-                <span className="hidden md:block text-sm font-medium text-gray-300">
+                <span className="hidden lg:block text-sm font-medium">
                   {userData?.name || 'User'}
                 </span>
-                <ChevronDown className="w-4 h-4 text-gray-400" />
+                <ChevronDown className="w-4 h-4" />
               </button>
 
               {/* User Dropdown Menu */}
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-56 glass-effect bg-gray-900/95 rounded-xl neon-border py-2 z-50">
-                  <div className="px-4 py-3 border-b border-gray-700">
-                    <p className="text-sm font-medium text-white">{userData?.name}</p>
-                    <p className="text-xs text-gray-400">{userData?.email}</p>
+                <div 
+                  className="absolute right-0 mt-2 w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-50"
+                  style={{
+                    backgroundColor: `${currentTheme.colors.surface}95`,
+                    borderColor: currentTheme.colors.border
+                  }}
+                >
+                  <div 
+                    className="px-4 py-3 border-b"
+                    style={{ borderColor: currentTheme.colors.border }}
+                  >
+                    <p className="text-sm font-medium" style={{ color: currentTheme.colors.text }}>
+                      {userData?.name}
+                    </p>
+                    <p className="text-xs" style={{ color: currentTheme.colors.textMuted }}>
+                      {userData?.email}
+                    </p>
                   </div>
                   <Link
                     href="/dashboard/profile"
-                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+                    className="flex items-center gap-3 px-4 py-2 text-sm transition-all duration-150 hover:scale-[1.02]"
+                    style={{
+                      color: currentTheme.colors.text
+                    }}
                     onClick={() => setShowUserMenu(false)}
                   >
                     <User className="w-4 h-4" />
@@ -203,16 +273,18 @@ export default function DashboardHeader() {
                   </Link>
                   <Link
                     href="/dashboard/settings"
-                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+                    className="flex items-center gap-3 px-4 py-2 text-sm transition-all duration-150 hover:scale-[1.02]"
+                    style={{ color: currentTheme.colors.text }}
                     onClick={() => setShowUserMenu(false)}
                   >
                     <Settings className="w-4 h-4" />
                     Settings
                   </Link>
-                  <hr className="my-2 border-gray-700" />
+                  <hr style={{ margin: '8px 0', borderColor: currentTheme.colors.border }} />
                   <button
                     onClick={handleSignOut}
-                    className="flex items-center gap-3 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-900/20 w-full text-left transition-colors"
+                    className="flex items-center gap-3 px-4 py-2 text-sm w-full text-left transition-all duration-150 hover:scale-[1.02]"
+                    style={{ color: currentTheme.colors.accent }}
                   >
                     <LogOut className="w-4 h-4" />
                     Sign Out
@@ -224,7 +296,12 @@ export default function DashboardHeader() {
             {/* Mobile menu button */}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden p-2 text-gray-300 hover:text-white rounded-lg hover:bg-gray-800 neon-border transition-all"
+              className="lg:hidden p-2 rounded-lg transition-all duration-200 hover:scale-105"
+              style={{
+                backgroundColor: `${currentTheme.colors.surface}60`,
+                border: `1px solid ${currentTheme.colors.border}`,
+                color: currentTheme.colors.text
+              }}
             >
               {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -233,7 +310,17 @@ export default function DashboardHeader() {
 
         {/* Mobile Navigation Menu */}
         {showMobileMenu && (
-          <div className="md:hidden border-t border-gray-800 bg-black/95">
+          <div 
+            className="lg:hidden border-t"
+            style={{
+              borderColor: currentTheme.colors.border,
+              backgroundColor: `${currentTheme.colors.surface}95`
+            }}
+          >
+            {/* Theme switcher for mobile */}
+            <div className="md:hidden px-4 py-2 border-b" style={{ borderColor: currentTheme.colors.border }}>
+              <ThemeSwitcher />
+            </div>
             <nav className="px-4 py-2 space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -241,11 +328,12 @@ export default function DashboardHeader() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                      isActive(item.href)
-                        ? 'gradient-primary text-white glow-button'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                    }`}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
+                    style={{
+                      backgroundColor: isActive(item.href) ? `${currentTheme.colors.primary}20` : 'transparent',
+                      color: isActive(item.href) ? currentTheme.colors.primary : currentTheme.colors.text,
+                      border: isActive(item.href) ? `1px solid ${currentTheme.colors.primary}40` : '1px solid transparent'
+                    }}
                     onClick={() => setShowMobileMenu(false)}
                   >
                     <Icon className="w-4 h-4" />
