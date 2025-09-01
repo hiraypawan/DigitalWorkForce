@@ -8,6 +8,7 @@ export interface Theme {
   colors: {
     primary: string;
     primaryHover: string;
+    secondary: string;
     accent: string;
     background: string;
     surface: string;
@@ -16,45 +17,49 @@ export interface Theme {
     textSecondary: string;
     textMuted: string;
     border: string;
-    borderLight: string;
+    borderHover: string;
     success: string;
     warning: string;
     error: string;
     info: string;
   };
+  gradients: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    background: string;
+    card: string;
+  };
 }
 
-// Professional TalentSync Theme - Clean, trustworthy, modern
-export const professionalTheme: Theme = {
-  id: 'professional',
-  name: 'TalentSync Professional',
+// Modern Dark Theme with Gradients - Professional yet engaging
+export const modernDarkTheme: Theme = {
+  id: 'modern-dark',
+  name: 'DigitalWorkForce Modern',
   colors: {
-    // Primary: Deep Navy Blue - Trust, stability, professionalism
-    primary: '#0F2557',
-    primaryHover: '#0A1A3E',
-    
-    // Accent: Vibrant Coral - Energy, warmth, call-to-action
-    accent: '#FF6B6B',
-    
-    // Backgrounds: Light, clean, professional
-    background: '#F8FAFC',  // Very light gray background
-    surface: '#FFFFFF',      // White cards and surfaces
-    surfaceHover: '#F1F5F9', // Light hover state
-    
-    // Text: Proper contrast and hierarchy
-    text: '#1E293B',         // Almost black for headings
-    textSecondary: '#334155', // Dark gray for body text
-    textMuted: '#64748B',     // Medium gray for less important text
-    
-    // Borders: Subtle separation
-    border: '#E2E8F0',       // Light border for cards
-    borderLight: '#F1F5F9',   // Very light border
-    
-    // Status colors
+    primary: '#3B82F6',
+    primaryHover: '#2563EB',
+    secondary: '#8B5CF6',
+    accent: '#06B6D4',
+    background: '#0F0F23',
+    surface: '#1A1B3A',
+    surfaceHover: '#252653',
+    text: '#FFFFFF',
+    textSecondary: '#E2E8F0',
+    textMuted: '#94A3B8',
+    border: '#334155',
+    borderHover: '#475569',
     success: '#10B981',
-    warning: '#F59E0B', 
+    warning: '#F59E0B',
     error: '#EF4444',
-    info: '#0F2557'  // Same as primary
+    info: '#3B82F6'
+  },
+  gradients: {
+    primary: 'from-blue-600 via-blue-700 to-indigo-800',
+    secondary: 'from-purple-600 via-violet-700 to-indigo-800',
+    accent: 'from-cyan-500 via-blue-600 to-indigo-700',
+    background: 'linear-gradient(135deg, #0F0F23, #1A1B3A)',
+    card: 'linear-gradient(135deg, #1A1B3A, #252653)'
   }
 };
 
@@ -95,7 +100,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     // Apply theme CSS variables to document root
     const root = document.documentElement;
     
-    Object.entries(professionalTheme.colors).forEach(([key, value]) => {
+    Object.entries(modernDarkTheme.colors).forEach(([key, value]) => {
       root.style.setProperty(`--color-${key}`, value);
     });
   }, []);
@@ -121,7 +126,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{
-      currentTheme: professionalTheme,
+      currentTheme: modernDarkTheme,
       currency,
       setCurrency,
       formatCurrency

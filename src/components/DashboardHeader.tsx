@@ -149,9 +149,9 @@ export default function DashboardHeader() {
 
   return (
     <header 
-      className="border-b sticky top-0 z-50 shadow-sm"
+      className="backdrop-blur-lg border-b sticky top-0 z-50"
       style={{
-        backgroundColor: currentTheme.colors.primary,
+        background: currentTheme.gradients.background,
         borderColor: currentTheme.colors.border
       }}
     >
@@ -161,25 +161,26 @@ export default function DashboardHeader() {
           <div className="flex items-center gap-8">
             <Link 
               href="/dashboard" 
-              className="text-2xl font-bold transition-colors hover:opacity-80"
-              style={{ color: 'white' }}
+              className="text-2xl font-bold transition-colors hover:opacity-80 glow-text"
+              style={{ color: currentTheme.colors.text }}
             >
-              TalentSync
+              DigitalWorkForce
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-1">
+            <nav className="hidden lg:flex space-x-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-white/10"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105"
                     style={{
-                      backgroundColor: isActive(item.href) ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
-                      color: 'white',
-                      borderBottom: isActive(item.href) ? `2px solid ${currentTheme.colors.accent}` : '2px solid transparent'
+                      backgroundColor: isActive(item.href) ? `${currentTheme.colors.primary}30` : 'transparent',
+                      color: isActive(item.href) ? currentTheme.colors.text : currentTheme.colors.textSecondary,
+                      border: isActive(item.href) ? `1px solid ${currentTheme.colors.primary}50` : '1px solid transparent',
+                      boxShadow: isActive(item.href) ? `0 0 15px ${currentTheme.colors.primary}40` : 'none'
                     }}
                   >
                     <Icon className="w-4 h-4" />
@@ -199,14 +200,17 @@ export default function DashboardHeader() {
 
             {/* Notifications */}
             <button 
-              className="relative p-2 rounded-lg transition-all duration-200 hover:bg-white/10"
+              className="relative p-2 rounded-lg transition-all duration-300 hover:scale-105 neon-border"
               style={{
-                color: 'white'
+                backgroundColor: `${currentTheme.colors.surface}60`,
+                border: `1px solid ${currentTheme.colors.border}`,
+                color: currentTheme.colors.text,
+                backdropFilter: 'blur(10px)'
               }}
             >
               <Bell className="w-5 h-5" />
               <span 
-                className="absolute top-1 right-1 w-2 h-2 rounded-full"
+                className="absolute top-1 right-1 w-2 h-2 rounded-full animate-pulse"
                 style={{ backgroundColor: currentTheme.colors.accent }}
               ></span>
             </button>
@@ -215,14 +219,17 @@ export default function DashboardHeader() {
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-2 rounded-lg transition-all duration-200 hover:bg-white/10"
+                className="flex items-center gap-2 p-2 rounded-lg transition-all duration-300 hover:scale-105"
                 style={{
-                  color: 'white'
+                  backgroundColor: `${currentTheme.colors.surface}60`,
+                  border: `1px solid ${currentTheme.colors.border}`,
+                  color: currentTheme.colors.text,
+                  backdropFilter: 'blur(10px)'
                 }}
               >
                 <div 
                   className="w-8 h-8 rounded-full flex items-center justify-center"
-                  style={{ backgroundColor: currentTheme.colors.accent }}
+                  style={{ background: currentTheme.gradients.card }}
                 >
                   {userData?.avatar ? (
                     <Image src={userData.avatar} alt="Avatar" width={32} height={32} className="w-8 h-8 rounded-full" />
@@ -239,9 +246,9 @@ export default function DashboardHeader() {
               {/* User Dropdown Menu */}
               {showUserMenu && (
                 <div 
-                  className="absolute right-0 mt-2 w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-50"
+                  className="absolute right-0 mt-2 w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-50 glass-card"
                   style={{
-                    backgroundColor: `${currentTheme.colors.surface}95`,
+                    background: currentTheme.gradients.card,
                     borderColor: currentTheme.colors.border
                   }}
                 >

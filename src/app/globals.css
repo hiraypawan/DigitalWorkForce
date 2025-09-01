@@ -11,145 +11,161 @@
   
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: var(--color-background);
-    color: var(--color-textSecondary);
+    background: linear-gradient(135deg, #0F0F23, #1A1B3A);
+    color: #E2E8F0;
     line-height: 1.6;
     font-weight: 400;
+    min-height: 100vh;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    color: var(--color-text);
+    color: #FFFFFF;
     font-weight: 600;
     line-height: 1.3;
   }
   
   h1 {
-    font-size: 2.25rem; /* 36px */
+    font-size: 2.25rem;
     font-weight: 700;
   }
   
   h2 {
-    font-size: 1.875rem; /* 30px */
+    font-size: 1.875rem;
     font-weight: 600;
   }
   
   h3 {
-    font-size: 1.5rem; /* 24px */
+    font-size: 1.5rem;
     font-weight: 600;
   }
   
   h4 {
-    font-size: 1.25rem; /* 20px */
+    font-size: 1.25rem;
     font-weight: 600;
   }
 }
 
 @layer components {
-  /* Professional Card Components */
-  .professional-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    transition: all 0.2s ease-in-out;
+  /* Modern Glass Card Components */
+  .glass-card {
+    background: rgba(26, 27, 58, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    transition: all 0.3s ease;
   }
   
-  .professional-card:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transform: translateY(-1px);
+  .glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+                0 0 0 1px rgba(59, 130, 246, 0.3) inset,
+                0 0 20px rgba(59, 130, 246, 0.1);
   }
   
-  /* Button Components */
+  /* Modern Gradient Buttons */
   .btn-primary {
-    background: var(--color-accent);
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
     color: white;
     padding: 0.75rem 1.5rem;
-    border-radius: 8px;
+    border-radius: 12px;
     font-weight: 600;
     font-size: 0.875rem;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     border: none;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
   }
   
   .btn-primary:hover {
-    background: #E55555;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.25);
+    background: linear-gradient(135deg, #2563EB, #1D4ED8);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
   }
   
   .btn-secondary {
-    background: var(--color-surface);
-    color: var(--color-primary);
+    background: rgba(26, 27, 58, 0.8);
+    color: #3B82F6;
     padding: 0.75rem 1.5rem;
-    border-radius: 8px;
+    border-radius: 12px;
     font-weight: 600;
     font-size: 0.875rem;
-    transition: all 0.2s ease;
-    border: 1px solid var(--color-primary);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(59, 130, 246, 0.4);
     cursor: pointer;
+    backdrop-filter: blur(10px);
   }
   
   .btn-secondary:hover {
-    background: var(--color-primary);
-    color: white;
+    background: rgba(59, 130, 246, 0.1);
+    border-color: #3B82F6;
     transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
   }
   
-  /* Skill Tags */
+  /* Modern Skill Tags */
   .skill-tag {
-    background: var(--color-borderLight);
-    color: var(--color-textSecondary);
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+    color: #E2E8F0;
+    padding: 0.375rem 0.875rem;
+    border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 500;
     display: inline-flex;
     align-items: center;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    backdrop-filter: blur(10px);
   }
   
-  /* Filter Chips */
+  /* Modern Filter Chips */
   .filter-chip {
-    background: var(--color-surface);
-    color: var(--color-textSecondary);
+    background: rgba(26, 27, 58, 0.8);
+    color: #94A3B8;
     padding: 0.5rem 1rem;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 0.875rem;
     font-weight: 500;
-    border: 1px solid var(--color-border);
+    border: 1px solid rgba(51, 65, 85, 0.5);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
   }
   
   .filter-chip:hover {
-    background: var(--color-surfaceHover);
+    background: rgba(37, 38, 83, 0.9);
+    border-color: rgba(59, 130, 246, 0.5);
+    color: #E2E8F0;
   }
   
   .filter-chip.active {
-    background: var(--color-primary);
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
     color: white;
-    border-color: var(--color-primary);
+    border-color: #3B82F6;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
   }
   
-  /* Professional Input */
-  .professional-input {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
+  /* Modern Glass Input */
+  .glass-input {
+    background: rgba(26, 27, 58, 0.8);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+    border-radius: 12px;
+    padding: 0.875rem 1.125rem;
     font-size: 0.875rem;
-    color: var(--color-textSecondary);
-    transition: all 0.2s ease;
+    color: #E2E8F0;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
   }
   
-  .professional-input:focus {
+  .glass-input:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(15, 37, 87, 0.1);
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2), 
+                0 0 20px rgba(59, 130, 246, 0.1);
   }
   
-  .professional-input::placeholder {
-    color: var(--color-textMuted);
+  .glass-input::placeholder {
+    color: #94A3B8;
   }
   
   /* Futuristic Glowing Effects */

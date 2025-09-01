@@ -246,7 +246,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-black min-h-screen">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen" style={{ background: 'radial-gradient(ellipse at top, #1e3a8a 0%, #000000 70%)' }}>
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
@@ -275,11 +275,11 @@ export default function Profile() {
             ) : (
               <>
                 <Link
-                  href="/ai-chat"
+                  href="/onboarding"
                   className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg hover:shadow-green-500/25 flex items-center gap-2 font-medium mr-2 transition-all duration-300 transform hover:scale-105 glow-button"
                 >
                   <Bot className="w-4 h-4" />
-                  AI Profile Tips
+                  Edit Profile with AI
                 </Link>
                 <button
                   onClick={() => setEditMode(true)}

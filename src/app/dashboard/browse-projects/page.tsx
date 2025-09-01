@@ -84,12 +84,12 @@ export default function BrowseProjects() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ backgroundColor: currentTheme.colors.background }}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ background: currentTheme.gradients.background, minHeight: '100vh' }}>
         <div className="animate-pulse">
           <div className="h-8 rounded w-1/4 mb-6" style={{ backgroundColor: currentTheme.colors.border }}></div>
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="professional-card p-6">
+              <div key={i} className="glass-card p-6">
                 <div className="h-4 rounded w-3/4 mb-2" style={{ backgroundColor: currentTheme.colors.borderLight }}></div>
                 <div className="h-3 rounded w-1/2 mb-4" style={{ backgroundColor: currentTheme.colors.borderLight }}></div>
                 <div className="flex gap-2">
@@ -106,12 +106,12 @@ export default function BrowseProjects() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ backgroundColor: currentTheme.colors.background }}>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ background: currentTheme.gradients.background, minHeight: '100vh' }}>
       {/* Page Header */}
       <div className="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: currentTheme.colors.text }}>Browse Projects</h1>
-          <p style={{ color: currentTheme.colors.textMuted }}>Find exciting projects that match your skills and interests</p>
+          <h1 className="text-4xl font-bold mb-2 glow-text" style={{ color: currentTheme.colors.text }}>Browse Projects 🔍</h1>
+          <p className="text-xl" style={{ color: currentTheme.colors.textMuted }}>Find exciting projects that match your skills and interests</p>
         </div>
         <Link href="/ai-chat" className="btn-secondary inline-flex items-center gap-2">
           <Bot className="w-5 h-5" />
@@ -120,7 +120,7 @@ export default function BrowseProjects() {
       </div>
 
       {/* Search and Filters */}
-      <div className="professional-card p-6 mb-6">
+      <div className="glass-card p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
@@ -133,7 +133,12 @@ export default function BrowseProjects() {
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="professional-input w-full pl-10"
+                className="filter-chip-input w-full pl-10"
+                style={{
+                  backgroundColor: 'rgba(20, 30, 48, 0.4)',
+                  borderColor: currentTheme.colors.border,
+                  color: currentTheme.colors.text
+                }}
               />
             </div>
           </div>
@@ -163,29 +168,31 @@ export default function BrowseProjects() {
       {/* Project Cards */}
       <div className="space-y-4">
         {projects.map(project => (
-          <div key={project.id} className="professional-card p-6">
-            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
-              <div className="flex-1">
-                {/* Title and Urgent Badge */}
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-semibold" style={{ color: currentTheme.colors.text }}>
-                      {project.title}
-                    </h3>
-                    {project.urgent && (
-                      <span 
-                        className="px-2 py-1 text-xs font-medium rounded-full"
-                        style={{ 
-                          backgroundColor: `${currentTheme.colors.error}20`,
-                          color: currentTheme.colors.error,
-                          border: `1px solid ${currentTheme.colors.error}40`
-                        }}
-                      >
-                        Urgent
-                      </span>
-                    )}
+          <div key={project.id} className="glass-card p-6 group hover:scale-102 transition-all duration-300 relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-0 group-hover:opacity-25 transition duration-300"></div>
+            <div className="relative">
+              <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+                <div className="flex-1">
+                  {/* Title and Urgent Badge */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-xl font-semibold" style={{ color: currentTheme.colors.text }}>
+                        {project.title}
+                      </h3>
+                      {project.urgent && (
+                        <span 
+                          className="px-2 py-1 text-xs font-medium rounded-full"
+                          style={{ 
+                            backgroundColor: `${currentTheme.colors.error}20`,
+                            color: currentTheme.colors.error,
+                            border: `1px solid ${currentTheme.colors.error}40`
+                          }}
+                        >
+                          Urgent
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
                 
                 {/* Company Info */}
                 <div className="flex items-center gap-4 mb-3">
@@ -222,34 +229,35 @@ export default function BrowseProjects() {
                 </div>
               </div>
               
-              {/* Right Side - Budget and Actions */}
-              <div className="lg:text-right lg:min-w-[200px] flex flex-row lg:flex-col gap-4 lg:gap-3">
-                <div className="flex-1 lg:flex-none">
-                  <div className="text-2xl font-bold mb-2" style={{ color: currentTheme.colors.accent }}>
-                    {project.budget}
+                {/* Right Side - Budget and Actions */}
+                <div className="lg:text-right lg:min-w-[200px] flex flex-row lg:flex-col gap-4 lg:gap-3">
+                  <div className="flex-1 lg:flex-none">
+                    <div className="text-2xl font-bold mb-2 glow-text" style={{ color: currentTheme.colors.accent }}>
+                      {project.budget}
+                    </div>
+                    <div className="flex items-center gap-1 text-sm" style={{ color: currentTheme.colors.textMuted }}>
+                      <Star className="w-4 h-4" style={{ color: '#FCD34D', fill: '#FCD34D' }} />
+                      <span>{project.rating}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1 text-sm" style={{ color: currentTheme.colors.textMuted }}>
-                    <Star className="w-4 h-4" style={{ color: '#FCD34D', fill: '#FCD34D' }} />
-                    <span>{project.rating}</span>
-                  </div>
-                </div>
-                
-                {/* Actions */}
-                <div className="flex lg:flex-col gap-2 lg:w-full">
-                  <button className="btn-primary flex-1 lg:w-full">
-                    Apply Now
-                  </button>
-                  <div className="flex gap-2">
-                    <button 
-                      className="btn-secondary flex items-center gap-1 px-3"
-                      title="Save Project"
-                    >
-                      <BookmarkIcon className="w-4 h-4" />
-                      Save
+                  
+                  {/* Actions */}
+                  <div className="flex lg:flex-col gap-2 lg:w-full">
+                    <button className="btn-primary flex-1 lg:w-full glow-button">
+                      Apply Now
                     </button>
-                    <button className="btn-secondary px-3">
-                      View Details
-                    </button>
+                    <div className="flex gap-2">
+                      <button 
+                        className="btn-secondary flex items-center gap-1 px-3"
+                        title="Save Project"
+                      >
+                        <BookmarkIcon className="w-4 h-4" />
+                        Save
+                      </button>
+                      <button className="btn-secondary px-3">
+                        View Details
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -260,7 +268,7 @@ export default function BrowseProjects() {
 
       {/* Load More */}
       <div className="text-center mt-8">
-        <button className="btn-primary px-8 py-3">
+        <button className="btn-primary px-8 py-4 glow-button">
           Load More Projects
         </button>
       </div>

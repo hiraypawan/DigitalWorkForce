@@ -24,11 +24,12 @@ export default function CurrencySwitcher() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setShowMenu(!showMenu)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 border"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 hover:scale-105 glass-card"
         style={{ 
-          backgroundColor: currentTheme.colors.surface,
+          backgroundColor: `${currentTheme.colors.surface}60`,
           border: `1px solid ${currentTheme.colors.border}`,
-          color: currentTheme.colors.textSecondary
+          color: currentTheme.colors.text,
+          backdropFilter: 'blur(10px)'
         }}
         title="Change Currency"
       >
@@ -43,9 +44,9 @@ export default function CurrencySwitcher() {
 
       {showMenu && (
         <div 
-          className="absolute right-0 mt-2 w-32 rounded-lg shadow-lg border z-50 overflow-hidden"
+          className="absolute right-0 mt-2 w-32 rounded-lg shadow-lg border z-50 overflow-hidden glass-card"
           style={{ 
-            backgroundColor: currentTheme.colors.surface,
+            background: currentTheme.gradients.card,
             borderColor: currentTheme.colors.border
           }}
         >
@@ -56,10 +57,10 @@ export default function CurrencySwitcher() {
                 setCurrency(curr as 'USD' | 'INR');
                 setShowMenu(false);
               }}
-              className="w-full flex items-center justify-between px-4 py-3 transition-colors duration-150 hover:bg-opacity-80"
+              className="w-full flex items-center justify-between px-4 py-3 transition-all duration-150 hover:scale-[1.02]"
               style={{ 
-                backgroundColor: currency === curr ? currentTheme.colors.surfaceHover : 'transparent',
-                color: currency === curr ? currentTheme.colors.primary : currentTheme.colors.textSecondary
+                backgroundColor: currency === curr ? `${currentTheme.colors.primary}20` : 'transparent',
+                color: currency === curr ? currentTheme.colors.primary : currentTheme.colors.text
               }}
             >
               <div className="flex items-center gap-2">
