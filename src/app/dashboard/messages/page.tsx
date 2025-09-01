@@ -38,16 +38,16 @@ export default function MessagesPage() {
     return (
       <div 
         className="min-h-screen flex items-center justify-center transition-colors duration-300"
-        style={{ background: currentTheme.gradients.background }}
+        style={{ backgroundColor: currentTheme.colors.background }}
       >
         <div className="text-center">
           <div 
             className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-            style={{ background: currentTheme.gradients.card }}
+            style={{ backgroundColor: currentTheme.colors.primary }}
           >
             <div 
               className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
-              style={{ borderColor: currentTheme.colors.primary }}
+              style={{ borderColor: 'white' }}
             ></div>
           </div>
           <p style={{ color: currentTheme.colors.textMuted }}>Loading messages...</p>
@@ -61,14 +61,14 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ backgroundColor: currentTheme.colors.background }}>
       {/* Header */}
-      <div className="mb-8">
+      <div className="professional-card p-6 mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div 
             className="w-10 h-10 rounded-xl flex items-center justify-center"
             style={{ 
-              backgroundColor: `${currentTheme.colors.primary}20`,
+              backgroundColor: `${currentTheme.colors.primary}15`,
               color: currentTheme.colors.primary
             }}
           >
@@ -91,18 +91,12 @@ export default function MessagesPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div 
-          className="p-4 rounded-xl border"
-          style={{
-            backgroundColor: `${currentTheme.colors.surface}80`,
-            borderColor: currentTheme.colors.border
-          }}
-        >
+        <div className="professional-card p-4">
           <div className="flex items-center gap-3">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{ 
-                backgroundColor: `${currentTheme.colors.primary}20`,
+                backgroundColor: `${currentTheme.colors.primary}15`,
                 color: currentTheme.colors.primary
               }}
             >
@@ -125,19 +119,13 @@ export default function MessagesPage() {
           </div>
         </div>
 
-        <div 
-          className="p-4 rounded-xl border"
-          style={{
-            backgroundColor: `${currentTheme.colors.surface}80`,
-            borderColor: currentTheme.colors.border
-          }}
-        >
+        <div className="professional-card p-4">
           <div className="flex items-center gap-3">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{ 
-                backgroundColor: `${currentTheme.colors.secondary}20`,
-                color: currentTheme.colors.secondary
+                backgroundColor: `${currentTheme.colors.primary}15`,
+                color: currentTheme.colors.primary
               }}
             >
               <Mail className="w-4 h-4" />
@@ -159,19 +147,13 @@ export default function MessagesPage() {
           </div>
         </div>
 
-        <div 
-          className="p-4 rounded-xl border"
-          style={{
-            backgroundColor: `${currentTheme.colors.surface}80`,
-            borderColor: currentTheme.colors.border
-          }}
-        >
+        <div className="professional-card p-4">
           <div className="flex items-center gap-3">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{ 
-                backgroundColor: `${currentTheme.colors.accent}20`,
-                color: currentTheme.colors.accent
+                backgroundColor: `${currentTheme.colors.primary}15`,
+                color: currentTheme.colors.primary
               }}
             >
               <Users className="w-4 h-4" />
@@ -193,15 +175,15 @@ export default function MessagesPage() {
           </div>
         </div>
 
-        <div 
-          className="p-4 rounded-xl border"
-          style={{
-            backgroundColor: `${currentTheme.colors.surface}80`,
-            borderColor: currentTheme.colors.border
-          }}
-        >
+        <div className="professional-card p-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-yellow-500/20 text-yellow-400">
+            <div 
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ 
+                backgroundColor: '#FCD34D20',
+                color: '#FCD34D'
+              }}
+            >
               <Star className="w-4 h-4" />
             </div>
             <div>
@@ -223,18 +205,11 @@ export default function MessagesPage() {
       </div>
 
       {/* Empty State */}
-      <div 
-        className="text-center py-16 rounded-2xl border"
-        style={{
-          backgroundColor: `${currentTheme.colors.surface}40`,
-          borderColor: currentTheme.colors.border,
-          background: `linear-gradient(135deg, ${currentTheme.colors.surface}40, ${currentTheme.colors.primary}05)`
-        }}
-      >
+      <div className="professional-card text-center py-16">
         <div 
           className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center"
           style={{ 
-            backgroundColor: `${currentTheme.colors.primary}10`,
+            backgroundColor: `${currentTheme.colors.primary}15`,
             color: currentTheme.colors.primary
           }}
         >
@@ -258,11 +233,7 @@ export default function MessagesPage() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link 
             href="/dashboard/browse-projects"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: currentTheme.colors.primary,
-              color: 'white'
-            }}
+            className="btn-primary inline-flex items-center gap-2 px-8 py-3"
           >
             <Search className="w-5 h-5" />
             Browse Projects
@@ -271,12 +242,7 @@ export default function MessagesPage() {
           
           <Link 
             href="/dashboard/my-applications"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}80`,
-              color: currentTheme.colors.text,
-              border: `1px solid ${currentTheme.colors.border}`
-            }}
+            className="btn-secondary inline-flex items-center gap-2 px-8 py-3"
           >
             <MessageSquare className="w-5 h-5" />
             View Applications
@@ -285,17 +251,11 @@ export default function MessagesPage() {
 
         {/* Tips Section */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <div 
-            className="p-4 rounded-xl border text-left"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}60`,
-              borderColor: currentTheme.colors.border
-            }}
-          >
+          <div className="professional-card p-4 text-left">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
               style={{ 
-                backgroundColor: `${currentTheme.colors.primary}20`,
+                backgroundColor: `${currentTheme.colors.primary}15`,
                 color: currentTheme.colors.primary
               }}
             >
@@ -315,18 +275,12 @@ export default function MessagesPage() {
             </p>
           </div>
 
-          <div 
-            className="p-4 rounded-xl border text-left"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}60`,
-              borderColor: currentTheme.colors.border
-            }}
-          >
+          <div className="professional-card p-4 text-left">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
               style={{ 
-                backgroundColor: `${currentTheme.colors.secondary}20`,
-                color: currentTheme.colors.secondary
+                backgroundColor: `${currentTheme.colors.primary}15`,
+                color: currentTheme.colors.primary
               }}
             >
               <Building className="w-4 h-4" />
@@ -345,13 +299,7 @@ export default function MessagesPage() {
             </p>
           </div>
 
-          <div 
-            className="p-4 rounded-xl border text-left"
-            style={{
-              backgroundColor: `${currentTheme.colors.surface}60`,
-              borderColor: currentTheme.colors.border
-            }}
-          >
+          <div className="professional-card p-4 text-left">
             <div 
               className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
               style={{ 
@@ -387,24 +335,14 @@ export default function MessagesPage() {
           <div className="flex flex-wrap gap-3 justify-center">
             <Link 
               href="/dashboard/profile"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-              style={{
-                backgroundColor: `${currentTheme.colors.surface}60`,
-                color: currentTheme.colors.text,
-                border: `1px solid ${currentTheme.colors.border}`
-              }}
+              className="btn-secondary inline-flex items-center gap-2"
             >
               <User className="w-4 h-4" />
               Complete Profile
             </Link>
             <Link 
               href="/dashboard/browse-projects"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-              style={{
-                backgroundColor: `${currentTheme.colors.surface}60`,
-                color: currentTheme.colors.text,
-                border: `1px solid ${currentTheme.colors.border}`
-              }}
+              className="btn-secondary inline-flex items-center gap-2"
             >
               <Search className="w-4 h-4" />
               Find Projects

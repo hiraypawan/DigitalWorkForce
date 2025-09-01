@@ -36,16 +36,16 @@ export default function MyApplicationsPage() {
     return (
       <div 
         className="min-h-screen flex items-center justify-center transition-colors duration-300"
-        style={{ background: currentTheme.gradients.background }}
+        style={{ backgroundColor: currentTheme.colors.background }}
       >
         <div className="text-center">
           <div 
             className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-            style={{ background: currentTheme.gradients.card }}
+            style={{ backgroundColor: currentTheme.colors.primary }}
           >
             <div 
               className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
-              style={{ borderColor: currentTheme.colors.primary }}
+              style={{ borderColor: 'white' }}
             ></div>
           </div>
           <p style={{ color: currentTheme.colors.textMuted }}>Loading applications...</p>
