@@ -55,33 +55,29 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ background: currentTheme.gradients.background, minHeight: '100vh' }}>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ background: currentTheme.gradients.background, minHeight: '100vh' }}>
       {/* Welcome Section */}
-      <div className="glass-card p-8 mb-8 group relative">
-        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
-        <div className="relative">
-          <h1 
-            className="text-4xl font-bold mb-4 glow-text"
-            style={{ color: currentTheme.colors.text }}
-          >
-            Welcome back, {session?.user?.name?.split(' ')[0] || 'Employee'} 👋
-          </h1>
-          <p 
-            className="text-xl"
-            style={{ color: currentTheme.colors.textMuted }}
-          >
-            Ready to explore new opportunities and advance your career?
-          </p>
-        </div>
+      <div className="glass-card p-6 mb-6">
+        <h1 
+          className="text-3xl font-bold mb-3"
+          style={{ color: currentTheme.colors.text }}
+        >
+          Welcome back, {session?.user?.name?.split(' ')[0] || 'Employee'} 👋
+        </h1>
+        <p 
+          className="text-lg"
+          style={{ color: currentTheme.colors.textMuted }}
+        >
+          Ready to explore new opportunities and advance your career?
+        </p>
       </div>
 
       {/* Quick Actions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Browse Projects */}
         <Link href="/dashboard/browse-projects" className="group block">
-          <div className="glass-card p-6 group-hover:scale-105 transition-all duration-300 group relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
-            <div className="relative">
+          <div className="glass-card p-5 hover:scale-[1.02] transition-all duration-300">
+            <div>
               <div className="flex items-center gap-4 mb-4">
                 <div 
                   className="w-12 h-12 rounded-xl flex items-center justify-center"
@@ -117,9 +113,8 @@ export default function DashboardPage() {
 
         {/* My Applications */}
         <Link href="/dashboard/my-applications" className="group block">
-          <div className="glass-card p-6 group-hover:scale-105 transition-all duration-300 group relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
-            <div className="relative">
+          <div className="glass-card p-5 hover:scale-[1.02] transition-all duration-300">
+            <div>
               <div className="flex items-center gap-4 mb-4">
                 <div 
                   className="w-12 h-12 rounded-xl flex items-center justify-center"
@@ -155,9 +150,8 @@ export default function DashboardPage() {
 
         {/* Messages */}
         <Link href="/dashboard/messages" className="group block">
-          <div className="glass-card p-6 group-hover:scale-105 transition-all duration-300 group relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
-            <div className="relative">
+          <div className="glass-card p-5 hover:scale-[1.02] transition-all duration-300">
+            <div>
               <div className="flex items-center gap-4 mb-4">
                 <div 
                   className="w-12 h-12 rounded-xl flex items-center justify-center"
@@ -285,47 +279,44 @@ export default function DashboardPage() {
       </div>
 
       {/* Getting Started Section */}
-      <div className="glass-card p-8 text-center group relative">
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
-        <div className="relative">
-          <div 
-            className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center"
-            style={{ 
-              backgroundColor: `${currentTheme.colors.primary}20`,
-              color: currentTheme.colors.primary
-            }}
+      <div className="glass-card p-6 text-center">
+        <div 
+          className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
+          style={{ 
+            backgroundColor: `${currentTheme.colors.primary}20`,
+            color: currentTheme.colors.primary
+          }}
+        >
+          <Star className="w-8 h-8" />
+        </div>
+        <h3 
+          className="text-2xl font-semibold mb-4"
+          style={{ color: currentTheme.colors.text }}
+        >
+          Ready to Start Your Journey?
+        </h3>
+        <p 
+          className="text-base mb-6 max-w-2xl mx-auto leading-relaxed"
+          style={{ color: currentTheme.colors.textMuted }}
+        >
+          Complete your profile and start applying to projects from top companies. 
+          Build your professional network and grow your career with DigitalWorkForce.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link 
+            href="/dashboard/browse-projects"
+            className="btn-primary inline-flex items-center gap-2 px-6 py-3"
           >
-            <Star className="w-10 h-10" />
-          </div>
-          <h3 
-            className="text-3xl font-semibold mb-6 glow-text"
-            style={{ color: currentTheme.colors.text }}
+            <Search className="w-4 h-4" />
+            Browse Projects
+          </Link>
+          <Link 
+            href="/dashboard/profile"
+            className="btn-secondary inline-flex items-center gap-2 px-6 py-3"
           >
-            Ready to Start Your Journey?
-          </h3>
-          <p 
-            className="text-xl mb-8 max-w-2xl mx-auto leading-relaxed"
-            style={{ color: currentTheme.colors.textMuted }}
-          >
-            Complete your profile and start applying to projects from top companies. 
-            Build your professional network and grow your career with DigitalWorkForce.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href="/dashboard/browse-projects"
-              className="btn-primary inline-flex items-center gap-2 px-8 py-4 glow-button"
-            >
-              <Search className="w-5 h-5" />
-              Browse Projects
-            </Link>
-            <Link 
-              href="/dashboard/profile"
-              className="btn-secondary inline-flex items-center gap-2 px-8 py-4"
-            >
-              <User className="w-5 h-5" />
-              Complete Profile
-            </Link>
-          </div>
+            <User className="w-4 h-4" />
+            Complete Profile
+          </Link>
         </div>
       </div>
     </div>

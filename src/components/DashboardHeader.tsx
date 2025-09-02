@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
@@ -43,6 +43,8 @@ export default function DashboardHeader() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (session?.user) {
@@ -54,6 +56,40 @@ export default function DashboardHeader() {
       });
     }
   }, [session]);
+
+  // Handle clicking outside to close menus
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setShowMobileMenu(false);
+      }
+    };
+
+    if (showUserMenu || showMobileMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+      
+      // Prevent body scroll when mobile menu is open
+      if (showMobileMenu) {
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showUserMenu, showMobileMenu]);
+
+  // Close menus on route change
+  useEffect(() => {
+    setShowUserMenu(false);
+    setShowMobileMenu(false);
+  }, [pathname]);
 
   const handleSignOut = async () => {
     await signOut({ redirect: false });
@@ -216,10 +252,10 @@ export default function DashboardHeader() {
             </button>
 
             {/* User Menu */}
-            <div className="relative">
+            <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-2 rounded-lg transition-all duration-300 hover:scale-105"
+                className="flex items-center gap-2 p-2 rounded-lg transition-all duration-300 hover:scale-105 touch-manipulation"
                 style={{
                   backgroundColor: `${currentTheme.colors.surface}60`,
                   border: `1px solid ${currentTheme.colors.border}`,
@@ -313,52 +349,73 @@ export default function DashboardHeader() {
 
         {/* Mobile Navigation Menu */}
         {showMobileMenu && (
-          <div 
-            className="lg:hidden border-t"
-            style={{
-              borderColor: currentTheme.colors.border,
-              backgroundColor: `${currentTheme.colors.surface}95`
-            }}
-          >
-            {/* Currency switcher for mobile */}
-            <div className="md:hidden px-4 py-2 border-b" style={{ borderColor: currentTheme.colors.border }}>
-              <CurrencySwitcher />
-            </div>
-            <nav className="px-4 py-2 space-y-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
-                    style={{
-                      backgroundColor: isActive(item.href) ? `${currentTheme.colors.primary}20` : 'transparent',
-                      color: isActive(item.href) ? currentTheme.colors.primary : currentTheme.colors.text,
-                      border: isActive(item.href) ? `1px solid ${currentTheme.colors.primary}40` : '1px solid transparent'
+          <>
+            {/* Mobile Menu Backdrop */}
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden mobile-backdrop"
+              onClick={() => setShowMobileMenu(false)}
+            />
+            
+            {/* Mobile Menu Panel */}
+            <div 
+              ref={mobileMenuRef}
+              className="lg:hidden border-t relative z-50 shadow-xl"
+              style={{
+                borderColor: currentTheme.colors.border,
+                backgroundColor: currentTheme.colors.surface,
+                backdropFilter: 'blur(20px)'
+              }}
+            >
+              {/* Currency switcher for mobile */}
+              <div className="md:hidden px-4 py-3 border-b" style={{ borderColor: currentTheme.colors.border }}>
+                <CurrencySwitcher />
+              </div>
+              
+              {/* Mobile Navigation Links */}
+              <nav className="px-4 py-3 space-y-1 max-h-96 overflow-y-auto">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 touch-manipulation active:scale-95"
+                      style={{
+                        backgroundColor: isActive(item.href) ? `${currentTheme.colors.primary}30` : 'transparent',
+                        color: isActive(item.href) ? currentTheme.colors.primary : currentTheme.colors.text,
+                        border: isActive(item.href) ? `1px solid ${currentTheme.colors.primary}50` : '1px solid transparent',
+                        minHeight: '48px' // Better touch targets
+                      }}
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <Icon className="w-5 h-5 flex-shrink-0" />
+                      <span className="flex-1">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+              
+              {/* Mobile Menu Footer */}
+              <div className="px-4 py-3 border-t" style={{ borderColor: currentTheme.colors.border }}>
+                <div className="flex items-center justify-between text-sm" style={{ color: currentTheme.colors.textMuted }}>
+                  <span>{userData?.name || 'User'}</span>
+                  <button
+                    onClick={() => {
+                      setShowMobileMenu(false);
+                      handleSignOut();
                     }}
-                    onClick={() => setShowMobileMenu(false)}
+                    className="flex items-center gap-2 px-3 py-1 rounded text-sm touch-manipulation"
+                    style={{ color: currentTheme.colors.accent }}
                   >
-                    <Icon className="w-4 h-4" />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
-
-      {/* Click outside to close menus */}
-      {(showUserMenu || showMobileMenu) && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => {
-            setShowUserMenu(false);
-            setShowMobileMenu(false);
-          }}
-        />
-      )}
     </header>
   );
 }
