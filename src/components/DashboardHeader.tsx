@@ -44,7 +44,7 @@ export default function DashboardHeader() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<'right' | 'left'>('right');
-  const [dropdownStyle, setDropdownStyle] = useState<{ right?: string; left?: string; position?: string; top?: string }>({ right: '0' });
+  const [dropdownStyle, setDropdownStyle] = useState<{ right?: string; left?: string; position?: 'absolute' | 'fixed'; top?: string }>({ right: '0' });
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
@@ -450,7 +450,7 @@ export default function DashboardHeader() {
                     ...dropdownStyle,
                     minWidth: '14rem',
                     maxWidth: 'calc(100vw - 2rem)',
-                    transform: dropdownStyle.position === 'fixed' ? 'none' : undefined
+                    ...(dropdownStyle.position === 'fixed' && { transform: 'none' })
                   }}
                 >
                   <div 
