@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
-import { CheckCircle, User, Briefcase, Award, FileText } from 'lucide-react';
+import { CheckCircle, User, Briefcase, Award, FileText, Mail, Heart, Star } from 'lucide-react';
 
 interface ProfileSection {
   id: string;
@@ -11,20 +11,76 @@ interface ProfileSection {
   icon: React.ReactNode;
 }
 
+interface UserProfileData {
+  name?: string;
+  aboutMe?: string;
+  skills?: string[];
+  hobbies?: string[];
+  experience?: any[];
+  resumeUrl?: string;
+  portfolioLinks?: string[];
+  email?: string;
+}
+
 interface ProfileProgressProps {
   className?: string;
   showDetails?: boolean;
+  userData?: UserProfileData;
+  variant?: 'default' | 'compact';
 }
 
-export function ProfileProgress({ className = '', showDetails = false }: ProfileProgressProps) {
+export function ProfileProgress({ 
+  className = '', 
+  showDetails = false, 
+  userData,
+  variant = 'default'
+}: ProfileProgressProps) {
   const { currentTheme } = useTheme();
   
-  // Mock profile completion data - in real app, this would come from user data
+  // Calculate profile sections based on real user data
   const profileSections: ProfileSection[] = [
-    { id: 'basic', name: 'Basic Info', completed: true, icon: <User className="w-4 h-4" /> },
-    { id: 'skills', name: 'Skills', completed: false, icon: <Award className="w-4 h-4" /> },
-    { id: 'experience', name: 'Experience', completed: false, icon: <Briefcase className="w-4 h-4" /> },
-    { id: 'resume', name: 'Resume', completed: false, icon: <FileText className="w-4 h-4" /> },
+    { 
+      id: 'basic', 
+      name: 'Basic Info', 
+      completed: !!(userData?.name?.trim()), 
+      icon: <User className="w-4 h-4" /> 
+    },
+    { 
+      id: 'bio', 
+      name: 'About Me', 
+      completed: !!(userData?.aboutMe?.trim()), 
+      icon: <Mail className="w-4 h-4" /> 
+    },
+    { 
+      id: 'skills', 
+      name: 'Skills', 
+      completed: !!(userData?.skills && userData.skills.length > 0), 
+      icon: <Award className="w-4 h-4" /> 
+    },
+    { 
+      id: 'experience', 
+      name: 'Experience', 
+      completed: !!(userData?.experience && userData.experience.length > 0), 
+      icon: <Briefcase className="w-4 h-4" /> 
+    },
+    { 
+      id: 'resume', 
+      name: 'Resume', 
+      completed: !!(userData?.resumeUrl), 
+      icon: <FileText className="w-4 h-4" /> 
+    },
+    { 
+      id: 'portfolio', 
+      name: 'Portfolio', 
+      completed: !!(userData?.portfolioLinks && userData.portfolioLinks.length > 0), 
+      icon: <Star className="w-4 h-4" /> 
+    },
+    { 
+      id: 'hobbies', 
+      name: 'Interests', 
+      completed: !!(userData?.hobbies && userData.hobbies.length > 0), 
+      icon: <Heart className="w-4 h-4" /> 
+    },
   ];
   
   const completedSections = profileSections.filter(section => section.completed).length;

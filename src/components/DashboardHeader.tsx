@@ -185,42 +185,93 @@ export default function DashboardHeader() {
 
   return (
     <header 
-      className="backdrop-blur-lg border-b sticky top-0 z-50"
+      className="backdrop-blur-xl border-b sticky top-0 z-50 shadow-lg"
       style={{
-        background: currentTheme.gradients.background,
-        borderColor: currentTheme.colors.border
+        background: `linear-gradient(135deg, ${currentTheme.colors.surface}95, ${currentTheme.colors.background}85)`,
+        borderColor: `${currentTheme.colors.border}60`,
+        backdropFilter: 'blur(20px) saturate(180%)'
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo and Navigation */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-10">
             <Link 
               href="/dashboard" 
-              className="text-2xl font-bold transition-colors hover:opacity-80 glow-text"
-              style={{ color: currentTheme.colors.text }}
+              className="group flex items-center gap-3 transition-all duration-300 hover:scale-105"
             >
-              DigitalWorkForce
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110"
+                style={{ background: `linear-gradient(135deg, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})` }}
+              >
+                <Briefcase className="w-5 h-5 text-white" />
+              </div>
+              <div className="hidden sm:block">
+                <h1 
+                  className="text-xl font-bold leading-tight transition-colors group-hover:opacity-80"
+                  style={{ color: currentTheme.colors.text }}
+                >
+                  DigitalWorkforce
+                </h1>
+                <p className="text-xs font-medium" style={{ color: currentTheme.colors.textMuted }}>
+                  Professional Platform
+                </p>
+              </div>
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-2">
+            <nav className="hidden lg:flex items-center gap-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
+                const active = isActive(item.href);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105"
+                    className="group relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
                     style={{
-                      backgroundColor: isActive(item.href) ? `${currentTheme.colors.primary}30` : 'transparent',
-                      color: isActive(item.href) ? currentTheme.colors.text : currentTheme.colors.textSecondary,
-                      border: isActive(item.href) ? `1px solid ${currentTheme.colors.primary}50` : '1px solid transparent',
-                      boxShadow: isActive(item.href) ? `0 0 15px ${currentTheme.colors.primary}40` : 'none'
+                      backgroundColor: active 
+                        ? `${currentTheme.colors.primary}20` 
+                        : 'transparent',
+                      color: active 
+                        ? currentTheme.colors.primary 
+                        : currentTheme.colors.textSecondary,
+                      border: active 
+                        ? `1px solid ${currentTheme.colors.primary}40` 
+                        : '1px solid transparent',
+                      boxShadow: active 
+                        ? `0 4px 20px ${currentTheme.colors.primary}25, inset 0 1px 0 ${currentTheme.colors.primary}20` 
+                        : 'none'
                     }}
                   >
-                    <Icon className="w-4 h-4" />
-                    {item.label}
+                    {/* Active indicator */}
+                    {active && (
+                      <div 
+                        className="absolute inset-0 rounded-xl opacity-20 animate-pulse"
+                        style={{ background: `linear-gradient(135deg, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})` }}
+                      />
+                    )}
+                    
+                    <div className="relative z-10 flex items-center gap-3">
+                      <div 
+                        className={`p-1.5 rounded-lg transition-all duration-300 ${
+                          active ? 'shadow-lg' : 'group-hover:shadow-md'
+                        }`}
+                        style={{
+                          background: active 
+                            ? `linear-gradient(135deg, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})` 
+                            : `${currentTheme.colors.surface}40`,
+                          color: active ? 'white' : currentTheme.colors.textSecondary
+                        }}
+                      >
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <span className="font-semibold tracking-wide">{item.label}</span>
+                    </div>
+                    
+                    {/* Hover effect overlay */}
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-300" 
+                         style={{ background: `linear-gradient(135deg, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})` }} />
                   </Link>
                 );
               })}
@@ -228,7 +279,7 @@ export default function DashboardHeader() {
           </div>
 
           {/* Right side - Currency switcher, notifications, and user menu */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {/* Currency Switcher */}
             <div className="hidden md:block">
               <CurrencySwitcher />
@@ -236,47 +287,64 @@ export default function DashboardHeader() {
 
             {/* Notifications */}
             <button 
-              className="relative p-2 rounded-lg transition-all duration-300 hover:scale-105 neon-border"
+              className="group relative p-3 rounded-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
               style={{
-                backgroundColor: `${currentTheme.colors.surface}60`,
-                border: `1px solid ${currentTheme.colors.border}`,
+                background: `linear-gradient(135deg, ${currentTheme.colors.surface}90, ${currentTheme.colors.background}70)`,
+                border: `1px solid ${currentTheme.colors.border}60`,
                 color: currentTheme.colors.text,
-                backdropFilter: 'blur(10px)'
+                backdropFilter: 'blur(15px)'
               }}
             >
-              <Bell className="w-5 h-5" />
+              <Bell className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
               <span 
-                className="absolute top-1 right-1 w-2 h-2 rounded-full animate-pulse"
-                style={{ backgroundColor: currentTheme.colors.accent }}
+                className="absolute -top-1 -right-1 w-3 h-3 rounded-full animate-pulse shadow-lg border-2 border-white/20"
+                style={{ background: `linear-gradient(135deg, ${currentTheme.colors.accent}, #ff6b6b)` }}
               ></span>
+              
+              {/* Glow effect on hover */}
+              <div 
+                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                style={{ background: `linear-gradient(135deg, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})` }}
+              />
             </button>
 
             {/* User Menu */}
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-2 rounded-lg transition-all duration-300 hover:scale-105 touch-manipulation"
+                className="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
                 style={{
-                  backgroundColor: `${currentTheme.colors.surface}60`,
-                  border: `1px solid ${currentTheme.colors.border}`,
+                  background: `linear-gradient(135deg, ${currentTheme.colors.surface}90, ${currentTheme.colors.background}70)`,
+                  border: `1px solid ${currentTheme.colors.border}60`,
                   color: currentTheme.colors.text,
-                  backdropFilter: 'blur(10px)'
+                  backdropFilter: 'blur(15px)'
                 }}
               >
                 <div 
-                  className="w-8 h-8 rounded-full flex items-center justify-center"
-                  style={{ background: currentTheme.gradients.card }}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110"
+                  style={{ background: `linear-gradient(135deg, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})` }}
                 >
                   {userData?.avatar ? (
-                    <Image src={userData.avatar} alt="Avatar" width={32} height={32} className="w-8 h-8 rounded-full" />
+                    <Image src={userData.avatar} alt="Avatar" width={40} height={40} className="w-10 h-10 rounded-xl object-cover" />
                   ) : (
-                    <User className="w-4 h-4 text-white" />
+                    <User className="w-5 h-5 text-white" />
                   )}
                 </div>
-                <span className="hidden lg:block text-sm font-medium">
-                  {userData?.name || 'User'}
-                </span>
-                <ChevronDown className="w-4 h-4" />
+                <div className="hidden lg:block text-left">
+                  <p className="text-sm font-semibold leading-tight">
+                    {userData?.name || 'User'}
+                  </p>
+                  <p className="text-xs opacity-70" style={{ color: currentTheme.colors.textMuted }}>
+                    {userData?.role ? userData.role.charAt(0).toUpperCase() + userData.role.slice(1) : 'Member'}
+                  </p>
+                </div>
+                <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+                
+                {/* Glow effect on hover */}
+                <div 
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                  style={{ background: `linear-gradient(135deg, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})` }}
+                />
               </button>
 
               {/* User Dropdown Menu */}

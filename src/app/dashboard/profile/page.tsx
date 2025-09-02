@@ -16,6 +16,8 @@ import {
   MessageSquare,
   Bot
 } from 'lucide-react';
+import { ProfileProgress } from '@/components/ui/ProfileProgress';
+import { ResumeUpload } from '@/components/ui/ResumeUpload';
 
 interface Experience {
   title: string;
@@ -315,18 +317,21 @@ export default function Profile() {
           </div>
         </div>
         
-        {/* Profile Completeness Bar */}
+        {/* Enhanced Profile Progress */}
         <div className="mt-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-400">Profile Completeness</span>
-            <span className="text-sm font-medium text-white">{profile.profileCompleteness}%</span>
-          </div>
-          <div className="w-full bg-gray-700 rounded-full h-2">
-            <div 
-              className="bg-slate-600 h-2 rounded-full transition-all duration-300" 
-              style={{ width: `${profile.profileCompleteness}%` }}
-            ></div>
-          </div>
+          <ProfileProgress 
+            userData={{
+              name: profile.name,
+              aboutMe: profile.aboutMe,
+              skills: profile.skills,
+              hobbies: profile.hobbies,
+              experience: profile.experience,
+              resumeUrl: profile.resumeUrl,
+              portfolioLinks: profile.portfolioLinks,
+              email: profile.email
+            }}
+            showDetails={true}
+          />
         </div>
       </div>
 
@@ -473,64 +478,34 @@ export default function Profile() {
         <div className="glass-card p-6 mb-6">
           <h3 className="text-lg font-semibold text-white mb-4">Resume</h3>
           
-          {profile.resumeUrl ? (
-            <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-slate-300" fill="currentColor" viewBox="0 0 20 20">
+          {editMode ? (
+            <ResumeUpload
+              currentResumeUrl={profile.resumeUrl}
+              onUploadSuccess={(resumeUrl) => {
+                setProfile({ ...profile, resumeUrl });
+              }}
+              onRemove={() => {
+                setProfile({ ...profile, resumeUrl: undefined });
+              }}
+            />
+          ) : (
+            // Read-only resume display when not in edit mode
+            profile.resumeUrl ? (
+              <ResumeUpload
+                currentResumeUrl={profile.resumeUrl}
+                variant="compact"
+              />
+            ) : (
+              <div className="text-center py-6 border-2 border-dashed border-gray-700 rounded-lg">
+                <div className="w-16 h-16 bg-gray-800 border border-gray-700 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <div>
-                  <p className="font-medium text-white">Resume uploaded</p>
-                  <p className="text-sm text-gray-400">Click to view or download</p>
-                </div>
+                <p className="text-gray-400 mb-2">No resume uploaded yet</p>
+                <p className="text-xs text-gray-500">Click &quot;Edit Profile&quot; to upload your resume</p>
               </div>
-              <div className="flex items-center gap-2">
-                <a
-                  href={profile.resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-slate-300 hover:text-white text-sm transition-colors"
-                >
-                  View
-                </a>
-                {editMode && (
-                  <button
-                    onClick={removeResume}
-                    className="text-red-400 hover:text-red-300 text-sm transition-colors"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-6">
-              <div className="w-16 h-16 bg-gray-800 border border-gray-700 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <p className="text-gray-400 mb-4">No resume uploaded yet</p>
-              {editMode && (
-                <div>
-                  <input
-                    type="file"
-                    id="resume-upload"
-                    accept=".pdf,.doc,.docx"
-                    onChange={handleResumeUpload}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="resume-upload"
-                    className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg cursor-pointer inline-block transition-all"
-                  >
-                    Upload Resume
-                  </label>
-                </div>
-              )}
-            </div>
+            )
           )}
         </div>
 
