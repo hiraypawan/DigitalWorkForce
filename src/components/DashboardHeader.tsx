@@ -117,40 +117,29 @@ export default function DashboardHeader() {
       const buttonRect = userButtonRef.current.getBoundingClientRect();
       const dropdownWidth = 224; // w-56 = 14rem = 224px
       const viewportWidth = window.innerWidth;
-      const padding = 20; // Increased padding for better spacing
+      const padding = 16; // Standard padding
       
       // Always use fixed positioning for better control
       const topPosition = buttonRect.bottom + 8;
       
-      // Calculate available space on both sides
-      const spaceOnRight = viewportWidth - buttonRect.right;
-      const spaceOnLeft = buttonRect.left;
+      // Calculate the ideal position: align right edge of dropdown with right edge of button
+      let leftPosition = buttonRect.right - dropdownWidth;
       
-      let leftPosition;
-      
-      // Determine best position based on available space
-      if (spaceOnRight >= dropdownWidth + padding) {
-        // Align with right edge of button
-        leftPosition = buttonRect.right - dropdownWidth;
-        setDropdownPosition('right');
-      } else if (spaceOnLeft >= dropdownWidth + padding) {
-        // Align with left edge of button
+      // Check if this position would cause the dropdown to go outside the viewport
+      if (leftPosition < padding) {
+        // Not enough space on the left, align with left edge of button instead
         leftPosition = buttonRect.left;
-        setDropdownPosition('left');
-      } else {
-        // Center in available space or align to viewport edge
-        if (dropdownWidth > viewportWidth - 2 * padding) {
-          // Dropdown is wider than available space, center it
-          leftPosition = padding;
-        } else {
-          // Try to center around button, but keep within viewport
-          const centerPosition = buttonRect.left + (buttonRect.width / 2) - (dropdownWidth / 2);
-          leftPosition = Math.max(padding, Math.min(centerPosition, viewportWidth - dropdownWidth - padding));
+        
+        // If still not enough space, align with viewport edge
+        if (leftPosition + dropdownWidth > viewportWidth - padding) {
+          leftPosition = viewportWidth - dropdownWidth - padding;
         }
         setDropdownPosition('left');
+      } else {
+        setDropdownPosition('right');
       }
       
-      // Ensure leftPosition is never negative or too far right
+      // Final safety check - ensure dropdown stays within viewport bounds
       leftPosition = Math.max(padding, Math.min(leftPosition, viewportWidth - dropdownWidth - padding));
       
       setDropdownStyle({ 
