@@ -575,6 +575,10 @@ html {
   animation: bounceIn 0.6s ease-out forwards;
 }
 
+.animate-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
 /* Enhanced Utility Classes */
 .gradient-text {
   background: linear-gradient(135deg, #60A5FA, #A78BFA, #34D399);

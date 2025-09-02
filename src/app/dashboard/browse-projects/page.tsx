@@ -141,49 +141,134 @@ export default function BrowseProjects() {
         </div>
       </div>
 
-      {/* Project Cards */}
+      {/* Project Cards or AI Recommendations */}
       {projects.length === 0 ? (
-        <div className="glass-card text-center py-16">
-          <div 
-            className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center"
-            style={{ 
-              backgroundColor: `${currentTheme.colors.primary}15`,
-              color: currentTheme.colors.primary
-            }}
-          >
-            <Search className="w-10 h-10" />
+        <div className="space-y-8">
+          {/* AI Recommendations Placeholder */}
+          <div className="glass-card p-8">
+            <div className="flex items-start gap-6">
+              <div 
+                className="w-16 h-16 rounded-2xl flex items-center justify-center animate-pulse-glow"
+                style={{ 
+                  backgroundColor: `${currentTheme.colors.primary}20`,
+                  color: currentTheme.colors.primary
+                }}
+              >
+                <Bot className="w-8 h-8" />
+              </div>
+              
+              <div className="flex-1">
+                <h3 
+                  className="text-2xl font-bold mb-3 flex items-center gap-2"
+                  style={{ color: currentTheme.colors.text }}
+                >
+                  🔮 AI Project Recommendations Coming Soon!
+                </h3>
+                
+                <p 
+                  className="text-base mb-6 leading-relaxed"
+                  style={{ color: currentTheme.colors.textMuted }}
+                >
+                  Based on your profile, we&apos;ll match you with projects from top companies. 
+                  The more complete your profile, the better matches you&apos;ll receive.
+                </p>
+                
+                {/* Mock AI Recommendations */}
+                <div className="space-y-4 mb-6">
+                  <div className="p-4 rounded-xl border-2 border-dashed" 
+                       style={{ borderColor: `${currentTheme.colors.primary}40`, backgroundColor: `${currentTheme.colors.primary}05` }}>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: currentTheme.colors.success }}></div>
+                      <span className="font-semibold" style={{ color: currentTheme.colors.text }}>React Developer - TechCorp</span>
+                      <span className="text-sm px-2 py-1 rounded-full" 
+                            style={{ backgroundColor: `${currentTheme.colors.success}20`, color: currentTheme.colors.success }}>95% match</span>
+                    </div>
+                    <p className="text-sm" style={{ color: currentTheme.colors.textMuted }}>Full-stack development with React & Node.js</p>
+                  </div>
+                  
+                  <div className="p-4 rounded-xl border-2 border-dashed" 
+                       style={{ borderColor: `${currentTheme.colors.secondary}40`, backgroundColor: `${currentTheme.colors.secondary}05` }}>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: currentTheme.colors.warning }}></div>
+                      <span className="font-semibold" style={{ color: currentTheme.colors.text }}>UI/UX Designer - Creative Studio</span>
+                      <span className="text-sm px-2 py-1 rounded-full" 
+                            style={{ backgroundColor: `${currentTheme.colors.warning}20`, color: currentTheme.colors.warning }}>78% match</span>
+                    </div>
+                    <p className="text-sm" style={{ color: currentTheme.colors.textMuted }}>Modern web design with Figma & Adobe Creative Suite</p>
+                  </div>
+                </div>
+                
+                <Link 
+                  href="/dashboard/profile"
+                  className="btn-primary inline-flex items-center gap-2"
+                >
+                  <Briefcase className="w-5 h-5" />
+                  Complete Profile to Unlock Matches
+                </Link>
+              </div>
+            </div>
           </div>
           
-          <h3 
-            className="text-2xl font-semibold mb-4"
-            style={{ color: currentTheme.colors.text }}
-          >
-            No Projects Available
-          </h3>
-          
-          <p 
-            className="text-lg mb-8 max-w-md mx-auto"
-            style={{ color: currentTheme.colors.textMuted }}
-          >
-            There are currently no projects available. Check back soon for new opportunities!
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href="/ai-chat"
-              className="btn-primary inline-flex items-center gap-2 px-8 py-3"
+          {/* Motivational Empty State */}
+          <div className="text-center py-12">
+            <div 
+              className="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center animate-float"
+              style={{ 
+                backgroundColor: `${currentTheme.colors.accent}20`,
+                color: currentTheme.colors.accent
+              }}
             >
-              <Bot className="w-5 h-5" />
-              Get AI Recommendations
-            </Link>
+              <Search className="w-12 h-12" />
+            </div>
             
-            <Link 
-              href="/dashboard/profile"
-              className="btn-secondary inline-flex items-center gap-2 px-8 py-3"
+            <h3 
+              className="text-3xl font-bold mb-4 gradient-text"
             >
-              <Briefcase className="w-5 h-5" />
-              Update Profile
-            </Link>
+              Your Perfect Projects Are Coming
+            </h3>
+            
+            <p 
+              className="text-lg mb-8 max-w-2xl mx-auto leading-relaxed"
+              style={{ color: currentTheme.colors.textMuted }}
+            >
+              We&apos;re building an amazing marketplace of opportunities.
+              Complete your profile now to be first in line for premium projects from top companies.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link 
+                href="/dashboard/profile"
+                className="btn-primary inline-flex items-center gap-3 px-8 py-4 text-lg font-semibold"
+              >
+                <Star className="w-5 h-5" />
+                Complete Your Profile
+              </Link>
+              
+              <Link 
+                href="/ai-chat"
+                className="btn-secondary inline-flex items-center gap-2 px-6 py-4"
+              >
+                <Bot className="w-5 h-5" />
+                Chat with AI Assistant
+              </Link>
+            </div>
+            
+            {/* Progress Indicator */}
+            <div className="mt-8 max-w-sm mx-auto">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm" style={{ color: currentTheme.colors.textMuted }}>Profile Completion</span>
+                <span className="text-sm font-bold" style={{ color: currentTheme.colors.primary }}>25%</span>
+              </div>
+              <div className="w-full h-2 rounded-full" style={{ backgroundColor: `${currentTheme.colors.border}40` }}>
+                <div 
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{ width: '25%', backgroundColor: currentTheme.colors.primary }}
+                ></div>
+              </div>
+              <p className="text-xs mt-2" style={{ color: currentTheme.colors.textMuted }}>
+                Reach 75% to unlock premium project matches
+              </p>
+            </div>
           </div>
         </div>
       ) : (
