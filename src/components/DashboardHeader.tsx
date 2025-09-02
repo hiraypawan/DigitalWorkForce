@@ -117,33 +117,48 @@ export default function DashboardHeader() {
       const buttonRect = userButtonRef.current.getBoundingClientRect();
       const dropdownWidth = 224; // w-56 = 14rem = 224px
       const viewportWidth = window.innerWidth;
-      const padding = 16; // 1rem padding from edge
+      const padding = 20; // Increased padding for better spacing
       
-      // Calculate how much space we have on the right
+      // Always use fixed positioning for better control
+      const topPosition = buttonRect.bottom + 8;
+      
+      // Calculate available space on both sides
       const spaceOnRight = viewportWidth - buttonRect.right;
+      const spaceOnLeft = buttonRect.left;
       
+      let leftPosition;
+      
+      // Determine best position based on available space
       if (spaceOnRight >= dropdownWidth + padding) {
-        // Enough space on right, position normally
+        // Align with right edge of button
+        leftPosition = buttonRect.right - dropdownWidth;
         setDropdownPosition('right');
-        setDropdownStyle({ 
-          right: '0',
-          position: 'absolute',
-          top: 'auto',
-          left: 'auto'
-        });
-      } else {
-        // Not enough space, calculate position to keep dropdown in viewport
-        const idealLeftPosition = buttonRect.left - (dropdownWidth - buttonRect.width);
-        const leftPosition = Math.max(padding, Math.min(idealLeftPosition, viewportWidth - dropdownWidth - padding));
-        
+      } else if (spaceOnLeft >= dropdownWidth + padding) {
+        // Align with left edge of button
+        leftPosition = buttonRect.left;
         setDropdownPosition('left');
-        setDropdownStyle({ 
-          right: 'auto',
-          left: `${leftPosition}px`,
-          position: 'fixed',
-          top: `${buttonRect.bottom + 8}px`
-        });
+      } else {
+        // Center in available space or align to viewport edge
+        if (dropdownWidth > viewportWidth - 2 * padding) {
+          // Dropdown is wider than available space, center it
+          leftPosition = padding;
+        } else {
+          // Try to center around button, but keep within viewport
+          const centerPosition = buttonRect.left + (buttonRect.width / 2) - (dropdownWidth / 2);
+          leftPosition = Math.max(padding, Math.min(centerPosition, viewportWidth - dropdownWidth - padding));
+        }
+        setDropdownPosition('left');
       }
+      
+      // Ensure leftPosition is never negative or too far right
+      leftPosition = Math.max(padding, Math.min(leftPosition, viewportWidth - dropdownWidth - padding));
+      
+      setDropdownStyle({ 
+        position: 'fixed',
+        left: `${leftPosition}px`,
+        top: `${topPosition}px`,
+        right: 'auto'
+      });
     }
   };
 
@@ -443,14 +458,15 @@ export default function DashboardHeader() {
               {/* User Dropdown Menu */}
               {showUserMenu && (
                 <div 
-                  className={`${dropdownStyle.position === 'fixed' ? 'fixed' : 'absolute'} mt-2 w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-[60] glass-card`}
+                  className="fixed w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-[60] glass-card"
                   style={{
                     background: currentTheme.gradients.card,
                     borderColor: currentTheme.colors.border,
                     ...dropdownStyle,
                     minWidth: '14rem',
-                    maxWidth: 'calc(100vw - 2rem)',
-                    ...(dropdownStyle.position === 'fixed' && { transform: 'none' })
+                    maxWidth: 'calc(100vw - 2.5rem)',
+                    width: 'auto',
+                    transform: 'none'
                   }}
                 >
                   <div 
