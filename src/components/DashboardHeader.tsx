@@ -44,6 +44,7 @@ export default function DashboardHeader() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<'right' | 'left'>('right');
+  const [dropdownStyle, setDropdownStyle] = useState<{ right?: string; left?: string }>({ right: '0' });
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
@@ -104,12 +105,20 @@ export default function DashboardHeader() {
       const buttonRect = userButtonRef.current.getBoundingClientRect();
       const dropdownWidth = 224; // w-56 = 14rem = 224px
       const viewportWidth = window.innerWidth;
+      const padding = 16; // 1rem padding from edge
       
-      // If dropdown would overflow on the right side, position it to the left
-      if (buttonRect.right + dropdownWidth > viewportWidth) {
-        setDropdownPosition('left');
-      } else {
+      // Calculate how much space we have on the right
+      const spaceOnRight = viewportWidth - buttonRect.right;
+      
+      if (spaceOnRight >= dropdownWidth + padding) {
+        // Enough space on right, position normally
         setDropdownPosition('right');
+        setDropdownStyle({ right: '0' });
+      } else {
+        // Not enough space, calculate how much to shift left
+        const overflow = dropdownWidth - spaceOnRight + padding;
+        setDropdownPosition('left');
+        setDropdownStyle({ right: `${overflow}px` });
       }
     }
   };
@@ -410,11 +419,13 @@ export default function DashboardHeader() {
               {/* User Dropdown Menu */}
               {showUserMenu && (
                 <div 
-                  className={`absolute ${dropdownPosition === 'right' ? 'right-0' : 'left-0'} mt-2 w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-50 glass-card`}
+                  className="absolute mt-2 w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-50 glass-card"
                   style={{
                     background: currentTheme.gradients.card,
                     borderColor: currentTheme.colors.border,
-                    ...(dropdownPosition === 'left' && { transform: 'translateX(calc(-100% + 100%))' })
+                    ...dropdownStyle,
+                    minWidth: '14rem',
+                    maxWidth: 'calc(100vw - 1rem)'
                   }}
                 >
                   <div 
