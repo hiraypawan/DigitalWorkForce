@@ -44,7 +44,7 @@ export default function DashboardHeader() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<'right' | 'left'>('right');
-  const [dropdownStyle, setDropdownStyle] = useState<{ right?: string; left?: string }>({ right: '0' });
+  const [dropdownStyle, setDropdownStyle] = useState<{ right?: string; left?: string; position?: string; top?: string }>({ right: '0' });
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
@@ -94,6 +94,18 @@ export default function DashboardHeader() {
     setShowMobileMenu(false);
   }, [pathname]);
 
+  // Handle window resize to recalculate dropdown position
+  useEffect(() => {
+    const handleResize = () => {
+      if (showUserMenu) {
+        calculateDropdownPosition();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [showUserMenu]);
+
   const handleSignOut = async () => {
     await signOut({ redirect: false });
     router.push('/');
@@ -113,12 +125,24 @@ export default function DashboardHeader() {
       if (spaceOnRight >= dropdownWidth + padding) {
         // Enough space on right, position normally
         setDropdownPosition('right');
-        setDropdownStyle({ right: '0' });
+        setDropdownStyle({ 
+          right: '0',
+          position: 'absolute',
+          top: 'auto',
+          left: 'auto'
+        });
       } else {
-        // Not enough space, calculate how much to shift left
-        const overflow = dropdownWidth - spaceOnRight + padding;
+        // Not enough space, calculate position to keep dropdown in viewport
+        const idealLeftPosition = buttonRect.left - (dropdownWidth - buttonRect.width);
+        const leftPosition = Math.max(padding, Math.min(idealLeftPosition, viewportWidth - dropdownWidth - padding));
+        
         setDropdownPosition('left');
-        setDropdownStyle({ right: `${overflow}px` });
+        setDropdownStyle({ 
+          right: 'auto',
+          left: `${leftPosition}px`,
+          position: 'fixed',
+          top: `${buttonRect.bottom + 8}px`
+        });
       }
     }
   };
@@ -419,13 +443,14 @@ export default function DashboardHeader() {
               {/* User Dropdown Menu */}
               {showUserMenu && (
                 <div 
-                  className="absolute mt-2 w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-50 glass-card"
+                  className={`${dropdownStyle.position === 'fixed' ? 'fixed' : 'absolute'} mt-2 w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-[60] glass-card`}
                   style={{
                     background: currentTheme.gradients.card,
                     borderColor: currentTheme.colors.border,
                     ...dropdownStyle,
                     minWidth: '14rem',
-                    maxWidth: 'calc(100vw - 1rem)'
+                    maxWidth: 'calc(100vw - 2rem)',
+                    transform: dropdownStyle.position === 'fixed' ? 'none' : undefined
                   }}
                 >
                   <div 
