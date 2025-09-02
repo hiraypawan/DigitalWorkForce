@@ -4,10 +4,14 @@ import { useState, useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Mail, Lock, Eye, EyeOff, LogIn, Sparkles } from 'lucide-react';
+import { Loading } from '@/components/ui/Loading';
+import { Button } from '@/components/ui/Button';
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
+  const { currentTheme } = useTheme();
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
@@ -87,16 +91,7 @@ export default function LoginPage() {
 
   // Show loading while checking authentication status
   if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          </div>
-          <p className="text-gray-300">Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loading fullScreen text="Checking authentication..." variant="ring" size="lg" />;
   }
 
   // Don't show login form if already authenticated
@@ -105,44 +100,107 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background Effects */}
+    <div 
+      className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden"
+      style={{ background: currentTheme.gradients.background }}
+    >
+      {/* Animated Background Effects */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        <div 
+          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl animate-float"
+          style={{ backgroundColor: `${currentTheme.colors.primary}20` }}
+        ></div>
+        <div 
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl animate-float"
+          style={{ 
+            backgroundColor: `${currentTheme.colors.secondary}20`,
+            animationDelay: '1s'
+          }}
+        ></div>
+        <div className="cyber-grid absolute inset-0 opacity-30"></div>
       </div>
       
-      <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
+      {/* Header Section */}
+      <div className="relative sm:mx-auto sm:w-full sm:max-w-md animate-fade-in-up">
         <div className="text-center">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent mb-2">DigitalWorkForce</h1>
-          <h2 className="text-2xl font-semibold text-white">Sign in to your account</h2>
-          <p className="mt-2 text-gray-300">Access your dashboard and start working on projects</p>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Sparkles 
+              className="w-8 h-8 animate-pulse-glow"
+              style={{ color: currentTheme.colors.accent }}
+            />
+            <h1 className="text-4xl font-bold gradient-text">DigitalWorkForce</h1>
+            <Sparkles 
+              className="w-8 h-8 animate-pulse-glow"
+              style={{ color: currentTheme.colors.accent }}
+            />
+          </div>
+          <h2 
+            className="text-2xl font-bold mb-2"
+            style={{ color: currentTheme.colors.text }}
+          >
+            Welcome Back! 👋
+          </h2>
+          <p 
+            className="text-base leading-relaxed"
+            style={{ color: currentTheme.colors.textMuted }}
+          >
+            Sign in to access your dashboard and continue your journey
+          </p>
         </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
-        <div className="bg-gray-900/50 backdrop-blur border border-gray-800 py-8 px-4 shadow-lg sm:rounded-xl sm:px-10">
+      {/* Login Form */}
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative animate-scale-in animation-delay-200">
+        <div className="glass-card-highlight p-8 shadow-2xl">
+          {/* Success Message */}
           {registrationSuccess && (
-            <div className="mb-4 p-3 bg-green-900/50 border border-green-800 text-green-300 rounded-md text-sm">
-              🎉 Registration successful! Please sign in with your new account.
+            <div 
+              className="mb-6 p-4 rounded-xl border animate-bounce-in"
+              style={{
+                backgroundColor: `${currentTheme.colors.success}20`,
+                borderColor: `${currentTheme.colors.success}60`,
+                color: currentTheme.colors.success
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🎉</span>
+                <span className="font-semibold">Registration successful! Please sign in.</span>
+              </div>
             </div>
           )}
           
+          {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-900/50 border border-red-800 text-red-300 rounded-md text-sm">
-              {error}
+            <div 
+              className="mb-6 p-4 rounded-xl border animate-bounce-in"
+              style={{
+                backgroundColor: `${currentTheme.colors.error}20`,
+                borderColor: `${currentTheme.colors.error}60`,
+                color: currentTheme.colors.error
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-xl">⚠️</span>
+                <span className="font-medium">{error}</span>
+              </div>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-                Email address
+            {/* Email Field */}
+            <div className="animate-slide-in-left animation-delay-400">
+              <label 
+                htmlFor="email" 
+                className="block text-sm font-semibold mb-2"
+                style={{ color: currentTheme.colors.text }}
+              >
+                Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                <Mail 
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" 
+                  style={{ color: currentTheme.colors.textMuted }}
+                />
                 <input
                   id="email"
                   name="email"
@@ -150,19 +208,26 @@ export default function LoginPage() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
-                  placeholder="Enter your email"
+                  className="glass-input w-full pl-12 pr-4 py-4"
+                  placeholder="Enter your email address"
                 />
               </div>
             </div>
 
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
+            {/* Password Field */}
+            <div className="animate-slide-in-left animation-delay-600">
+              <label 
+                htmlFor="password" 
+                className="block text-sm font-semibold mb-2"
+                style={{ color: currentTheme.colors.text }}
+              >
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                <Lock 
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" 
+                  style={{ color: currentTheme.colors.textMuted }}
+                />
                 <input
                   id="password"
                   name="password"
@@ -170,13 +235,14 @@ export default function LoginPage() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-10 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
+                  className="glass-input w-full pl-12 pr-12 py-4"
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 rounded-lg hover-glow transition-all duration-200"
+                  style={{ color: currentTheme.colors.textMuted }}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -184,32 +250,36 @@ export default function LoginPage() {
             </div>
 
             {/* Submit Button */}
-            <div>
-              <button
+            <div className="pt-4 animate-bounce-in">
+              <Button
                 type="submit"
-                disabled={loading}
-                className="w-full flex justify-center items-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white font-semibold hover:shadow-lg hover:shadow-blue-500/25 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
+                variant="gradient"
+                size="lg"
+                loading={loading}
+                glow
+                className="w-full"
+                icon={!loading ? <LogIn className="w-5 h-5" /> : undefined}
               >
-                {loading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                ) : (
-                  <>
-                    <LogIn className="w-5 h-5" />
-                    Sign In
-                  </>
-                )}
-              </button>
+                Sign In to Dashboard
+              </Button>
             </div>
           </form>
 
-          <div className="mt-6">
-            <div className="text-center">
-              <span className="text-sm text-gray-400">Don&apos;t have an account? </span>
+          {/* Footer */}
+          <div className="mt-8 text-center animate-fade-in-up animation-delay-600">
+            <div className="flex items-center justify-center gap-2">
+              <span 
+                className="text-sm"
+                style={{ color: currentTheme.colors.textMuted }}
+              >
+                New to DigitalWorkForce?
+              </span>
               <Link
                 href="/auth/register"
-                className="font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                className="font-semibold text-sm hover:underline transition-all duration-200 hover-glow"
+                style={{ color: currentTheme.colors.accent }}
               >
-                Sign up here
+                Create Account →
               </Link>
             </div>
           </div>
