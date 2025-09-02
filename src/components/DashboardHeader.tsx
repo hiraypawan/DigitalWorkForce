@@ -397,15 +397,15 @@ export default function DashboardHeader() {
           </div>
 
           {/* Right side - Currency switcher, notifications, and user menu */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 lg:gap-3 flex-shrink-0">
             {/* Currency Switcher */}
-            <div className="hidden md:block">
+            <div className="hidden md:block flex-shrink-0">
               <CurrencySwitcher />
             </div>
 
             {/* Notifications */}
             <button 
-              className="group relative p-3 rounded-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
+              className="group relative p-2 lg:p-3 rounded-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl flex-shrink-0"
               style={{
                 background: `linear-gradient(135deg, ${currentTheme.colors.surface}90, ${currentTheme.colors.background}70)`,
                 border: `1px solid ${currentTheme.colors.border}60`,
@@ -427,14 +427,14 @@ export default function DashboardHeader() {
             </button>
 
             {/* User Menu */}
-            <div className="relative" ref={userMenuRef}>
+            <div className="relative flex-shrink-0" ref={userMenuRef}>
               <button
                 ref={userButtonRef}
                 onClick={() => {
                   calculateDropdownPosition();
                   setShowUserMenu(!showUserMenu);
                 }}
-                className="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
+                className="group flex items-center gap-2 lg:gap-3 px-2 sm:px-3 lg:px-4 py-2 lg:py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl max-w-[200px] lg:max-w-none"
                 style={{
                   background: `linear-gradient(135deg, ${currentTheme.colors.surface}90, ${currentTheme.colors.background}70)`,
                   border: `1px solid ${currentTheme.colors.border}60`,
@@ -443,24 +443,24 @@ export default function DashboardHeader() {
                 }}
               >
                 <div 
-                  className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110"
+                  className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-110 flex-shrink-0"
                   style={{ background: `linear-gradient(135deg, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})` }}
                 >
                   {userData?.avatar ? (
-                    <Image src={userData.avatar} alt="Avatar" width={40} height={40} className="w-10 h-10 rounded-xl object-cover" />
+                    <Image src={userData.avatar} alt="Avatar" width={32} height={32} className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl object-cover" />
                   ) : (
-                    <User className="w-5 h-5 text-white" />
+                    <User className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
                   )}
                 </div>
-                <div className="hidden lg:block text-left">
-                  <p className="text-sm font-semibold leading-tight">
+                <div className="hidden xl:block text-left min-w-0 flex-1">
+                  <p className="text-sm font-semibold leading-tight truncate max-w-[100px]">
                     {userData?.name || 'User'}
                   </p>
-                  <p className="text-xs opacity-70" style={{ color: currentTheme.colors.textMuted }}>
+                  <p className="text-xs opacity-70 truncate max-w-[100px]" style={{ color: currentTheme.colors.textMuted }}>
                     {userData?.role ? userData.role.charAt(0).toUpperCase() + userData.role.slice(1) : 'Member'}
                   </p>
                 </div>
-                <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+                <ChevronDown className="w-3 h-3 lg:w-4 lg:h-4 transition-transform duration-300 group-hover:rotate-180 flex-shrink-0" />
                 
                 {/* Glow effect on hover */}
                 <div 
