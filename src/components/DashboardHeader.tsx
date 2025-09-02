@@ -118,11 +118,12 @@ export default function DashboardHeader() {
       const dropdownWidth = 224; // w-56 = 14rem = 224px
       const viewportWidth = window.innerWidth;
       const padding = 16; // Standard padding
+      const rightMargin = 16; // Add right margin to match left spacing
       
       // Always use fixed positioning for better control
       const topPosition = buttonRect.bottom + 8;
       
-      // Calculate the ideal position: align right edge of dropdown with right edge of button
+      // Calculate the ideal position: align right edge of dropdown with right edge of button minus margin
       let leftPosition = buttonRect.right - dropdownWidth;
       
       // Check if this position would cause the dropdown to go outside the viewport
@@ -131,16 +132,18 @@ export default function DashboardHeader() {
         leftPosition = buttonRect.left;
         
         // If still not enough space, align with viewport edge
-        if (leftPosition + dropdownWidth > viewportWidth - padding) {
-          leftPosition = viewportWidth - dropdownWidth - padding;
+        if (leftPosition + dropdownWidth > viewportWidth - padding - rightMargin) {
+          leftPosition = viewportWidth - dropdownWidth - padding - rightMargin;
         }
         setDropdownPosition('left');
       } else {
+        // Add right margin when positioning from the right
+        leftPosition = Math.min(leftPosition, viewportWidth - dropdownWidth - padding - rightMargin);
         setDropdownPosition('right');
       }
       
-      // Final safety check - ensure dropdown stays within viewport bounds
-      leftPosition = Math.max(padding, Math.min(leftPosition, viewportWidth - dropdownWidth - padding));
+      // Final safety check - ensure dropdown stays within viewport bounds with right margin
+      leftPosition = Math.max(padding, Math.min(leftPosition, viewportWidth - dropdownWidth - padding - rightMargin));
       
       setDropdownStyle({ 
         position: 'fixed',
