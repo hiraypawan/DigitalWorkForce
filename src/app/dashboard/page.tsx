@@ -60,7 +60,7 @@ export default function DashboardPage() {
       style={{ background: currentTheme.gradients.background }}
     >
       {/* Welcome Section */}
-      <div className="p-8 mb-8 animate-fade-in-up bg-gradient-to-br from-blue-500/30 via-purple-500/30 to-pink-500/30 border-2 border-blue-400/60 backdrop-blur-lg shadow-2xl shadow-blue-500/25 rounded-2xl">
+      <div className="glass-card p-8 mb-8 animate-fade-in-up">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 
@@ -196,7 +196,7 @@ export default function DashboardPage() {
       {/* Profile & Earnings Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
         {/* Profile Card */}
-        <div className="p-8 animate-slide-in-left bg-gradient-to-br from-orange-500/20 via-red-500/20 to-pink-500/20 border-2 border-orange-400/50 backdrop-blur-lg shadow-xl shadow-orange-500/20 rounded-2xl">
+        <div className="glass-card-highlight p-8 animate-slide-in-left">
           <div className="flex items-center gap-6 mb-8">
             <div 
               className="w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-2xl animate-pulse-glow shadow-lg"
@@ -233,7 +233,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Earnings Overview */}
-        <div className="p-8 animate-slide-in-right bg-slate-900/80 border-2 border-cyan-400 shadow-lg shadow-cyan-400/25 backdrop-blur-md rounded-2xl">
+        <div className="glass-card-highlight p-8 animate-slide-in-right">
           <div className="flex items-center gap-6 mb-8">
             <div 
               className="w-16 h-16 rounded-2xl flex items-center justify-center animate-pulse-glow"
@@ -293,7 +293,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Getting Started Section */}
-      <div className="p-10 text-center animate-bounce-in bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-emerald-600/20 border border-blue-400/40 backdrop-blur-md rounded-2xl">
+      <div className="glass-card-highlight p-10 text-center animate-bounce-in">
         <div 
           className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center animate-float"
           style={{ 
