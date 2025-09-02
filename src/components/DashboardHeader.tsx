@@ -43,8 +43,10 @@ export default function DashboardHeader() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState<'right' | 'left'>('right');
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const userButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (session?.user) {
@@ -94,6 +96,22 @@ export default function DashboardHeader() {
   const handleSignOut = async () => {
     await signOut({ redirect: false });
     router.push('/');
+  };
+
+  // Calculate dropdown position to prevent overflow
+  const calculateDropdownPosition = () => {
+    if (userButtonRef.current) {
+      const buttonRect = userButtonRef.current.getBoundingClientRect();
+      const dropdownWidth = 224; // w-56 = 14rem = 224px
+      const viewportWidth = window.innerWidth;
+      
+      // If dropdown would overflow on the right side, position it to the left
+      if (buttonRect.right + dropdownWidth > viewportWidth) {
+        setDropdownPosition('left');
+      } else {
+        setDropdownPosition('right');
+      }
+    }
   };
 
   const isActive = (path: string) => pathname === path;
@@ -349,7 +367,11 @@ export default function DashboardHeader() {
             {/* User Menu */}
             <div className="relative" ref={userMenuRef}>
               <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
+                ref={userButtonRef}
+                onClick={() => {
+                  calculateDropdownPosition();
+                  setShowUserMenu(!showUserMenu);
+                }}
                 className="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
                 style={{
                   background: `linear-gradient(135deg, ${currentTheme.colors.surface}90, ${currentTheme.colors.background}70)`,
@@ -388,10 +410,11 @@ export default function DashboardHeader() {
               {/* User Dropdown Menu */}
               {showUserMenu && (
                 <div 
-                  className="absolute right-0 mt-2 w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-50 glass-card"
+                  className={`absolute ${dropdownPosition === 'right' ? 'right-0' : 'left-0'} mt-2 w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-50 glass-card`}
                   style={{
                     background: currentTheme.gradients.card,
-                    borderColor: currentTheme.colors.border
+                    borderColor: currentTheme.colors.border,
+                    ...(dropdownPosition === 'left' && { transform: 'translateX(calc(-100% + 100%))' })
                   }}
                 >
                   <div 
