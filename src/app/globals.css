@@ -424,6 +424,16 @@ html {
   scrollbar-color: #4b5563 #1f2937;
 }
 
+/* Hide scrollbar for navigation overflow */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Mobile Navigation Improvements */
 @media (max-width: 1024px) {
   .touch-manipulation {

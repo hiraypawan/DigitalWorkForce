@@ -220,15 +220,15 @@ export default function DashboardHeader() {
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
-              {navItems.map((item) => {
+            <nav className="hidden lg:flex items-center gap-1 overflow-x-auto scrollbar-hide">
+              {navItems.slice(0, 5).map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.href);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="group relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
+                    className="group relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 whitespace-nowrap flex-shrink-0"
                     style={{
                       backgroundColor: active 
                         ? `${currentTheme.colors.primary}20` 
@@ -240,22 +240,22 @@ export default function DashboardHeader() {
                         ? `1px solid ${currentTheme.colors.primary}40` 
                         : '1px solid transparent',
                       boxShadow: active 
-                        ? `0 4px 20px ${currentTheme.colors.primary}25, inset 0 1px 0 ${currentTheme.colors.primary}20` 
+                        ? `0 2px 10px ${currentTheme.colors.primary}25` 
                         : 'none'
                     }}
                   >
                     {/* Active indicator */}
                     {active && (
                       <div 
-                        className="absolute inset-0 rounded-xl opacity-20 animate-pulse"
+                        className="absolute inset-0 rounded-lg opacity-15 animate-pulse"
                         style={{ background: `linear-gradient(135deg, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})` }}
                       />
                     )}
                     
-                    <div className="relative z-10 flex items-center gap-3">
+                    <div className="relative z-10 flex items-center gap-2">
                       <div 
-                        className={`p-1.5 rounded-lg transition-all duration-300 ${
-                          active ? 'shadow-lg' : 'group-hover:shadow-md'
+                        className={`p-1 rounded-md transition-all duration-300 ${
+                          active ? 'shadow-md' : 'group-hover:shadow-sm'
                         }`}
                         style={{
                           background: active 
@@ -266,15 +266,53 @@ export default function DashboardHeader() {
                       >
                         <Icon className="w-4 h-4" />
                       </div>
-                      <span className="font-semibold tracking-wide">{item.label}</span>
+                      <span className="font-medium text-xs xl:text-sm">{item.label}</span>
                     </div>
                     
                     {/* Hover effect overlay */}
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-300" 
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-300" 
                          style={{ background: `linear-gradient(135deg, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})` }} />
                   </Link>
                 );
               })}
+              
+              {/* More menu for additional items */}
+              {navItems.length > 5 && (
+                <div className="relative group">
+                  <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 hover:-translate-y-0.5" 
+                          style={{ color: currentTheme.colors.textSecondary }}>
+                    <div className="p-1 rounded-md" style={{ background: `${currentTheme.colors.surface}40` }}>
+                      <Menu className="w-4 h-4" />
+                    </div>
+                    <span className="font-medium text-xs xl:text-sm">More</span>
+                  </button>
+                  
+                  {/* Dropdown for additional items */}
+                  <div className="absolute left-0 top-full mt-2 w-48 rounded-xl backdrop-blur-md shadow-xl border py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+                       style={{
+                         background: currentTheme.gradients.card,
+                         borderColor: currentTheme.colors.border
+                       }}>
+                    {navItems.slice(5).map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="flex items-center gap-3 px-4 py-2 text-sm transition-all duration-150 hover:scale-[1.02]"
+                          style={{
+                            backgroundColor: isActive(item.href) ? `${currentTheme.colors.primary}20` : 'transparent',
+                            color: isActive(item.href) ? currentTheme.colors.primary : currentTheme.colors.text
+                          }}
+                        >
+                          <Icon className="w-4 h-4" />
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </nav>
           </div>
 
