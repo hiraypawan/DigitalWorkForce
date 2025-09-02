@@ -19,7 +19,7 @@ export default function DashboardLayout({
       }}
     >
       <DashboardHeader />
-      <main className="relative">
+      <main className="pt-20 relative">  {/* Add top padding for fixed header */}
         {children}
       </main>
     </div>

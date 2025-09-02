@@ -144,13 +144,13 @@ export default function DashboardHeader() {
 
   if (status === 'loading') {
     return (
-      <header 
-        className="backdrop-blur-lg border-b sticky top-0 z-50"
-        style={{
-          backgroundColor: `${currentTheme.colors.surface}90`,
-          borderColor: currentTheme.colors.border
-        }}
-      >
+    <header 
+      className="backdrop-blur-lg border-b fixed top-0 left-0 right-0 z-50"
+      style={{
+        backgroundColor: `${currentTheme.colors.surface}90`,
+        borderColor: currentTheme.colors.border
+      }}
+    >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-8">
@@ -185,7 +185,7 @@ export default function DashboardHeader() {
 
   return (
     <header 
-      className="backdrop-blur-xl border-b sticky top-0 z-50 shadow-lg"
+      className="backdrop-blur-xl border-b fixed top-0 left-0 right-0 z-50 shadow-lg"
       style={{
         background: `linear-gradient(135deg, ${currentTheme.colors.surface}95, ${currentTheme.colors.background}85)`,
         borderColor: `${currentTheme.colors.border}60`,

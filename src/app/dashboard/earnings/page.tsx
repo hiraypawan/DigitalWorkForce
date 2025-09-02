@@ -119,7 +119,8 @@ export default function Earnings() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ background: currentTheme.gradients.background, minHeight: '100vh' }}>
+    <div className="w-full max-w-none overflow-x-hidden" style={{ background: currentTheme.gradients.background, minHeight: 'calc(100vh - 5rem)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {/* Earnings Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="glass-card p-6">
@@ -308,6 +309,7 @@ export default function Earnings() {
             </div>
           </div>
         </div>
+      </div>
     </div>
   );
 }

@@ -9,6 +9,18 @@
     box-sizing: border-box;
   }
   
+  /* Prevent horizontal overflow globally */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  
+  /* Ensure all containers respect viewport width */
+  #__next, [data-reactroot] {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
