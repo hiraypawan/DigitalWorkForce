@@ -125,8 +125,8 @@ export default function DashboardHeader() {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
       
-      // Fixed dropdown width
-      const dropdownWidth = 224; // 14rem = 224px
+      // Fixed dropdown width - reduced by 10% to prevent overflow
+      const dropdownWidth = 201; // ~90% of 224px (originally 14rem)
       const padding = 16;
       const topOffset = 8;
       
