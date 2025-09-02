@@ -33,35 +33,35 @@ export interface Theme {
   };
 }
 
-// Comfortable Dark Theme - Easy on the eyes, professional and balanced
+// Vibrant Colorful Theme - Modern, engaging and visually appealing
 export const modernDarkTheme: Theme = {
-  id: 'modern-dark',
-  name: 'DigitalWorkForce Comfortable',
+  id: 'modern-colorful',
+  name: 'DigitalWorkForce Vibrant',
   colors: {
-    primary: '#60A5FA',    // Softer blue, less harsh
-    primaryHover: '#3B82F6',
-    secondary: '#A78BFA',  // Softer purple
-    accent: '#34D399',     // Softer green-cyan
-    background: '#0F172A', // Warmer dark background
-    surface: '#1E293B',    // Warmer surface
-    surfaceHover: '#334155',
-    text: '#F1F5F9',       // Softer white, less harsh
-    textSecondary: '#CBD5E1',
-    textMuted: '#94A3B8',
-    border: '#475569',
-    borderHover: '#64748B',
-    borderLight: '#64748B',
-    success: '#22C55E',    // Softer green
-    warning: '#FBB928',    // Softer yellow
-    error: '#F87171',      // Softer red
-    info: '#60A5FA'
+    primary: '#3B82F6',      // Vibrant blue
+    primaryHover: '#2563EB', // Deeper blue
+    secondary: '#8B5CF6',    // Vibrant purple  
+    accent: '#10B981',       // Vibrant emerald
+    background: '#0A0E27',   // Deep navy background
+    surface: '#1A1B3A',     // Rich dark surface
+    surfaceHover: '#2D2E5F', // Lighter hover state
+    text: '#FFFFFF',         // Pure white for contrast
+    textSecondary: '#E2E8F0', // Light gray
+    textMuted: '#94A3B8',    // Medium gray
+    border: '#3B4263',       // Subtle border
+    borderHover: '#4F5578',  // Hover border
+    borderLight: '#6B7289',  // Light border
+    success: '#10B981',      // Emerald green
+    warning: '#F59E0B',      // Amber warning
+    error: '#EF4444',        // Red error
+    info: '#06B6D4'          // Cyan info
   },
   gradients: {
-    primary: 'from-slate-900 via-slate-800 to-slate-900',
-    secondary: 'from-slate-800 via-slate-700 to-slate-800',
-    accent: 'from-slate-900 via-blue-900/20 to-slate-900',
-    background: 'linear-gradient(135deg, #0F172A, #1E293B, #0F172A)',
-    card: 'linear-gradient(135deg, #1E293B, #334155)'
+    primary: 'from-blue-600 via-blue-500 to-blue-400',
+    secondary: 'from-purple-600 via-purple-500 to-purple-400', 
+    accent: 'from-emerald-600 via-emerald-500 to-emerald-400',
+    background: 'linear-gradient(135deg, #0A0E27 0%, #1A1B3A 25%, #2D1B69 50%, #1A1B3A 75%, #0A0E27 100%)',
+    card: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(16, 185, 129, 0.1) 100%)'
   }
 };
 

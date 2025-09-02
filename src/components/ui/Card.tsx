@@ -9,7 +9,7 @@ interface CardProps {
   className?: string;
   hover?: boolean;
   padding?: 'sm' | 'md' | 'lg' | 'xl';
-  variant?: 'glass' | 'highlight' | 'outlined' | 'gradient' | 'solid';
+  variant?: 'glass' | 'highlight' | 'outlined' | 'gradient' | 'solid' | 'vibrant' | 'neon' | 'colorful';
   animate?: boolean;
   glow?: boolean;
 }
@@ -46,11 +46,17 @@ export function Card({
       case 'highlight':
         return 'glass-card-highlight';
       case 'outlined':
-        return `border-2 bg-transparent`;
+        return `border-2 bg-transparent border-blue-400 hover:border-blue-300 hover:bg-blue-500/5`;
       case 'gradient':
-        return 'bg-gradient-to-br from-blue-50/10 to-purple-50/10 border';
+        return 'bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-emerald-600/20 border border-blue-400/40 backdrop-blur-md';
       case 'solid':
-        return 'border shadow-lg';
+        return 'bg-slate-800/90 border border-slate-600 shadow-2xl backdrop-blur-sm';
+      case 'vibrant':
+        return 'bg-gradient-to-br from-blue-500/30 via-purple-500/30 to-pink-500/30 border-2 border-blue-400/60 backdrop-blur-lg shadow-2xl shadow-blue-500/25';
+      case 'neon':
+        return 'bg-slate-900/80 border-2 border-cyan-400 shadow-lg shadow-cyan-400/25 backdrop-blur-md';
+      case 'colorful':
+        return 'bg-gradient-to-br from-orange-500/20 via-red-500/20 to-pink-500/20 border-2 border-orange-400/50 backdrop-blur-lg shadow-xl shadow-orange-500/20';
       default:
         return 'glass-card';
     }

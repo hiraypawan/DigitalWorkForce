@@ -7,7 +7,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'gradient';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'gradient' | 'vibrant' | 'neon' | 'colorful';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   loading?: boolean;
   icon?: ReactNode;
@@ -96,6 +96,27 @@ export function Button({
           color: 'white',
           border: 'none',
           boxShadow: `0 4px 20px ${currentTheme.colors.primary}30`
+        };
+      case 'vibrant':
+        return {
+          background: 'linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899)',
+          color: 'white',
+          border: 'none',
+          boxShadow: '0 8px 25px rgba(59, 130, 246, 0.4)'
+        };
+      case 'neon':
+        return {
+          background: 'linear-gradient(135deg, #06B6D4, #0891B2)',
+          color: 'white',
+          border: '2px solid #22D3EE',
+          boxShadow: '0 0 20px rgba(34, 211, 238, 0.5), 0 4px 15px rgba(6, 182, 212, 0.3)'
+        };
+      case 'colorful':
+        return {
+          background: 'linear-gradient(135deg, #F59E0B, #EF4444, #EC4899)',
+          color: 'white',
+          border: 'none',
+          boxShadow: '0 8px 25px rgba(245, 158, 11, 0.4)'
         };
       default:
         return {};
