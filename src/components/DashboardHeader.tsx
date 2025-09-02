@@ -130,38 +130,49 @@ export default function DashboardHeader() {
       const padding = 16;
       const topOffset = 8;
       
-      // Simple positioning: align dropdown to the right edge of the button
-      // but ensure it stays within viewport
+      // Start by aligning dropdown to the right edge of the button (preferred position)
       let leftPosition = buttonRect.right - dropdownWidth;
       let topPosition = buttonRect.bottom + topOffset;
       
-      // Ensure dropdown doesn't go beyond left edge
-      if (leftPosition < padding) {
-        leftPosition = padding;
-      }
+      // Check if the dropdown would go beyond the right edge of the viewport
+      const wouldOverflowRight = leftPosition + dropdownWidth > viewportWidth - padding;
       
-      // Ensure dropdown doesn't go beyond right edge
-      if (leftPosition + dropdownWidth > viewportWidth - padding) {
+      // Check if the dropdown would go beyond the left edge of the viewport
+      const wouldOverflowLeft = leftPosition < padding;
+      
+      if (wouldOverflowRight) {
+        // If it would overflow right, position it at the safe right boundary
         leftPosition = viewportWidth - dropdownWidth - padding;
       }
       
-      // Ensure dropdown doesn't go beyond bottom edge
+      if (wouldOverflowLeft) {
+        // If it would overflow left, position it at the safe left boundary
+        leftPosition = padding;
+      }
+      
+      // Handle vertical positioning
       const dropdownHeight = 200; // Estimated height
       if (topPosition + dropdownHeight > viewportHeight - 20) {
-        topPosition = buttonRect.top - dropdownHeight - topOffset;
-        // If still doesn't fit above, position at top of viewport
-        if (topPosition < 20) {
+        // Try to position above the button
+        const abovePosition = buttonRect.top - dropdownHeight - topOffset;
+        if (abovePosition >= 20) {
+          topPosition = abovePosition;
+        } else {
+          // If can't fit above either, position at top of screen
           topPosition = 20;
         }
       }
       
-      console.log('Dropdown positioning:', {
-        buttonRect: buttonRect,
+      console.log('Dropdown positioning debug:', {
+        buttonRect,
         viewportWidth,
         viewportHeight,
-        leftPosition,
-        topPosition,
-        dropdownWidth
+        initialLeft: buttonRect.right - dropdownWidth,
+        finalLeft: leftPosition,
+        finalTop: topPosition,
+        dropdownWidth,
+        wouldOverflowRight,
+        wouldOverflowLeft
       });
       
       setDropdownPosition('right');
