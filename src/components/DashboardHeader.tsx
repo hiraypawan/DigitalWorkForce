@@ -115,41 +115,73 @@ export default function DashboardHeader() {
   const calculateDropdownPosition = () => {
     if (userButtonRef.current) {
       const buttonRect = userButtonRef.current.getBoundingClientRect();
-      const dropdownWidth = 224; // w-56 = 14rem = 224px
       const viewportWidth = window.innerWidth;
-      const padding = 16; // Standard padding
-      const rightMargin = 16; // Add right margin to match left spacing
+      const viewportHeight = window.innerHeight;
       
-      // Always use fixed positioning for better control
-      const topPosition = buttonRect.bottom + 8;
-      
-      // Calculate the ideal position: align right edge of dropdown with right edge of button minus margin
-      let leftPosition = buttonRect.right - dropdownWidth;
-      
-      // Check if this position would cause the dropdown to go outside the viewport
-      if (leftPosition < padding) {
-        // Not enough space on the left, align with left edge of button instead
-        leftPosition = buttonRect.left;
-        
-        // If still not enough space, align with viewport edge
-        if (leftPosition + dropdownWidth > viewportWidth - padding - rightMargin) {
-          leftPosition = viewportWidth - dropdownWidth - padding - rightMargin;
-        }
-        setDropdownPosition('left');
-      } else {
-        // Add right margin when positioning from the right
-        leftPosition = Math.min(leftPosition, viewportWidth - dropdownWidth - padding - rightMargin);
-        setDropdownPosition('right');
+      // Responsive dropdown width based on screen size
+      let dropdownWidth = 224; // Default: 14rem = 224px
+      if (viewportWidth < 640) { // sm breakpoint
+        dropdownWidth = Math.min(280, viewportWidth - 32); // Max width with 16px padding on each side
+      } else if (viewportWidth < 768) { // md breakpoint
+        dropdownWidth = 240;
       }
       
-      // Final safety check - ensure dropdown stays within viewport bounds with right margin
-      leftPosition = Math.max(padding, Math.min(leftPosition, viewportWidth - dropdownWidth - padding - rightMargin));
+      // Dynamic padding based on screen size
+      const padding = viewportWidth < 640 ? 12 : 16;
+      const topOffset = 8;
+      const bottomPadding = 20;
       
+      // Calculate available space
+      const availableRight = viewportWidth - buttonRect.right;
+      const availableLeft = buttonRect.left;
+      const availableBottom = viewportHeight - buttonRect.bottom - bottomPadding;
+      
+      // Determine optimal positioning
+      let leftPosition = 0;
+      let topPosition = buttonRect.bottom + topOffset;
+      let position = 'right';
+      
+      // Check if dropdown fits when aligned to the right edge of button
+      const rightAlignedLeft = buttonRect.right - dropdownWidth;
+      
+      if (rightAlignedLeft >= padding && availableRight >= 0) {
+        // Right alignment works
+        leftPosition = rightAlignedLeft;
+        position = 'right';
+      } else if (availableLeft >= dropdownWidth + padding) {
+        // Left alignment works
+        leftPosition = buttonRect.left;
+        position = 'left';
+      } else {
+        // Center on screen with safe margins
+        leftPosition = Math.max(padding, (viewportWidth - dropdownWidth) / 2);
+        position = 'center';
+      }
+      
+      // Handle vertical overflow
+      const estimatedDropdownHeight = 200; // Approximate height
+      if (topPosition + estimatedDropdownHeight > viewportHeight - bottomPadding) {
+        // Show above the button if there's space
+        if (buttonRect.top - estimatedDropdownHeight > topOffset) {
+          topPosition = buttonRect.top - estimatedDropdownHeight - topOffset;
+        } else {
+          // Keep below but adjust to fit
+          topPosition = Math.max(topOffset, viewportHeight - estimatedDropdownHeight - bottomPadding);
+        }
+      }
+      
+      // Final boundary checks
+      leftPosition = Math.max(padding, Math.min(leftPosition, viewportWidth - dropdownWidth - padding));
+      topPosition = Math.max(topOffset, Math.min(topPosition, viewportHeight - bottomPadding));
+      
+      setDropdownPosition(position as 'right' | 'left');
       setDropdownStyle({ 
         position: 'fixed',
         left: `${leftPosition}px`,
         top: `${topPosition}px`,
-        right: 'auto'
+        right: 'auto',
+        width: `${dropdownWidth}px`,
+        maxHeight: `${Math.min(400, viewportHeight - topPosition - bottomPadding)}px`
       });
     }
   };
@@ -450,57 +482,64 @@ export default function DashboardHeader() {
               {/* User Dropdown Menu */}
               {showUserMenu && (
                 <div 
-                  className="fixed w-56 rounded-xl backdrop-blur-md shadow-2xl border py-2 z-[60] glass-card"
+                  className="fixed rounded-xl backdrop-blur-md shadow-2xl border py-2 z-[60] glass-card overflow-hidden"
                   style={{
                     background: currentTheme.gradients.card,
                     borderColor: currentTheme.colors.border,
-                    ...dropdownStyle,
-                    minWidth: '14rem',
-                    maxWidth: 'calc(100vw - 2.5rem)',
-                    width: 'auto',
-                    transform: 'none'
+                    ...dropdownStyle
                   }}
                 >
+                  {/* User Info Section with Flexbox */}
                   <div 
-                    className="px-4 py-3 border-b"
+                    className="flex flex-col px-4 py-3 border-b space-y-1"
                     style={{ borderColor: currentTheme.colors.border }}
                   >
-                    <p className="text-sm font-medium" style={{ color: currentTheme.colors.text }}>
+                    <p className="text-sm font-medium truncate leading-tight" style={{ color: currentTheme.colors.text }}>
                       {userData?.name}
                     </p>
-                    <p className="text-xs" style={{ color: currentTheme.colors.textMuted }}>
+                    <p className="text-xs truncate leading-tight" style={{ color: currentTheme.colors.textMuted }}>
                       {userData?.email}
                     </p>
                   </div>
-                  <Link
-                    href="/dashboard/profile"
-                    className="flex items-center gap-3 px-4 py-2 text-sm transition-all duration-150 hover:scale-[1.02]"
-                    style={{
-                      color: currentTheme.colors.text
-                    }}
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    <User className="w-4 h-4" />
-                    Edit Profile
-                  </Link>
-                  <Link
-                    href="/dashboard/settings"
-                    className="flex items-center gap-3 px-4 py-2 text-sm transition-all duration-150 hover:scale-[1.02]"
-                    style={{ color: currentTheme.colors.text }}
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    <Settings className="w-4 h-4" />
-                    Settings
-                  </Link>
-                  <hr style={{ margin: '8px 0', borderColor: currentTheme.colors.border }} />
-                  <button
-                    onClick={handleSignOut}
-                    className="flex items-center gap-3 px-4 py-2 text-sm w-full text-left transition-all duration-150 hover:scale-[1.02]"
-                    style={{ color: currentTheme.colors.accent }}
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Sign Out
-                  </button>
+                  
+                  {/* Menu Items with Grid Layout */}
+                  <div className="py-1">
+                    <Link
+                      href="/dashboard/profile"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm transition-all duration-150 hover:scale-[1.02] active:scale-95 w-full"
+                      style={{
+                        color: currentTheme.colors.text
+                      }}
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <User className="w-4 h-4 flex-shrink-0" />
+                      <span className="truncate">Edit Profile</span>
+                    </Link>
+                    <Link
+                      href="/dashboard/settings"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm transition-all duration-150 hover:scale-[1.02] active:scale-95 w-full"
+                      style={{ color: currentTheme.colors.text }}
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <Settings className="w-4 h-4 flex-shrink-0" />
+                      <span className="truncate">Settings</span>
+                    </Link>
+                  </div>
+                  
+                  {/* Divider */}
+                  <hr className="my-1" style={{ borderColor: currentTheme.colors.border }} />
+                  
+                  {/* Sign Out Button */}
+                  <div className="py-1">
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm w-full text-left transition-all duration-150 hover:scale-[1.02] active:scale-95"
+                      style={{ color: currentTheme.colors.accent }}
+                    >
+                      <LogOut className="w-4 h-4 flex-shrink-0" />
+                      <span className="truncate">Sign Out</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
