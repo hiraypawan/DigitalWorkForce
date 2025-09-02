@@ -151,18 +151,19 @@ export default function DashboardHeader() {
       // Check if dropdown fits when aligned to the right edge of button
       const rightAlignedLeft = buttonRect.right - dropdownWidth;
       
-      if (rightAlignedLeft >= padding && availableRight >= 0) {
-        // Right alignment works
+      // Check if right alignment has enough space (dropdown must not extend beyond viewport)
+      if (rightAlignedLeft >= padding && (buttonRect.right <= viewportWidth - padding)) {
+        // Right alignment works - dropdown fits within viewport
         leftPosition = rightAlignedLeft;
         position = 'right';
       } else if (availableLeft >= dropdownWidth + padding) {
-        // Left alignment works
+        // Left alignment works - enough space on the left
         leftPosition = buttonRect.left;
         position = 'left';
       } else {
-        // Center on screen with safe margins
-        leftPosition = Math.max(padding, (viewportWidth - dropdownWidth) / 2);
-        position = 'center';
+        // Force dropdown to fit by positioning it at the rightmost safe position
+        leftPosition = viewportWidth - dropdownWidth - padding;
+        position = 'right';
       }
       
       // Handle vertical overflow
@@ -177,9 +178,19 @@ export default function DashboardHeader() {
         }
       }
       
-      // Final boundary checks
-      leftPosition = Math.max(padding, Math.min(leftPosition, viewportWidth - dropdownWidth - padding));
+      // Final boundary checks - ensure dropdown never exceeds viewport
+      const minLeftPosition = padding;
+      const maxLeftPosition = viewportWidth - dropdownWidth - padding;
+      
+      // Clamp leftPosition to safe boundaries
+      leftPosition = Math.max(minLeftPosition, Math.min(leftPosition, maxLeftPosition));
       topPosition = Math.max(topOffset, Math.min(topPosition, viewportHeight - bottomPadding));
+      
+      // Additional safety check: if dropdown would still overflow, reduce width
+      if (leftPosition + dropdownWidth > viewportWidth - padding) {
+        const availableWidth = viewportWidth - leftPosition - padding;
+        dropdownWidth = Math.max(200, availableWidth); // Minimum 200px width
+      }
       
       setDropdownPosition(position as 'right' | 'left');
       setDropdownStyle({ 
